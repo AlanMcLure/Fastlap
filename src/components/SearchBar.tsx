@@ -80,9 +80,9 @@ const SearchBar: FC<SearchBarProps> = ({}) => {
         <CommandList className='absolute bg-white top-full inset-x-0 shadow rounded-b-md'>
           {isFetched && <CommandEmpty>No results found.</CommandEmpty>}
           {(queryResults?.length ?? 0) > 0 ? (
-            <CommandGroup heading='Communities'>
+            <CommandGroup heading='Comunidades'>
               {queryResults?.map((subreddit) => (
-                <CommandItem
+                <CommandItem className='cursor-pointer'
                   onSelect={(e) => {
                     router.push(`/r/${e}`)
                     router.refresh()
