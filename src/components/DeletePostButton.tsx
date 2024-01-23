@@ -3,7 +3,8 @@ import axios from 'axios'
 import { Button } from '@/components/ui/Button'
 import { usePathname, useRouter } from 'next/navigation'
 import { toast } from '@/hooks/use-toast'
-import { FC } from 'react'
+import { FC, useState } from 'react'
+import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/Dialog'
 
 interface DeletePostButtonProps {
   postId: string
@@ -13,6 +14,17 @@ const DeletePostButton:FC<DeletePostButtonProps> = ({ postId }) => {
   const router = useRouter()
   const pathname = usePathname()
   const queryClient = useQueryClient()
+
+  const [isDialogOpen, setDialogOpen] = useState(false)
+
+  const handleDelete = () => {
+    setDialogOpen(false)
+    deletePost()
+  }
+
+  const openDialog = () => {
+    setDialogOpen(true)
+  }
 
   const { mutate: deletePost } = useMutation({
     mutationFn: async () => {
@@ -37,14 +49,34 @@ const DeletePostButton:FC<DeletePostButtonProps> = ({ postId }) => {
     },
   })
 
+  // onClick={() => {
+  //   const confirmDelete = confirm('¿Estás seguro de que quieres borrar este post?')
+  //   if (confirmDelete) deletePost()
+  // }}
+
   return (
-    <Button
-    className='bg-red-500'
-      onClick={() => deletePost()}
-      variant='destructive'
-      size='sm'>
-      Delete
-    </Button>
+    <Dialog open={isDialogOpen} onOpenChange={setDialogOpen}>
+      <Button
+        className='bg-red-500'
+        onClick={openDialog}
+        variant='destructive'
+        size='sm'>
+        Borrar
+      </Button>
+
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>¿Estás seguro de que quieres borrar este post?</DialogTitle>
+          <DialogDescription>
+            Está acción no se puede deshacer.
+          </DialogDescription>
+        </DialogHeader>
+        <DialogFooter>
+          <Button size='xs' variant='outline' type="button" onClick={() => setDialogOpen(false)}>Cancelar</Button>
+          <Button size='xs' type="submit" onClick={handleDelete}>Confirmar</Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   )
 }
 
