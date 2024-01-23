@@ -10,6 +10,8 @@ import { FC, useEffect, useRef } from 'react'
 import Post from './Post'
 import { useSession } from 'next-auth/react'
 
+import '@/styles/loader.css'
+
 interface PostFeedProps {
   initialPosts: ExtendedPost[]
   subredditName?: string
@@ -92,7 +94,8 @@ const PostFeed: FC<PostFeedProps> = ({ initialPosts, subredditName }) => {
 
       {isFetchingNextPage && (
         <li className='flex justify-center'>
-          <Loader2 className='w-6 h-6 text-zinc-500 animate-spin' />
+          {/* <Loader2 className='w-6 h-6 text-zinc-500 animate-spin' /> */}
+          <div className="loader"></div>
         </li>
       )}
     </ul>
