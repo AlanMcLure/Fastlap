@@ -1,3 +1,4 @@
+import { useSession } from 'next-auth/react'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import axios from 'axios'
 import { Button } from '@/components/ui/Button'
@@ -7,13 +8,16 @@ import { FC, useState } from 'react'
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/Dialog'
 
 interface DeletePostButtonProps {
-  postId: string
+  postId: string,
+  authorId: string
 }
 
-const DeletePostButton:FC<DeletePostButtonProps> = ({ postId }) => {
+const DeletePostButton:FC<DeletePostButtonProps> = ({ postId, authorId }) => {
   const router = useRouter()
   const pathname = usePathname()
   const queryClient = useQueryClient()
+  
+  const { data: session } = useSession()
 
   const [isDialogOpen, setDialogOpen] = useState(false)
 
@@ -49,10 +53,9 @@ const DeletePostButton:FC<DeletePostButtonProps> = ({ postId }) => {
     },
   })
 
-  // onClick={() => {
-  //   const confirmDelete = confirm('¿Estás seguro de que quieres borrar este post?')
-  //   if (confirmDelete) deletePost()
-  // }}
+  if (session?.user?.id !== authorId) {
+    return null
+  }
 
   return (
     <Dialog open={isDialogOpen} onOpenChange={setDialogOpen}>

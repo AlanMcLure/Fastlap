@@ -79,7 +79,7 @@ const Post: FC<PostProps> = ({
           className='w-fit flex items-center gap-2'>
           <MessageSquare className='h-4 w-4' /> {commentAmt} comments
         </Link>
-        <DeletePostButton postId={post.id} />
+        <DeletePostButton postId={post.id} authorId={post.authorId} />
       </div>
     </div>
   )
