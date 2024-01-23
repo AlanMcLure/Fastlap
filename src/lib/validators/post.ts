@@ -13,11 +13,4 @@ export const PostValidator = z.object({
   content: z.any(),
 })
 
-export const DeletePostValidator = z.object({
-  postId: z.string(),
-  subredditId: z.string(),
-});
-
-export type DeletePostRequest = z.infer<typeof DeletePostValidator>;
-
 export type PostCreationRequest = z.infer<typeof PostValidator>

@@ -1,55 +1,32 @@
 import { getAuthSession } from '@/lib/auth'
 import { db } from '@/lib/db'
-import { z } from 'zod'
-import { DeletePostValidator } from '@/lib/validators/post'
+import { z } from 'zod';
 
-export async function DELETE(req: Request) {
+export async function DELETE(
+  req: Request,
+  { params }: { params: { id: string } }
+  ) {
   try {
-    const body = await req.json()
-
-    console.log(body);
-
-    const { postId, subredditId } = DeletePostValidator.parse(body)
-
-    const session = await getAuthSession()
+    const session = await getAuthSession();
 
     if (!session?.user) {
       return new Response('Unauthorized', { status: 401 })
     }
 
-    // verify user is subscribed to passed subreddit id
-    const subscription = await db.subscription.findFirst({
+    await db.comment.updateMany({
       where: {
-        subredditId,
-        userId: session.user.id,
+        postId: params.id,
+      },
+      data: {
+        replyToId: null,
       },
     })
-
-    if (!subscription) {
-      return new Response('Subscribe to delete post', { status: 403 })
-    }
-
-    // verify the user is the author of the post
-    const post = await db.post.findFirst({
-      where: {
-        id: postId,
-        authorId: session.user.id,
-      },
-    })
-
-    if (!post) {
-      return new Response('Not authorized to delete this post', { status: 403 })
-    }
-
-    console.log('Deleting post with id:', postId);
 
     await db.post.delete({
       where: {
-        id: postId,
+        id: params.id,
       },
     })
-
-    console.log('Post deleted successfully');
 
     return new Response('OK')
   } catch (error) {

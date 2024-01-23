@@ -1,7 +1,7 @@
-import { useMutation } from '@tanstack/react-query'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
 import axios from 'axios'
 import { Button } from '@/components/ui/Button'
-import { useRouter } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
 import { toast } from '@/hooks/use-toast'
 import { FC } from 'react'
 
@@ -11,6 +11,8 @@ interface DeletePostButtonProps {
 
 const DeletePostButton:FC<DeletePostButtonProps> = ({ postId }) => {
   const router = useRouter()
+  const pathname = usePathname()
+  const queryClient = useQueryClient()
 
   const { mutate: deletePost } = useMutation({
     mutationFn: async () => {
@@ -25,15 +27,22 @@ const DeletePostButton:FC<DeletePostButtonProps> = ({ postId }) => {
       })
     },
     onSuccess: () => {
-      router.push('/subreddit') // Redirige al usuario a la página principal del subreddit después de eliminar un post
+      queryClient.invalidateQueries(['infinite-query']) // Invalida todas las consultas con la clave 'post'
+
+      router.push(pathname);
+
+      return toast({
+        description: 'Tú post ha sido borado.',
+      })
     },
   })
 
   return (
     <Button
+    className='bg-red-500'
       onClick={() => deletePost()}
-      variant='ghost'
-      size='xs'>
+      variant='destructive'
+      size='sm'>
       Delete
     </Button>
   )

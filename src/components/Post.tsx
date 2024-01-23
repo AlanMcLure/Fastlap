@@ -60,7 +60,6 @@ const Post: FC<PostProps> = ({
               {post.title}
             </h1>
           </a>
-          <DeletePostButton postId={post.id} />
 
           <div
             className='relative text-sm max-h-40 w-full overflow-clip'
@@ -74,12 +73,13 @@ const Post: FC<PostProps> = ({
         </div>
       </div>
 
-      <div className='bg-gray-50 z-20 text-sm px-4 py-4 sm:px-6'>
+      <div className='bg-gray-50 z-20 text-sm px-4 py-4 sm:px-6 flex justify-between'>
         <Link
           href={`/r/${subredditName}/post/${post.id}`}
           className='w-fit flex items-center gap-2'>
           <MessageSquare className='h-4 w-4' /> {commentAmt} comments
         </Link>
+        <DeletePostButton postId={post.id} />
       </div>
     </div>
   )
