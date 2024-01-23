@@ -7,6 +7,7 @@ import Link from 'next/link'
 import { FC, useRef } from 'react'
 import EditorOutput from './EditorOutput'
 import PostVoteClient from './post-vote/PostVoteClient'
+import DeletePostButton from './DeletePostButton'
 
 type PartialVote = Pick<Vote, 'type'>
 
@@ -59,6 +60,7 @@ const Post: FC<PostProps> = ({
               {post.title}
             </h1>
           </a>
+          <DeletePostButton postId={post.id} />
 
           <div
             className='relative text-sm max-h-40 w-full overflow-clip'
