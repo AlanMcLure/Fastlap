@@ -11,8 +11,6 @@ import { ArrowBigDown, ArrowBigUp, Loader2 } from 'lucide-react'
 import { notFound } from 'next/navigation'
 import { Suspense } from 'react'
 
-import '@/styles/loader.css'
-
 interface SubRedditPostPageProps {
   params: {
     postId: string
@@ -73,10 +71,10 @@ const SubRedditPostPage = async ({ params }: SubRedditPostPageProps) => {
           </h1>
 
           <EditorOutput content={post?.content ?? cachedPost.content} />
-          {/* <Loader2 className='h-5 w-5 animate-spin text-zinc-500' /> */}
+
           <Suspense
             fallback={
-              <div className="loader"></div>
+              <Loader2 className='h-5 w-5 animate-spin text-zinc-500' />
             }>
             {/* @ts-expect-error Server Component */}
             <CommentsSection postId={post?.id ?? cachedPost.id} />

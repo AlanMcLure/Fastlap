@@ -1,6 +1,6 @@
 /* HTML: <div class="loader"></div> */
 .loader {
-  width: 90px;
+  width: 650px;
   height: 12px;
   --c:#000 50%,#0000 0;
   background: 
@@ -14,3 +14,5 @@
 @keyframes l8 {
     100% {background-position: -8px 0%,-8px 50%,-8px 100%}
 }
+
+/* Intentar hacer uno de un coche */
