@@ -73,3 +73,17 @@ export async function GET(req: Request) {
     return new Response('Could not fetch posts', { status: 500 })
   }
 }
+
+// 1. Extrae la URL de la solicitud entrante.
+
+// 2. Intenta obtener la sesión de autenticación del usuario.
+
+// 3. Si hay una sesión de usuario, busca en la base de datos las comunidades que el usuario sigue. Guarda los IDs de estas comunidades en followedCommunitiesIds.
+
+// 4. Intenta extraer los parámetros limit, page y subredditName de la URL de la solicitud. limit y page se utilizan para la paginación de los resultados, y subredditName se utiliza para filtrar los posts por subreddit.
+
+// 5. Construye una cláusula where para la consulta a la base de datos basada en subredditName y followedCommunitiesIds. Si subredditName está definido, la cláusula where filtra los posts por subreddit. Si subredditName no está definido pero hay una sesión de usuario, la cláusula where filtra los posts por las comunidades que el usuario sigue.
+
+// 6. Realiza una consulta a la base de datos para obtener los posts que coinciden con la cláusula where, limitando el número de resultados y saltándose los resultados según los parámetros limit y page.
+
+// 7. Devuelve los posts como una respuesta JSON.
