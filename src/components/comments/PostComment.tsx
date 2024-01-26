@@ -16,6 +16,7 @@ import { Label } from '../ui/Label'
 import { Textarea } from '../ui/Textarea'
 import { toast } from '../../hooks/use-toast'
 import { useSession } from 'next-auth/react'
+import DeleteCommentButton from '../DeleteCommentButton'
 
 type ExtendedComment = Comment & {
   votes: CommentVote[]
@@ -57,8 +58,8 @@ const PostComment: FC<PostCommentProps> = ({
 
     onError: () => {
       return toast({
-        title: 'Something went wrong.',
-        description: "Comment wasn't created successfully. Please try again.",
+        title: 'Algo fue mal.',
+        description: "El comentario no se ha creado correctamente. Por favor, inténtalo de nuevo.",
         variant: 'destructive',
       })
     },
@@ -89,28 +90,31 @@ const PostComment: FC<PostCommentProps> = ({
 
       <p className='text-sm text-zinc-900 mt-2'>{comment.text}</p>
 
-      <div className='flex gap-2 items-center'>
-        <CommentVotes
-          commentId={comment.id}
-          votesAmt={votesAmt}
-          currentVote={currentVote}
-        />
+      <div className='flex justify-between items-center'>
+        <div className='flex gap-2 items-center'>
+          <CommentVotes
+            commentId={comment.id}
+            votesAmt={votesAmt}
+            currentVote={currentVote}
+          />
 
-        <Button
-          onClick={() => {
-            if (!session) return router.push('/sign-in')
-            setIsReplying(true)
-          }}
-          variant='ghost'
-          size='xs'>
-          <MessageSquare className='h-4 w-4 mr-1.5' />
-          Reply
-        </Button>
+          <Button
+            onClick={() => {
+              if (!session) return router.push('/sign-in')
+              setIsReplying(true)
+            }}
+            variant='ghost'
+            size='xs'>
+            <MessageSquare className='h-4 w-4 mr-1.5' />
+            Responde
+          </Button>
+        </div>
+          <DeleteCommentButton commentId={comment.id} authorId={comment.authorId} />
       </div>
 
       {isReplying ? (
         <div className='grid w-full gap-1.5'>
-          <Label htmlFor='comment'>Your comment</Label>
+          <Label htmlFor='comment'>Tú comentario</Label>
           <div className='mt-2'>
             <Textarea
               onFocus={(e) =>
@@ -124,7 +128,7 @@ const PostComment: FC<PostCommentProps> = ({
               value={input}
               onChange={(e) => setInput(e.target.value)}
               rows={1}
-              placeholder='What are your thoughts?'
+              placeholder='Qué piensas?'
             />
 
             <div className='mt-2 flex justify-end gap-2'>
@@ -132,7 +136,7 @@ const PostComment: FC<PostCommentProps> = ({
                 tabIndex={-1}
                 variant='subtle'
                 onClick={() => setIsReplying(false)}>
-                Cancel
+                Cancelar
               </Button>
               <Button
                 isLoading={isLoading}
@@ -144,7 +148,7 @@ const PostComment: FC<PostCommentProps> = ({
                     replyToId: comment.replyToId ?? comment.id, // default to top-level comment
                   })
                 }}>
-                Post
+                Publicar
               </Button>
             </div>
           </div>

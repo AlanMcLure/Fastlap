@@ -1,22 +1,20 @@
 import { useSession } from 'next-auth/react'
-import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { useMutation } from '@tanstack/react-query'
 import axios from 'axios'
 import { Button } from '@/components/ui/Button'
 import { Trash2 } from 'lucide-react'
-import { usePathname, useRouter } from 'next/navigation'
+import { useRouter } from 'next/navigation'
 import { toast } from '@/hooks/use-toast'
 import { FC, useState } from 'react'
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/Dialog'
 
-interface DeletePostButtonProps {
-  postId: string,
+interface DeleteCommentButtonProps {
+  commentId: string,
   authorId: string
 }
 
-const DeletePostButton:FC<DeletePostButtonProps> = ({ postId, authorId }) => {
+const DeleteCommentButton:FC<DeleteCommentButtonProps> = ({ commentId, authorId }) => {
   const router = useRouter()
-  const pathname = usePathname()
-  const queryClient = useQueryClient()
   
   const { data: session } = useSession()
 
@@ -24,32 +22,30 @@ const DeletePostButton:FC<DeletePostButtonProps> = ({ postId, authorId }) => {
 
   const handleDelete = () => {
     setDialogOpen(false)
-    deletePost()
+    deleteComment()
   }
 
   const openDialog = () => {
     setDialogOpen(true)
   }
 
-  const { mutate: deletePost } = useMutation({
+  const { mutate: deleteComment } = useMutation({
     mutationFn: async () => {
-      const { data } = await axios.delete(`/api/subreddit/post/delete/${postId}`)
+      const { data } = await axios.delete(`/api/subreddit/post/comment/delete/${commentId}`)
       return data
     },
     onError: () => {
       return toast({
         title: 'Algo fue mal.',
-        description: "El post no se ha borrado correctamente. Por favor, inténtalo de nuevo.",
+        description: "El comentario no se ha borrado correctamente. Por favor, inténtalo de nuevo.",
         variant: 'destructive',
       })
     },
     onSuccess: () => {
-      queryClient.invalidateQueries(['infinite-query']) // Invalida todas las consultas con la clave 'post'
-
-      router.push(pathname);
+      router.refresh()
 
       return toast({
-        description: 'Tú post ha sido borado.',
+        description: 'Tú comentario ha sido borado.',
       })
     },
   })
@@ -64,14 +60,14 @@ const DeletePostButton:FC<DeletePostButtonProps> = ({ postId, authorId }) => {
         className='bg-red-500'
         onClick={openDialog}
         variant='destructive'
-        size='sm'>
+        size='xs'>
         Borrar
         <Trash2 className='ml-1.5' size={16} />
       </Button>
 
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>¿Estás seguro de que quieres borrar este post?</DialogTitle>
+          <DialogTitle>¿Estás seguro de que quieres borrar este comentario?</DialogTitle>
           <DialogDescription>
             Está acción no se puede deshacer.
           </DialogDescription>
@@ -85,4 +81,4 @@ const DeletePostButton:FC<DeletePostButtonProps> = ({ postId, authorId }) => {
   )
 }
 
-export default DeletePostButton
+export default DeleteCommentButton
