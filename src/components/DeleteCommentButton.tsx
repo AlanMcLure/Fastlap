@@ -45,7 +45,7 @@ const DeleteCommentButton:FC<DeleteCommentButtonProps> = ({ commentId, authorId 
       router.refresh()
 
       return toast({
-        description: 'Tú comentario ha sido borado.',
+        description: 'Tú comentario ha sido borrado.',
       })
     },
   })

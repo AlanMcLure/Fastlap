@@ -49,7 +49,7 @@ const DeletePostButton:FC<DeletePostButtonProps> = ({ postId, authorId }) => {
       router.push(pathname);
 
       return toast({
-        description: 'Tú post ha sido borado.',
+        description: 'Tú post ha sido borrado.',
       })
     },
   })
