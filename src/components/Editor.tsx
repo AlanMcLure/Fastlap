@@ -82,11 +82,14 @@ export const Editor: React.FC<EditorProps> = ({ subredditId }) => {
     const InlineCode = (await import('@editorjs/inline-code')).default
     const ImageTool = (await import('@editorjs/image')).default
 
+    // if (!document.getElementById('editor')) {
+    //   console.error('Element with id "editor" does not exist');
+    // } else {
     if (!ref.current) {
       const editor = new EditorJS({
         holder: 'editor',
         onReady() {
-          ref.current = editor
+          // ref.current = editor
         },
         placeholder: 'Type here to write your post...',
         inlineToolbar: true,
@@ -124,6 +127,7 @@ export const Editor: React.FC<EditorProps> = ({ subredditId }) => {
           embed: Embed,
         },
       })
+      ref.current = editor
     }
   }, [])
 
