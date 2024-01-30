@@ -12,6 +12,8 @@ interface PageProps {
 const page = async ({ params }: PageProps) => {
   const { slug } = params
 
+  console.log(slug)
+
   const user = await db.user.findFirst({
     where: { username: slug },
   })
@@ -41,7 +43,7 @@ const page = async ({ params }: PageProps) => {
       <h1 className='font-bold text-3xl md:text-4xl h-14'>
         u/{user.username}
       </h1>
-      <PostFeed initialPosts={posts} includeUsernameInQuery/>
+      <PostFeed initialPosts={posts} username={user.username || undefined} />
     </>
   )
 }

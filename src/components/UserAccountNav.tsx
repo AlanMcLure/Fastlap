@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import { User } from 'next-auth'
+import { User as NextAuthUser } from 'next-auth'
 import { signOut } from 'next-auth/react'
 
 import {
@@ -13,8 +13,12 @@ import {
 } from '@/components/ui/DropdownMenu'
 import { UserAvatar } from '@/components/UserAvatar'
 
+interface User extends NextAuthUser {
+  username: string
+}
+
 interface UserAccountNavProps extends React.HTMLAttributes<HTMLDivElement> {
-  user: Pick<User, 'name' | 'image' | 'email'>
+  user: Pick<User, 'name' | 'image' | 'email' | 'username'>
 }
 
 export function UserAccountNav({ user }: UserAccountNavProps) {
@@ -43,11 +47,15 @@ export function UserAccountNav({ user }: UserAccountNavProps) {
         </DropdownMenuItem>
 
         <DropdownMenuItem asChild>
-          <Link href='/r/create'>Create Community</Link>
+          <Link href='/r/create'>Crear Comunidad</Link>
         </DropdownMenuItem>
 
         <DropdownMenuItem asChild>
-          <Link href='/settings'>Settings</Link>
+          <Link href={`/u/${user.username}`}>Perfil</Link>
+        </DropdownMenuItem>
+
+        <DropdownMenuItem asChild>
+          <Link href='/settings'>Ajustes</Link>
         </DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem
@@ -58,7 +66,7 @@ export function UserAccountNav({ user }: UserAccountNavProps) {
               callbackUrl: `${window.location.origin}/sign-in`,
             })
           }}>
-          Sign out
+          Cerrar sesión
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
