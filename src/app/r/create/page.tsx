@@ -9,6 +9,7 @@ import { useMutation } from '@tanstack/react-query'
 import axios, { AxiosError } from 'axios'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
+import ToFeedButton from '@/components/ToFeedButton'
 
 const Page = () => {
   const router = useRouter()
@@ -59,18 +60,21 @@ const Page = () => {
   })
 
   return (
-    <div className='container flex items-center h-full max-w-3xl mx-auto'>
-      <div className='relative bg-white w-full h-fit p-4 rounded-lg space-y-6'>
+    <div className='container flex flex-col items-start h-full max-w-3xl mx-auto'>
+      <div className='w-full'>
+        <ToFeedButton />
+      </div>
+      <div className='relative bg-white w-full h-fit p-4 rounded-lg space-y-6 mt-6 self-center'>
         <div className='flex justify-between items-center'>
-          <h1 className='text-xl font-semibold'>Create a Community</h1>
+          <h1 className='text-xl font-semibold'>Crear una Comunidad</h1>
         </div>
 
         <hr className='bg-red-500 h-px' />
 
         <div>
-          <p className='text-lg font-medium'>Name</p>
+          <p className='text-lg font-medium'>Nombre</p>
           <p className='text-xs pb-2'>
-            Community names including capitalization cannot be changed.
+            Los nombres de las comunidades no pueden ser cambiados (de momento).
           </p>
           <div className='relative'>
             <p className='absolute text-sm left-0 w-8 inset-y-0 grid place-items-center text-zinc-400'>
@@ -89,13 +93,13 @@ const Page = () => {
             disabled={isLoading}
             variant='subtle'
             onClick={() => router.back()}>
-            Cancel
+            Cancelar
           </Button>
           <Button
             isLoading={isLoading}
             disabled={input.length === 0}
             onClick={() => createCommunity()}>
-            Create Community
+            Crear Comunidad
           </Button>
         </div>
       </div>
