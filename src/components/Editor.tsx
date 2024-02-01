@@ -53,8 +53,8 @@ export const Editor: React.FC<EditorProps> = ({ subredditId }) => {
     },
     onError: () => {
       return toast({
-        title: 'Something went wrong.',
-        description: 'Your post was not published. Please try again.',
+        title: 'Algo fue mal',
+        description: 'La publicación no ha sido creada. Por favor, inténtelo de nuevo más tarde',
         variant: 'destructive',
       })
     },
@@ -66,7 +66,7 @@ export const Editor: React.FC<EditorProps> = ({ subredditId }) => {
       router.refresh()
 
       return toast({
-        description: 'Your post has been published.',
+        description: 'Su publicación ha sido creada',
       })
     },
   })
@@ -91,7 +91,7 @@ export const Editor: React.FC<EditorProps> = ({ subredditId }) => {
         onReady() {
           // ref.current = editor
         },
-        placeholder: 'Type here to write your post...',
+        placeholder: 'Escribe algo...',
         inlineToolbar: true,
         data: { blocks: [] },
         tools: {
@@ -136,7 +136,7 @@ export const Editor: React.FC<EditorProps> = ({ subredditId }) => {
       for (const [_key, value] of Object.entries(errors)) {
         value
         toast({
-          title: 'Something went wrong.',
+          title: 'Algo fue mal',
           description: (value as { message: string }).message,
           variant: 'destructive',
         })
@@ -201,16 +201,16 @@ export const Editor: React.FC<EditorProps> = ({ subredditId }) => {
               _titleRef.current = e
             }}
             {...rest}
-            placeholder='Title'
+            placeholder='Título'
             className='w-full resize-none appearance-none overflow-hidden bg-transparent text-5xl font-bold focus:outline-none'
           />
           <div id='editor' className='min-h-[500px]' />
           <p className='text-sm text-gray-500'>
-            Use{' '}
+            Usa{' '}
             <kbd className='rounded-md border bg-muted px-1 text-xs uppercase'>
               Tab
             </kbd>{' '}
-            to open the command menu.
+            para abrir el menú de comandos.
           </p>
         </div>
       </form>

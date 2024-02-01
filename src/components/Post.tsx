@@ -1,7 +1,7 @@
 'use client'
 
 import { formatTimeToNow } from '@/lib/utils'
-import { Post, User, Vote } from '@prisma/client'
+import { Post as PrismaPost, User, Vote } from '@prisma/client'
 import { MessageSquare } from 'lucide-react'
 import Link from 'next/link'
 import { FC, useRef } from 'react'
@@ -12,7 +12,7 @@ import DeletePostButton from './DeletePostButton'
 type PartialVote = Pick<Vote, 'type'>
 
 interface PostProps {
-  post: Post & {
+  post: PrismaPost & {
     author: User
     votes: Vote[]
   }
@@ -52,7 +52,7 @@ const Post: FC<PostProps> = ({
                 <span className='px-1'>•</span>
               </>
             ) : null}
-            <span>Publicado por <a 
+            <span>Publicado por <a
               className='hover:underline text-zinc-900 text-xs underline-offset-2'
               href={`/u/${post.author.username}`}>
               u/{post.author.username}
@@ -82,7 +82,7 @@ const Post: FC<PostProps> = ({
         <Link
           href={`/r/${subredditName}/post/${post.id}`}
           className='w-fit flex items-center gap-2'>
-          <MessageSquare className='h-4 w-4' /> {commentAmt} comments
+          <MessageSquare className='h-4 w-4' /> {commentAmt} comentarios
         </Link>
         <DeletePostButton postId={post.id} authorId={post.authorId} />
       </div>

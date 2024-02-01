@@ -13,11 +13,11 @@ interface DeletePostButtonProps {
   authorId: string
 }
 
-const DeletePostButton:FC<DeletePostButtonProps> = ({ postId, authorId }) => {
+const DeletePostButton: FC<DeletePostButtonProps> = ({ postId, authorId }) => {
   const router = useRouter()
   const pathname = usePathname()
   const queryClient = useQueryClient()
-  
+
   const { data: session } = useSession()
 
   const [isDialogOpen, setDialogOpen] = useState(false)
@@ -38,7 +38,7 @@ const DeletePostButton:FC<DeletePostButtonProps> = ({ postId, authorId }) => {
     },
     onError: () => {
       return toast({
-        title: 'Algo fue mal.',
+        title: 'Algo fue mal',
         description: "El post no se ha borrado correctamente. Por favor, inténtalo de nuevo.",
         variant: 'destructive',
       })

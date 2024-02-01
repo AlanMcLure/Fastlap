@@ -58,7 +58,7 @@ const PostComment: FC<PostCommentProps> = ({
 
     onError: () => {
       return toast({
-        title: 'Algo fue mal.',
+        title: 'Algo fue mal',
         description: "El comentario no se ha creado correctamente. Por favor, inténtalo de nuevo.",
         variant: 'destructive',
       })
@@ -109,7 +109,7 @@ const PostComment: FC<PostCommentProps> = ({
             Responde
           </Button>
         </div>
-          <DeleteCommentButton commentId={comment.id} authorId={comment.authorId} />
+        <DeleteCommentButton commentId={comment.id} authorId={comment.authorId} />
       </div>
 
       {isReplying ? (

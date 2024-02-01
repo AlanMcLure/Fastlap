@@ -40,8 +40,8 @@ const SubscribeLeaveToggle = ({
       }
 
       return toast({
-        title: 'There was a problem.',
-        description: 'Something went wrong. Please try again.',
+        title: 'Algo fue mal',
+        description: 'Por favor, inténtelo de nuevo más tarde',
         variant: 'destructive',
       })
     },
@@ -52,8 +52,8 @@ const SubscribeLeaveToggle = ({
         router.refresh()
       })
       toast({
-        title: 'Subscribed!',
-        description: `You are now subscribed to r/${subredditName}`,
+        title: 'Suscrito!',
+        description: `Ahora estás suscrito a r/${subredditName}`,
       })
     },
   })
@@ -81,8 +81,8 @@ const SubscribeLeaveToggle = ({
         router.refresh()
       })
       toast({
-        title: 'Unsubscribed!',
-        description: `You are now unsubscribed from/${subredditName}`,
+        title: 'Desuscrito!',
+        description: `Ahora estás desuscrito de r/${subredditName}`,
       })
     },
   })
@@ -92,14 +92,14 @@ const SubscribeLeaveToggle = ({
       className='w-full mt-1 mb-4'
       isLoading={isUnsubLoading}
       onClick={() => unsubscribe()}>
-      Leave community
+      Dejar comunidad
     </Button>
   ) : (
     <Button
       className='w-full mt-1 mb-4'
       isLoading={isSubLoading}
       onClick={() => subscribe()}>
-      Join to post
+      Únete para postear
     </Button>
   )
 }
