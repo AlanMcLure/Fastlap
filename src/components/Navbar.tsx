@@ -22,7 +22,7 @@ const Navbar = async () => {
 
         {/* actions */}
         {session?.user ? (
-          <UserAccountNav user={session.user} />
+          <UserAccountNav user={{ ...session.user, username: session.user.username || '' }} />
         ) : (
           <Link href='/sign-in' className={buttonVariants()}>
             Iniciar sesión
