@@ -17,6 +17,13 @@ import {
 } from '@/components/ui/Card'
 import { UserAvatar } from './UserAvatar'
 import { Button } from './ui/Button'
+import {
+    Tooltip,
+    TooltipContent,
+    TooltipProvider,
+    TooltipTrigger,
+} from "@/components/ui/tooltip"
+
 
 interface ProfileImageFormProps extends React.HTMLAttributes<HTMLFormElement> {
     user: Pick<User, 'id' | 'name' | 'image'>
@@ -109,3 +116,23 @@ export function ProfileImageForm({ user, className, ...props }: ProfileImageForm
         </form>
     )
 }
+
+{/* <TooltipProvider>
+                            <Tooltip>
+                                <TooltipTrigger>
+                                    <label>
+                                        <UserAvatar
+                                            user={{
+                                                name: user.name || null,
+                                                image: previewImage || user.image || null,
+                                            }}
+                                            className="w-24 h-24 cursor-pointer"
+                                        />
+                                        <input type="file" accept="image/*" onChange={handleImageUpload} style={{ display: 'none' }} />
+                                    </label>
+                                </TooltipTrigger>
+                                <TooltipContent>
+                                    <p>Elige una nueva imagen</p>
+                                </TooltipContent>
+                            </Tooltip>
+                        </TooltipProvider> */}
