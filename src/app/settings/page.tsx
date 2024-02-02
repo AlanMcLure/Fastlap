@@ -23,7 +23,7 @@ export default async function SettingsPage() {
       <div className='grid items-start gap-8 mt-4'>
         <h1 className='font-bold text-3xl md:text-4xl'>Ajustes</h1>
 
-        <div className='grid grid-cols-1 sm:grid-cols-2 gap-10 items-start justify-center'>
+        <div className='grid grid-cols-1 sm:grid-cols-2 gap-10 items-start justify-center '>
           <UserNameForm
             user={{
               id: session.user.id,

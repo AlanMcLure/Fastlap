@@ -90,7 +90,7 @@ export function ProfileImageForm({ user, className, ...props }: ProfileImageForm
             className={className}
             onSubmit={handleSubmit}
             {...props}>
-            <Card>
+            <Card className='min-h-[250px]'>
                 <CardHeader>
                     <CardTitle>Tú Imagen de perfil</CardTitle>
                     <CardDescription>
@@ -98,15 +98,18 @@ export function ProfileImageForm({ user, className, ...props }: ProfileImageForm
                     </CardDescription>
                 </CardHeader>
                 <CardContent>
-                    <div className='flex flex-col sm:flex-row justify-between items-center gap-2'>
-                        <label>
+                    <div className='flex flex-col sm:flex-row justify-between items-start sm:items-end gap-3'>
+                        <label className="relative w-24 h-24 cursor-pointer group">
                             <UserAvatar
                                 user={{
                                     name: user.name || null,
                                     image: previewImage || user.image || null,
                                 }}
-                                className="w-24 h-24 cursor-pointer"
+                                className="w-24 h-24"
                             />
+                            <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-0 group-hover:bg-opacity-50 rounded-full">
+                                <span className="text-4xl text-white opacity-0 group-hover:opacity-100">+</span>
+                            </div>
                             <input type="file" accept="image/*" onChange={handleImageUpload} style={{ display: 'none' }} />
                         </label>
                         <Button isLoading={isLoading}>Cambiar imagen</Button>
