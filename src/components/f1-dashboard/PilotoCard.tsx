@@ -18,14 +18,16 @@ interface PilotCardProps {
 const PilotCard: React.FC<PilotCardProps> = ({ pilot }) => {
     return (
         <Card className="w-full">
-            <div className="relative h-44 w-full overflow-hidden rounded-t-lg">
-                <Image
-                    src={pilot.img}
-                    alt={pilot.nombre}
-                    layout='fill'
-                    objectFit='cover'
-                    objectPosition='center top'
-                />
+            <div className="relative z-0">
+                <div className="relative h-44 w-full overflow-hidden rounded-t-lg">
+                    <Image
+                        src={pilot.img}
+                        alt={pilot.nombre}
+                        layout='fill'
+                        objectFit='cover'
+                        objectPosition='center top'
+                    />
+                </div>
             </div>
             <CardHeader>
                 <CardTitle>{pilot.nombre}</CardTitle>

@@ -3,23 +3,34 @@
 import React, { useEffect, useRef, useState } from 'react';
 import PilotCard, { PilotStats } from '@/components/f1-dashboard/PilotoCard';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
-import Link from 'next/link';
 
-export default function PilotsPage() {
+interface PilotsSeasonPageProps {
+    params: {
+        temporada: string;
+
+    }
+}
+
+export default function PilotsSeasonPage({ params }: PilotsSeasonPageProps) {
+    const { temporada } = params;
     const [pilots, setPilots] = useState<PilotStats[]>([]);
     const [page, setPage] = useState(0);
     const [totalPages, setTotalPages] = useState(0);
     const totalElementsRef = useRef(20);
 
+    console.log('temporada:', temporada);
+
     useEffect(() => {
-        fetch(`http://localhost:8083/piloto?page=${page}&size=8`)
-            .then(response => response.json())
-            .then(data => {
-                setPilots(data.content);
-                setTotalPages(data.totalPages);
-                totalElementsRef.current = data.totalElements;
-            });
-    }, [page]);
+        if (temporada) {
+            fetch(`http://localhost:8083/piloto/temporada/${temporada}?page=${page}&size=8`)
+                .then(response => response.json())
+                .then(data => {
+                    setPilots(data.content);
+                    setTotalPages(data.totalPages);
+                    totalElementsRef.current = data.totalElements;
+                });
+        }
+    }, [page, temporada]);
 
     const handlePreviousPage = () => {
         if (page >= 1) {
@@ -38,9 +49,7 @@ export default function PilotsPage() {
             <h1 className='font-bold text-3xl md:text-4xl mb-2'>Pilotos</h1>
             <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 '>
                 {pilots.map(pilot => (
-                    <Link href={`/f1-dashboard/piloto/${pilot.id}`} key={pilot.id}>
-                        <PilotCard key={pilot.id} pilot={pilot} />
-                    </Link>
+                    <PilotCard key={pilot.id} pilot={pilot} />
                 ))}
             </div>
             <div className="flex items-center justify-between border-t border-gray-200 px-4 py-3 sm:px-6 mt-2">
