@@ -9,7 +9,7 @@ import { useMutation } from '@tanstack/react-query'
 import axios, { AxiosError } from 'axios'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
-import ToFeedButton from '@/components/ToFeedButton'
+import BackButton from '@/components/BackButton'
 
 const Page = () => {
     const router = useRouter()
@@ -17,6 +17,9 @@ const Page = () => {
     const [fechaNac, setFechaNac] = useState<string>('')
     const [nacionalidad, setNacionalidad] = useState<string>('')
     const [img, setImg] = useState<string>('')
+    const [imgFlag, setImgFlag] = useState<string>('')
+    const [lugarNac, setLugarNac] = useState<string>('')
+    const [casco, setCasco] = useState<string>('')
     const { loginToast } = useCustomToasts()
 
     const { mutate: createPiloto, isLoading } = useMutation({
@@ -25,7 +28,10 @@ const Page = () => {
                 nombre,
                 fecha_nac: fechaNac,
                 nacionalidad,
+                img_flag: imgFlag,
                 img,
+                lugar_nac: lugarNac,
+                casco,
             }
 
             const { data } = await axios.post('/api/piloto', payload)
@@ -68,7 +74,7 @@ const Page = () => {
     return (
         <div className='container flex flex-col items-start h-full max-w-3xl mx-auto'>
             <div className='w-full'>
-                <ToFeedButton />
+                <BackButton defaultPath="/f1-dashboard/pilotos" backText="Volver al Dashboard" />
             </div>
             <div className='relative bg-white w-full h-fit p-4 rounded-lg space-y-6 mt-6 self-center'>
                 <div className='flex justify-between items-center'>
