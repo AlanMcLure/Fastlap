@@ -111,7 +111,7 @@ const PilotoForm: React.FC<PilotoFormProps> = ({
                 </Button>
                 <Button
                     isLoading={isLoading}
-                    disabled={nombre.length === 0 || fechaNac.length === 0 || nacionalidad.length === 0 || img.length === 0}
+                    disabled={nombre.length === 0}
                     onClick={onSubmit}>
                     Crear Piloto
                 </Button>

@@ -5,10 +5,10 @@ import Image from 'next/image';
 
 export interface PilotStats {
     id: number;
-    nombre: string;
-    fecha_nac: string;
-    nacionalidad: string;
-    img: string;
+    nombre: string | null;
+    fecha_nac: string | null;
+    nacionalidad: string | null;
+    img: string | null;
 }
 
 interface PilotCardProps {
@@ -16,13 +16,17 @@ interface PilotCardProps {
 }
 
 const PilotCard: React.FC<PilotCardProps> = ({ pilot }) => {
+    const imageSrc = pilot.img ?? '/default-image.png';
+    const pilotoNombre = pilot.nombre ?? 'Nombre desconocido';
+    const PilotoNacionalidad = pilot.nacionalidad ?? 'Nacionlidad desconocida';
+
     return (
         <Card className="w-full">
             <div className="relative z-0">
                 <div className="relative h-44 w-full overflow-hidden rounded-t-lg">
                     <Image
-                        src={pilot.img}
-                        alt={pilot.nombre}
+                        src={imageSrc}
+                        alt={pilotoNombre}
                         layout='fill'
                         objectFit='cover'
                         objectPosition='center top'
@@ -30,10 +34,10 @@ const PilotCard: React.FC<PilotCardProps> = ({ pilot }) => {
                 </div>
             </div>
             <CardHeader>
-                <CardTitle>{pilot.nombre}</CardTitle>
+                <CardTitle>{pilotoNombre}</CardTitle>
             </CardHeader>
             <CardContent>
-                <p className="text-sm mt-2">{pilot.nacionalidad}</p>
+                <p className="text-sm mt-2">{PilotoNacionalidad}</p>
             </CardContent>
         </Card>
     );

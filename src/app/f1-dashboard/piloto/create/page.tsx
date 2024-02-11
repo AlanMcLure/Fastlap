@@ -26,13 +26,13 @@ const Page = () => {
     const { mutate: createPiloto, isLoading } = useMutation({
         mutationFn: async () => {
             const payload: CreatePilotoPayload = {
-                nombre,
-                fecha_nac: fechaNac,
-                nacionalidad,
-                img_flag: imgFlag,
-                img,
-                lugar_nac: lugarNac,
-                casco,
+                nombre: nombre || null,
+                fecha_nac: fechaNac || null,
+                nacionalidad: nacionalidad || null,
+                img_flag: imgFlag || null,
+                img: img || null,
+                lugar_nac: lugarNac || null,
+                casco: casco || null,
             }
 
             console.log(payload)
@@ -70,7 +70,7 @@ const Page = () => {
             })
         },
         onSuccess: (data) => {
-            router.push(`/piloto/${data}`)
+            router.push(`/f1-dashboard/piloto/${data}`)
         },
     })
 
