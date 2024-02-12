@@ -1,6 +1,6 @@
 import { z } from 'zod'
 
-export const PilotoValidator = z.object({
+export const CreatePilotoValidator = z.object({
     nombre: z.string().nullable(),
     fecha_nac: z.string().nullable().refine(value => value === null || !isNaN(Date.parse(value)), {
         message: "fecha_nac must be a valid date string",
@@ -12,4 +12,10 @@ export const PilotoValidator = z.object({
     casco: z.string().url().nullable(),
 })
 
-export type CreatePilotoPayload = z.infer<typeof PilotoValidator>
+export type CreatePilotoPayload = z.infer<typeof CreatePilotoValidator>
+
+export const UpdatePilotoValidator = CreatePilotoValidator.extend({
+    id: z.string(),
+})
+
+export type UpdatePilotoPayload = z.infer<typeof UpdatePilotoValidator>
