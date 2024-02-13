@@ -7,8 +7,8 @@ import { GraficoPuntos } from '@/components/GraficoPuntos';
 
 interface PilotoData {
     id: string;
-    nombre: string;
-    img: string;
+    nombre?: string;
+    img?: string;
     // Add other properties as needed
 }
 
@@ -38,10 +38,24 @@ const PilotoPage: React.FC<PilotoPageProps> = ({ params }) => {
     useEffect(() => {
         if (pilotoId) {
             fetch(`http://localhost:8083/piloto/${pilotoId}`)
-                .then(response => response.json())
-                .then(data => setPilotoData(data));
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Piloto no encontrado');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (!data || !data.id) {
+                        throw new Error('Piloto no encontrado');
+                    }
+                    setPilotoData(data);
+                })
+                .catch(error => {
+                    console.error(error);
+                    router.push('/notfound'); // Redirige al usuario a la página de "no encontrado"
+                });
         }
-    }, [pilotoId]);
+    }, [pilotoId, router]);
 
     if (!pilotoData) {
         return <div>Cargando...</div>;
@@ -52,13 +66,13 @@ const PilotoPage: React.FC<PilotoPageProps> = ({ params }) => {
             <h1>Información del piloto</h1>
             <div className="flex">
                 <div className="w-1/2">
-                    <Image src={pilotoData.img} alt={pilotoData.nombre} width={500} height={500} />
+                    <Image src={pilotoData.img ?? '/default-driver.png'} alt={pilotoData.nombre ?? 'Piloto desconocido'} width={500} height={500} />
                     <h2>{pilotoData.nombre}</h2>
                 </div>
                 <div className="w-1/2">
                     {/* Render pilotoData characteristics here */}
                     <p>Características</p>
-                    <button onClick={() => router.push(`/edit/${pilotoData.id}`)}>Edit</button>
+                    <button onClick={() => router.push(`${pilotoData.id}/edit`)}>Edit</button>
                     <button onClick={() => deletePiloto(pilotoData.id)}>Delete</button>
                 </div>
             </div>

@@ -25,7 +25,7 @@ const PilotCard: React.FC<PilotCardProps> = ({ pilot }) => {
             <div className="relative z-0">
                 <div className="relative h-44 w-full overflow-hidden rounded-t-lg">
                     <Image
-                        src={imageSrc}
+                        src={imageSrc ?? '/default-driver.png'}
                         alt={pilotoNombre}
                         layout='fill'
                         objectFit='cover'

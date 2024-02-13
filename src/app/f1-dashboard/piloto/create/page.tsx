@@ -14,65 +14,58 @@ import PilotoForm from '@/components/f1-dashboard/PilotoForm'
 
 const Page = () => {
     const router = useRouter()
-    const [nombre, setNombre] = useState<string>('')
-    const [fechaNac, setFechaNac] = useState<string>('')
-    const [nacionalidad, setNacionalidad] = useState<string>('')
-    const [img, setImg] = useState<string>('')
-    const [imgFlag, setImgFlag] = useState<string>('')
-    const [lugarNac, setLugarNac] = useState<string>('')
-    const [casco, setCasco] = useState<string>('')
     const { loginToast } = useCustomToasts()
 
-    const { mutate: createPiloto, isLoading } = useMutation({
-        mutationFn: async () => {
-            const payload: CreatePilotoPayload = {
-                nombre: nombre || null,
-                fecha_nac: fechaNac || null,
-                nacionalidad: nacionalidad || null,
-                img_flag: imgFlag || null,
-                img: img || null,
-                lugar_nac: lugarNac || null,
-                casco: casco || null,
-            }
+    // const { mutate: createPiloto, isLoading } = useMutation({
+    //     mutationFn: async () => {
+    //         const payload: CreatePilotoPayload = {
+    //             nombre: nombre || null,
+    //             fecha_nac: fechaNac || null,
+    //             nacionalidad: nacionalidad || null,
+    //             img_flag: imgFlag || null,
+    //             img: img || null,
+    //             lugar_nac: lugarNac || null,
+    //             casco: casco || null,
+    //         }
 
-            console.log(payload)
+    //         console.log(payload)
 
-            const { data } = await axios.post('http://localhost:8083/piloto', payload)
-            return data as string
-        },
-        onError: (err) => {
-            if (err instanceof AxiosError) {
-                if (err.response?.status === 409) {
-                    return toast({
-                        title: 'Piloto already exists.',
-                        description: 'Please choose a different name.',
-                        variant: 'destructive',
-                    })
-                }
+    //         const { data } = await axios.post('http://localhost:8083/piloto', payload)
+    //         return data as string
+    //     },
+    //     onError: (err) => {
+    //         if (err instanceof AxiosError) {
+    //             if (err.response?.status === 409) {
+    //                 return toast({
+    //                     title: 'Piloto already exists.',
+    //                     description: 'Please choose a different name.',
+    //                     variant: 'destructive',
+    //                 })
+    //             }
 
-                if (err.response?.status === 422) {
-                    return toast({
-                        title: 'Invalid piloto name.',
-                        description: 'Please choose a name between 3 and 21 letters.',
-                        variant: 'destructive',
-                    })
-                }
+    //             if (err.response?.status === 422) {
+    //                 return toast({
+    //                     title: 'Invalid piloto name.',
+    //                     description: 'Please choose a name between 3 and 21 letters.',
+    //                     variant: 'destructive',
+    //                 })
+    //             }
 
-                if (err.response?.status === 401) {
-                    return loginToast()
-                }
-            }
+    //             if (err.response?.status === 401) {
+    //                 return loginToast()
+    //             }
+    //         }
 
-            toast({
-                title: 'There was an error.',
-                description: 'Could not create piloto.',
-                variant: 'destructive',
-            })
-        },
-        onSuccess: (data) => {
-            router.push(`/f1-dashboard/piloto/${data}`)
-        },
-    })
+    //         toast({
+    //             title: 'There was an error.',
+    //             description: 'Could not create piloto.',
+    //             variant: 'destructive',
+    //         })
+    //     },
+    //     onSuccess: (data) => {
+    //         router.push(`/f1-dashboard/piloto/${data}`)
+    //     },
+    // })
 
     return (
         <div className='container flex flex-col items-start h-full max-w-3xl mx-auto'>
@@ -87,23 +80,7 @@ const Page = () => {
                 <hr className='bg-red-500 h-px' />
 
                 <PilotoForm
-                    nombre={nombre}
-                    setNombre={setNombre}
-                    fechaNac={fechaNac}
-                    setFechaNac={setFechaNac}
-                    nacionalidad={nacionalidad}
-                    setNacionalidad={setNacionalidad}
-                    imgFlag={imgFlag}
-                    setImgFlag={setImgFlag}
-                    img={img}
-                    setImg={setImg}
-                    lugarNac={lugarNac}
-                    setLugarNac={setLugarNac}
-                    casco={casco}
-                    setCasco={setCasco}
-                    onSubmit={createPiloto}
                     onCancel={() => router.back()}
-                    isLoading={isLoading}
                 />
             </div>
         </div>
