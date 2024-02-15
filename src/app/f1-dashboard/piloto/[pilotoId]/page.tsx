@@ -4,12 +4,34 @@ import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import React, { useEffect, useState } from 'react';
 import { GraficoPuntos } from '@/components/GraficoPuntos';
+import EditButton from '@/components/f1-dashboard/EditButton';
+import DeleteButton from '@/components/f1-dashboard/DeleteButton';
+import { toast } from '@/hooks/use-toast';
+
+interface Piloto {
+    id: string;
+    nombre: string;
+    fecha_nac: string;
+    nacionalidad: string;
+    img: string;
+    img_flag: string | null;
+    lugar_nac: string | null;
+    casco: string | null;
+}
 
 interface PilotoData {
-    id: string;
-    nombre?: string;
-    img?: string;
-    // Add other properties as needed
+    piloto: Piloto;
+    puntosConseguidos: number;
+    victorias: number;
+    podios: number;
+    carrerasDisputadas: number;
+    poles: number;
+    vueltasRapidas: number;
+    mejorPosicionCarrera: number;
+    vecesMejorPosicionCarrera: number;
+    mejorPosicionClasificacion: number;
+    vecesMejorPosicionClasificacion: number;
+    abandonos: number;
 }
 
 interface PilotoPageProps {
@@ -18,18 +40,6 @@ interface PilotoPageProps {
     };
 }
 
-const deletePiloto = async (id: string) => {
-    const response = await fetch(`http://localhost:8083/piloto/${id}`, {
-        method: 'DELETE',
-    });
-
-    if (!response.ok) {
-        throw new Error('Error al eliminar el piloto');
-    }
-
-    // Actualizar la UI después de eliminar el piloto
-};
-
 const PilotoPage: React.FC<PilotoPageProps> = ({ params }) => {
     const { pilotoId } = params
     const [pilotoData, setPilotoData] = useState<PilotoData | null>(null);
@@ -37,7 +47,7 @@ const PilotoPage: React.FC<PilotoPageProps> = ({ params }) => {
 
     useEffect(() => {
         if (pilotoId) {
-            fetch(`http://localhost:8083/piloto/${pilotoId}`)
+            fetch(`http://localhost:8083/piloto/${pilotoId}/detalles`)
                 .then(response => {
                     if (!response.ok) {
                         throw new Error('Piloto no encontrado');
@@ -45,7 +55,7 @@ const PilotoPage: React.FC<PilotoPageProps> = ({ params }) => {
                     return response.json();
                 })
                 .then(data => {
-                    if (!data || !data.id) {
+                    if (!data || !data.piloto || !data.piloto.id) {
                         throw new Error('Piloto no encontrado');
                     }
                     setPilotoData(data);
@@ -63,22 +73,61 @@ const PilotoPage: React.FC<PilotoPageProps> = ({ params }) => {
 
     return (
         <div>
-            <h1>Información del piloto</h1>
-            <div className="flex">
-                <div className="w-1/2">
-                    <Image src={pilotoData.img ?? '/default-driver.png'} alt={pilotoData.nombre ?? 'Piloto desconocido'} width={500} height={500} />
-                    <h2>{pilotoData.nombre}</h2>
+            <div className="relative">
+                <div className="absolute top-0 right-0 p-4">
+                    <EditButton seccion="piloto" id={pilotoData.piloto.id} />
+                    <DeleteButton id={pilotoData.piloto.id}
+                        seccion="piloto"
+                        genero="masculino"
+                        onSuccess={() => {
+                            router.push('/f1-dashboard/pilotos');
+                            toast({
+                                title: 'Piloto eliminado',
+                                description: 'El piloto ha sido eliminado correctamente',
+                                variant: 'default',
+                            });
+                        }}
+                        onError={() => {
+                            toast({
+                                title: 'Error al eliminar el piloto',
+                                description: 'El piloto no ha sido eliminado correctamente',
+                                variant: 'destructive',
+                            });
+                            console.error('Error al eliminar el piloto');
+                        }}
+                    />
                 </div>
-                <div className="w-1/2">
-                    {/* Render pilotoData characteristics here */}
-                    <p>Características</p>
-                    <button onClick={() => router.push(`${pilotoData.id}/edit`)}>Edit</button>
-                    <button onClick={() => deletePiloto(pilotoData.id)}>Delete</button>
+                <div className="flex flex-col md:flex-row">
+                    <div className="w-full md:w-1/2">
+                        <div className="w-full">
+                            <Image src={pilotoData.piloto.img ?? '/default-driver.png'} alt={pilotoData.piloto.nombre ?? 'Piloto desconocido'} width={500} height={500} objectFit="cover" />
+                        </div>
+                        <h1>{pilotoData.piloto.nombre}</h1>
+                    </div>
+                    <div className="w-full md:w-1/2">
+                        {/* Render pilotoData characteristics here */}
+                        <p>Características</p>
+                        <ul>
+                            {/* Render the pilot details here */}
+                            <ul>
+                                <li>País: {pilotoData.piloto.nacionalidad}</li>
+                                <li>Podios: {pilotoData.podios}</li>
+                                <li>Puntos: {pilotoData.puntosConseguidos}</li>
+                                <li>Grandes Premios disputados: {pilotoData.carrerasDisputadas}</li>
+                                <li>Campeonatos del Mundo: {pilotoData.vecesMejorPosicionCarrera}</li>
+                                <li>Mejor posición en carrera: {pilotoData.mejorPosicionCarrera} (x{pilotoData.vecesMejorPosicionCarrera})</li>
+                                <li>Mejor posición en clasificación: {pilotoData.mejorPosicionClasificacion} (x{pilotoData.vecesMejorPosicionClasificacion})</li>
+                                <li>Fecha de nacimiento: {pilotoData.piloto.fecha_nac}</li>
+                                <li>Lugar de nacimiento: {pilotoData.piloto.lugar_nac}, {pilotoData.piloto.nacionalidad}</li>
+                            </ul>
+                            {/* Add more details as needed */}
+                        </ul>
+                    </div>
                 </div>
-            </div>
-            <div>
-                {/* Render charts here */}
-                <GraficoPuntos />
+                <div>
+                    {/* Render charts here */}
+                    <GraficoPuntos />
+                </div>
             </div>
         </div>
     );

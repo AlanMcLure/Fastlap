@@ -52,19 +52,19 @@ const PilotoForm: React.FC<PilotoFormProps> = ({
     const { mutate: savePiloto, isLoading } = useMutation({
         mutationFn: async () => {
 
-            let imageFlagUrl = '';
+            let imageFlagUrl = imgFlag;
             if (selectedImgFlag) {
                 const [res] = await uploadFiles([selectedImgFlag], 'imageUploader');
                 imageFlagUrl = res.fileUrl;
             }
 
-            let imageUrl = '';
+            let imageUrl = img;
             if (selectedImg) {
                 const [res] = await uploadFiles([selectedImg], 'imageUploader');
                 imageUrl = res.fileUrl;
             }
 
-            let imageCascoUrl = '';
+            let imageCascoUrl = casco;
             if (selectedCasco) {
                 const [res] = await uploadFiles([selectedCasco], 'imageUploader');
                 imageCascoUrl = res.fileUrl;

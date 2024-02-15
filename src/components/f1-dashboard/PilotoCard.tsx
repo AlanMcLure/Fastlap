@@ -16,7 +16,6 @@ interface PilotCardProps {
 }
 
 const PilotCard: React.FC<PilotCardProps> = ({ pilot }) => {
-    const imageSrc = pilot.img ?? '/default-image.png';
     const pilotoNombre = pilot.nombre ?? 'Nombre desconocido';
     const PilotoNacionalidad = pilot.nacionalidad ?? 'Nacionlidad desconocida';
 
@@ -24,13 +23,24 @@ const PilotCard: React.FC<PilotCardProps> = ({ pilot }) => {
         <Card className="w-full">
             <div className="relative z-0">
                 <div className="relative h-44 w-full overflow-hidden rounded-t-lg">
-                    <Image
-                        src={imageSrc ?? '/default-driver.png'}
-                        alt={pilotoNombre}
-                        layout='fill'
-                        objectFit='cover'
-                        objectPosition='center top'
-                    />
+                    {
+                        pilot.img ?
+                            <Image
+                                src={pilot.img}
+                                alt={pilotoNombre}
+                                layout='fill'
+                                objectFit='cover'
+                                objectPosition='center top'
+                            />
+                            :
+                            <Image
+                                src='/default-driver.png'
+                                alt={pilotoNombre}
+                                layout='fill'
+                                objectFit='contain'
+                                objectPosition='center'
+                            />
+                    }
                 </div>
             </div>
             <CardHeader>

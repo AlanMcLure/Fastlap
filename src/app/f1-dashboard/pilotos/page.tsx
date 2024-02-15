@@ -63,20 +63,32 @@ export default function PilotsPage() {
         }
     };
 
+
+
     return (
         <div className='max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8'>
             <div className='flex justify-between items-center mb-2'>
                 <h1 className='font-bold text-3xl md:text-4xl mb-2'>Pilotos</h1>
-                <Button onClick={() => setWinner(!winner)}><Trophy /></Button>
-                <Button onClick={() => setPodium(!podium)}><Medal /></Button>
+                <Button onClick={() => {
+                    setWinner(!winner);
+                    setPage(0);
+                }}><Trophy /></Button>
+                <Button onClick={() => {
+                    setPodium(!podium);
+                    setPage(0);
+                }}><Medal /></Button>
                 {session && <CreateButton seccion="piloto" />}
             </div>
             <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 '>
-                {pilots.map(pilot => (
-                    <Link href={`/f1-dashboard/piloto/${pilot.id}`} key={pilot.id}>
-                        <PilotCard key={pilot.id} pilot={pilot} />
-                    </Link>
-                ))}
+                {pilots && pilots.length > 0 ? (
+                    pilots.map(pilot => (
+                        <Link href={`/f1-dashboard/piloto/${pilot.id}`} key={pilot.id}>
+                            <PilotCard key={pilot.id} pilot={pilot} />
+                        </Link>
+                    ))
+                ) : (
+                    <p>No se encontraron pilotos que cumplan con el filtro.</p>
+                )}
             </div>
             <div>
                 <label>
