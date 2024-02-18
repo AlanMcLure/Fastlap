@@ -11,6 +11,36 @@ import { useRouter } from 'next/navigation';
 import { CreatePilotoPayload, UpdatePilotoPayload } from '@/lib/validators/piloto';
 import { useCustomToasts } from '@/hooks/use-custom-toasts';
 import { set } from 'date-fns';
+import { ControllerRenderProps } from 'react-hook-form';
+
+import { zodResolver } from "@hookform/resolvers/zod"
+import { CalendarIcon } from "@radix-ui/react-icons"
+import { format } from "date-fns"
+import { useForm } from "react-hook-form"
+import { date, z } from "zod"
+
+import { cn } from "@/lib/utils"
+import { Calendar } from "@/components/ui/calendar"
+import {
+    Form,
+    FormControl,
+    FormDescription,
+    FormField,
+    FormItem,
+    FormLabel,
+    FormMessage,
+} from "@/components/ui/form"
+import {
+    Popover,
+    PopoverContent,
+    PopoverTrigger,
+} from "@/components/ui/popover"
+
+const FormSchema = z.object({
+    dob: z.date({
+        required_error: "A date of birth is required.",
+    }),
+})
 
 interface PilotoFormProps {
     pilotoId?: string;
@@ -48,6 +78,10 @@ const PilotoForm: React.FC<PilotoFormProps> = ({
     const [previewImageCasco, setPreviewImageCasco] = useState<string | null>(null);
     const router = useRouter();
     const { loginToast } = useCustomToasts()
+
+    const form = useForm<z.infer<typeof FormSchema>>({
+        resolver: zodResolver(FormSchema),
+    })
 
     const { mutate: savePiloto, isLoading } = useMutation({
         mutationFn: async () => {
@@ -150,6 +184,10 @@ const PilotoForm: React.FC<PilotoFormProps> = ({
         }
     }
 
+    function onSubmit(data: z.infer<typeof FormSchema>) {
+        savePiloto();
+    }
+
     const handleImgUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
         if (event.target.files?.length) {
             const file = event.target.files[0];
@@ -197,41 +235,89 @@ const PilotoForm: React.FC<PilotoFormProps> = ({
     const buttonText = pilotoId ? 'Editar Piloto' : 'Crear Piloto';
 
     return (
-        <div className='relative bg-white w-full h-fit p-4 rounded-lg space-y-6 mt-6 self-center'>
-            <div>
-                {pilotoId && <><p className='text-lg font-medium'>ID del Piloto</p>
-                    <div className='relative'>
-                        <Input
-                            value={pilotoId}
-                            disabled
-                            className='pl-6'
+        <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+                <div className='relative bg-white w-full h-fit p-4 rounded-lg space-y-6 mt-6 self-center'>
+                    <div>
+                        {pilotoId && <><p className='text-lg font-medium'>ID del Piloto</p>
+                            <div className='relative'>
+                                <Input
+                                    value={pilotoId}
+                                    disabled
+                                    className='pl-6'
+                                />
+                            </div></>}
+                        <p className='text-lg font-medium'>Nombre</p>
+                        <div className='relative'>
+                            <Input
+                                value={nombre}
+                                onChange={(e) => setNombre(e.target.value)}
+                                className='pl-6'
+                            />
+                        </div>
+                        <FormField
+                            control={form.control}
+                            name="dob"
+                            render={({ field }: { field: ControllerRenderProps<{ dob: Date; }, "dob"> }) => (
+                                <FormItem className="flex flex-col">
+                                    <FormLabel>Fecha de nacimiento</FormLabel>
+                                    <Popover>
+                                        <PopoverTrigger asChild>
+                                            <FormControl>
+                                                <Button
+                                                    variant={"outline"}
+                                                    className={cn(
+                                                        "w-[240px] pl-3 text-left font-normal",
+                                                        !field.value && "text-muted-foreground"
+                                                    )}
+                                                >
+                                                    {field.value ? (
+                                                        format(field.value, "PPP")
+                                                    ) : (
+                                                        <span>Pick a date</span>
+                                                    )}
+                                                    <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                                                </Button>
+                                            </FormControl>
+                                        </PopoverTrigger>
+                                        <PopoverContent className="w-auto p-0" align="start">
+                                            <Calendar
+                                                mode="single"
+                                                selected={field.value}
+                                                onSelect={(date) => {
+                                                    field.onChange(date);
+                                                    if (date) {
+                                                        setFechaNac(format(date, 'yyyy-MM-dd'));
+                                                    }
+                                                }}
+                                                disabled={(date) =>
+                                                    date > new Date() || date < new Date("1900-01-01")
+                                                }
+                                                initialFocus
+                                            />
+                                        </PopoverContent>
+                                    </Popover>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
                         />
-                    </div></>}
-                <p className='text-lg font-medium'>Nombre</p>
-                <div className='relative'>
-                    <Input
-                        value={nombre}
-                        onChange={(e) => setNombre(e.target.value)}
-                        className='pl-6'
-                    />
-                </div>
-                <p className='text-lg font-medium'>Fecha de Nacimiento</p>
-                <div className='relative'>
-                    <Input
-                        value={fechaNac}
-                        onChange={(e) => setFechaNac(e.target.value)}
-                        className='pl-6'
-                    />
-                </div>
-                <p className='text-lg font-medium'>Nacionalidad</p>
-                <div className='relative'>
-                    <Input
-                        value={nacionalidad}
-                        onChange={(e) => setNacionalidad(e.target.value)}
-                        className='pl-6'
-                    />
-                </div>
-                {/* <p className='text-lg font-medium'>Bandera (URL)</p>
+                        {/* <p className='text-lg font-medium'>Fecha de Nacimiento</p>
+                        <div className='relative'>
+                            <Input
+                                value={fechaNac}
+                                onChange={(e) => setFechaNac(e.target.value)}
+                                className='pl-6'
+                            />
+                        </div> */}
+                        <p className='text-lg font-medium'>Nacionalidad</p>
+                        <div className='relative'>
+                            <Input
+                                value={nacionalidad}
+                                onChange={(e) => setNacionalidad(e.target.value)}
+                                className='pl-6'
+                            />
+                        </div>
+                        {/* <p className='text-lg font-medium'>Bandera (URL)</p>
                 <div className='relative'>
                     <Input
                         value={imgFlag}
@@ -247,47 +333,49 @@ const PilotoForm: React.FC<PilotoFormProps> = ({
                         className='pl-6'
                     />
                 </div> */}
-                <p className='text-lg font-medium'>Bandera</p>
-                <div className='relative'>
-                    <input type="file" accept="image/*" onChange={handleImgFlagUpload} />
-                    <img src={previewImageFlag ?? ''} alt="Bandera" />
+                        <p className='text-lg font-medium'>Bandera</p>
+                        <div className='relative'>
+                            <input type="file" accept="image/*" onChange={handleImgFlagUpload} />
+                            <img src={previewImageFlag ?? ''} alt="Bandera" />
 
-                </div>
-                <p className='text-lg font-medium'>Imagen</p>
-                <div className='relative'>
-                    <input type="file" accept="image/*" onChange={handleImgUpload} />
-                    <img src={previewImage ?? ''} alt="Imagen del piloto" />
-                </div>
-                <p className='text-lg font-medium'>Lugar de Nacimiento</p>
-                <div className='relative'>
-                    <Input
-                        value={lugarNac}
-                        onChange={(e) => setLugarNac(e.target.value)}
-                        className='pl-6'
-                    />
-                </div>
-                <p className='text-lg font-medium'>Casco</p>
-                <div className='relative'>
-                    <input type="file" accept="image/*" onChange={handleCascoUpload} />
-                    <img src={previewImageCasco ?? ''} alt="Casco" />
-                </div>
-            </div>
+                        </div>
+                        <p className='text-lg font-medium'>Imagen</p>
+                        <div className='relative'>
+                            <input type="file" accept="image/*" onChange={handleImgUpload} />
+                            <img src={previewImage ?? ''} alt="Imagen del piloto" />
+                        </div>
+                        <p className='text-lg font-medium'>Lugar de Nacimiento</p>
+                        <div className='relative'>
+                            <Input
+                                value={lugarNac}
+                                onChange={(e) => setLugarNac(e.target.value)}
+                                className='pl-6'
+                            />
+                        </div>
+                        <p className='text-lg font-medium'>Casco</p>
+                        <div className='relative'>
+                            <input type="file" accept="image/*" onChange={handleCascoUpload} />
+                            <img src={previewImageCasco ?? ''} alt="Casco" />
+                        </div>
+                    </div>
 
-            <div className='flex justify-end gap-4'>
-                <Button
-                    disabled={isLoading}
-                    variant='subtle'
-                    onClick={onCancel}>
-                    Cancelar
-                </Button>
-                <Button
-                    isLoading={isLoading}
-                    disabled={nombre.length === 0}
-                    onClick={() => savePiloto()}>
-                    {buttonText}
-                </Button>
-            </div>
-        </div>
+                    <div className='flex justify-end gap-4'>
+                        <Button
+                            disabled={isLoading}
+                            variant='subtle'
+                            onClick={onCancel}>
+                            Cancelar
+                        </Button>
+                        <Button
+                            isLoading={isLoading}
+                            disabled={nombre.length === 0}
+                            type='submit'>
+                            {buttonText}
+                        </Button>
+                    </div>
+                </div>
+            </form>
+        </Form>
     );
 };
 
