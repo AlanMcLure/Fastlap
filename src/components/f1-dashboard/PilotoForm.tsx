@@ -79,8 +79,13 @@ const PilotoForm: React.FC<PilotoFormProps> = ({
     const router = useRouter();
     const { loginToast } = useCustomToasts()
 
+    console.log('fechaNac?:', fechaNac)
+
     const form = useForm<z.infer<typeof FormSchema>>({
         resolver: zodResolver(FormSchema),
+        defaultValues: {
+            dob: fechaNac ? new Date(fechaNac) : undefined,
+        },
     })
 
     const { mutate: savePiloto, isLoading } = useMutation({
@@ -214,6 +219,12 @@ const PilotoForm: React.FC<PilotoFormProps> = ({
         }
     }, [pilotoId]);
 
+    useEffect(() => {
+        if (fechaNac) {
+            form.setValue('dob', new Date(fechaNac));
+        }
+    }, [fechaNac, form]);
+
     // Cuando los datos del piloto se cargan, establece los valores del formulario
     useEffect(() => {
         if (piloto) {
@@ -282,8 +293,9 @@ const PilotoForm: React.FC<PilotoFormProps> = ({
                                         </PopoverTrigger>
                                         <PopoverContent className="w-auto p-0" align="start">
                                             <Calendar
+                                                key={fechaNac}
                                                 mode="single"
-                                                selected={field.value}
+                                                selected={field.value || fechaNac ? new Date(fechaNac) : undefined}
                                                 onSelect={(date) => {
                                                     field.onChange(date);
                                                     if (date) {
