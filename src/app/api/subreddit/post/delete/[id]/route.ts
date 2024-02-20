@@ -5,12 +5,26 @@ import { z } from 'zod';
 export async function DELETE(
   req: Request,
   { params }: { params: { id: string } }
-  ) {
+) {
   try {
     const session = await getAuthSession();
 
     if (!session?.user) {
       return new Response('Unauthorized', { status: 401 })
+    }
+
+    const post = await db.post.findUnique({
+      where: {
+        id: params.id,
+      },
+    });
+
+    if (!post) {
+      return new Response('Post not found', { status: 404 });
+    }
+
+    if (post.authorId !== session.user.id && session.user.role !== 'ADMIN') {
+      return new Response('Forbidden', { status: 403 });
     }
 
     await db.comment.updateMany({

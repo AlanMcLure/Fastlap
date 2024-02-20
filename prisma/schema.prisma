@@ -16,6 +16,11 @@ enum VoteType {
   DOWN
 }
 
+enum UserRole {
+  USER
+  ADMIN
+}
+
 model Account {
   id                String  @id @default(cuid())
   userId            String
@@ -50,6 +55,7 @@ model User {
   updatedAt         DateTime       @updatedAt
   email             String?        @unique
   emailVerified     DateTime?
+  role              UserRole       @default(USER)
   createdSubreddits Subreddit[]    @relation("CreatedBy")
   subscriptions     Subscription[]
   votes             Vote[]
@@ -97,7 +103,7 @@ model Post {
   authorId    String
   subreddit   Subreddit @relation(fields: [subredditId], references: [id])
   subredditId String
-  comments    Comment[] 
+  comments    Comment[]
   votes       Vote[]
 }
 

@@ -8,6 +8,7 @@ import EditButton from '@/components/f1-dashboard/EditButton';
 import DeleteButton from '@/components/f1-dashboard/DeleteButton';
 import { toast } from '@/hooks/use-toast';
 import BackButton from '@/components/BackButton';
+import { useSession } from 'next-auth/react';
 
 interface Piloto {
     id: string;
@@ -45,6 +46,7 @@ const PilotoPage: React.FC<PilotoPageProps> = ({ params }) => {
     const { pilotoId } = params
     const [pilotoData, setPilotoData] = useState<PilotoData | null>(null);
     const router = useRouter();
+    const { data: session } = useSession()
 
     useEffect(() => {
         if (pilotoId) {
@@ -78,7 +80,7 @@ const PilotoPage: React.FC<PilotoPageProps> = ({ params }) => {
                 <div className='w-full mb-2'>
                     <BackButton defaultPath="/f1-dashboard/pilotos" backText="Volver al Dashboard" />
                 </div>
-                <div className="absolute top-0 right-0 p-4">
+                {session?.user.role === 'ADMIN' && (<div className="absolute top-0 right-0 p-4">
                     <EditButton seccion="piloto" id={pilotoData.piloto.id} />
                     <DeleteButton id={pilotoData.piloto.id}
                         seccion="piloto"
@@ -100,7 +102,7 @@ const PilotoPage: React.FC<PilotoPageProps> = ({ params }) => {
                             console.error('Error al eliminar el piloto');
                         }}
                     />
-                </div>
+                </div>)}
                 <div className="flex flex-col md:flex-row">
                     <div className="w-full md:w-1/2">
                         <div className="w-full">

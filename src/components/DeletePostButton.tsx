@@ -54,7 +54,7 @@ const DeletePostButton: FC<DeletePostButtonProps> = ({ postId, authorId }) => {
     },
   })
 
-  if (session?.user?.id !== authorId) {
+  if (session?.user?.id !== authorId && session?.user?.role !== 'ADMIN') {
     return null
   }
 

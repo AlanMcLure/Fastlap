@@ -77,7 +77,7 @@ export default function PilotsPage() {
                     setPodium(!podium);
                     setPage(0);
                 }}><Medal /></Button>
-                {session && <CreateButton seccion="piloto" />}
+                {session?.user.role === 'ADMIN' && <CreateButton seccion="piloto" />}
             </div>
             <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 '>
                 {pilots && pilots.length > 0 ? (

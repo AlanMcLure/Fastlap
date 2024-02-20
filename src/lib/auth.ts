@@ -1,5 +1,7 @@
 import { db } from '@/lib/db'
 import { PrismaAdapter } from '@next-auth/prisma-adapter'
+import { UserRole } from '@prisma/client'
+import { as } from '@upstash/redis/zmscore-a4ec4c2a'
 import { nanoid } from 'nanoid'
 import { NextAuthOptions, getServerSession } from 'next-auth'
 import GoogleProvider from 'next-auth/providers/google'
@@ -26,6 +28,7 @@ export const authOptions: NextAuthOptions = {
         session.user.email = token.email
         session.user.image = token.picture
         session.user.username = token.username
+        session.user.role = token.role as UserRole
       }
 
       return session
@@ -35,7 +38,7 @@ export const authOptions: NextAuthOptions = {
       const dbUser = await db.user.findFirst({
         where: {
           email: token.email,
-        },
+        }
       })
 
       if (!dbUser) {
@@ -60,6 +63,7 @@ export const authOptions: NextAuthOptions = {
         email: dbUser.email,
         picture: dbUser.image,
         username: dbUser.username,
+        role: dbUser.role,
       }
     },
     redirect() {
