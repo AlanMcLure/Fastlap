@@ -7,49 +7,58 @@ import Link from 'next/link';
 import CreateButton from '@/components/f1-dashboard/CreateButton';
 import { useSession } from 'next-auth/react';
 import { Button } from '@/components/ui/Button';
+import { useRouter } from 'next/navigation';
+import { authenticated } from '@/lib/utils';
 
 export default function PilotsPage() {
     const [pilots, setPilots] = useState<PilotStats[]>([]);
     const [page, setPage] = useState(0);
     const [totalPages, setTotalPages] = useState(0);
     const totalElementsRef = useRef(20);
+    const router = useRouter();
     const { data: session } = useSession()
 
     const [season, setSeason] = useState('');
     const [winner, setWinner] = useState(false);
     const [podium, setPodium] = useState(false);
 
-    const fetchPilots = () => {
-        let url = `http://localhost:8083/piloto?page=${page}&size=8`;
+    console.log('PilotsPage', session);
 
-        if (season) {
-            url += `&temporada=${season}`;
-        }
+    useEffect(() => {
+        const fetchPilots = async () => {
+            let url = `http://localhost:8083/piloto?page=${page}&size=8`;
 
-        if (podium) {
-            url = `http://localhost:8083/piloto/podio?page=${page}&size=8`;
             if (season) {
                 url += `&temporada=${season}`;
             }
-        }
 
-        if (winner) {
-            url = `http://localhost:8083/piloto/ganadores?page=${page}&size=8`;
-            if (season) {
-                url += `&temporada=${season}`;
+            if (podium) {
+                url = `http://localhost:8083/piloto/podio?page=${page}&size=8`;
+                if (season) {
+                    url += `&temporada=${season}`;
+                }
             }
-        }
 
-        fetch(url)
-            .then(response => response.json())
-            .then(data => {
+            if (winner) {
+                url = `http://localhost:8083/piloto/ganadores?page=${page}&size=8`;
+                if (season) {
+                    url += `&temporada=${season}`;
+                }
+            }
+
+            try {
+                const data = await authenticated(url, session);
                 setPilots(data.content);
                 setTotalPages(data.totalPages);
                 totalElementsRef.current = data.totalElements;
-            });
-    };
+            } catch (error) {
+                console.error(error);
+                // router.push('/notfound'); // Redirige al usuario a la página de "no encontrado"
+            }
+        };
 
-    useEffect(fetchPilots, [page, season, winner, podium]);
+        fetchPilots();
+    }, [page, season, winner, podium]);
 
     const handlePreviousPage = () => {
         if (page >= 1) {

@@ -5,8 +5,8 @@ import Link from 'next/link'
 export const useCustomToasts = () => {
   const loginToast = () => {
     const { dismiss } = toast({
-      title: 'Login required.',
-      description: 'You need to be logged in to do that.',
+      title: 'Login requerido.',
+      description: 'Necesitas estar logueado para hacer esa acción.',
       variant: 'destructive',
       action: (
         <Link

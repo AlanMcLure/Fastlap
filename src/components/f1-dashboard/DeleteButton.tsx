@@ -5,6 +5,8 @@ import { Trash2 } from 'lucide-react'
 import { toast } from '@/hooks/use-toast'
 import { FC, useState } from 'react'
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/Dialog'
+import { authenticated } from '@/lib/utils'
+import { useSession } from 'next-auth/react'
 
 interface DeleteButtonProps {
     id: string,
@@ -16,6 +18,7 @@ interface DeleteButtonProps {
 
 const DeleteButton: FC<DeleteButtonProps> = ({ id, seccion, onSuccess, onError, genero }) => {
     const queryClient = useQueryClient()
+    const { data: session } = useSession()
 
     const [isDialogOpen, setDialogOpen] = useState(false)
 
@@ -30,7 +33,8 @@ const DeleteButton: FC<DeleteButtonProps> = ({ id, seccion, onSuccess, onError, 
 
     const { mutate: deleteItem } = useMutation({
         mutationFn: async () => {
-            const { data } = await axios.delete(`http://localhost:8083/${seccion}/${id}`)
+            // const { data } = await axios.delete(`http://localhost:8083/${seccion}/${id}`)
+            const data = await authenticated(`http://localhost:8083/${seccion}/${id}`, session, { method: 'DELETE' })
 
             if (!data) {
                 throw new Error(`Error al eliminar el ${seccion}`);

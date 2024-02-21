@@ -9,6 +9,7 @@ import DeleteButton from '@/components/f1-dashboard/DeleteButton';
 import { toast } from '@/hooks/use-toast';
 import BackButton from '@/components/BackButton';
 import { useSession } from 'next-auth/react';
+import { authenticated } from '@/lib/utils';
 
 interface Piloto {
     id: string;
@@ -50,13 +51,14 @@ const PilotoPage: React.FC<PilotoPageProps> = ({ params }) => {
 
     useEffect(() => {
         if (pilotoId) {
-            fetch(`http://localhost:8083/piloto/${pilotoId}/detalles`)
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Piloto no encontrado');
-                    }
-                    return response.json();
-                })
+            authenticated(`http://localhost:8083/piloto/${pilotoId}/detalles`, session)
+                // fetch(`http://localhost:8083/piloto/${pilotoId}/detalles`)
+                // .then(response => {
+                //     if (!response.ok) {
+                //         throw new Error('Piloto no encontrado');
+                //     }
+                //     return response.json();
+                // })
                 .then(data => {
                     if (!data || !data.piloto || !data.piloto.id) {
                         throw new Error('Piloto no encontrado');
@@ -108,7 +110,7 @@ const PilotoPage: React.FC<PilotoPageProps> = ({ params }) => {
                         <div className="w-full">
                             <Image src={pilotoData.piloto.img ?? '/default-driver.png'} alt={pilotoData.piloto.nombre ?? 'Piloto desconocido'} width={500} height={500} objectFit="cover" />
                         </div>
-                        <h1>{pilotoData.piloto.nombre}</h1>
+                        <h1 className="text-4xl font-bold text-center mt-1">{pilotoData.piloto.nombre}</h1>
                     </div>
                     <div className="w-full md:w-1/2">
                         {/* Render pilotoData characteristics here */}
@@ -132,7 +134,7 @@ const PilotoPage: React.FC<PilotoPageProps> = ({ params }) => {
                 </div>
                 <div>
                     {/* Render charts here */}
-                    <GraficoPuntos />
+                    {/* <GraficoPuntos /> */}
                 </div>
             </div>
         </div>
