@@ -12,6 +12,8 @@ import { CreatePilotoPayload, UpdatePilotoPayload } from '@/lib/validators/pilot
 import { useCustomToasts } from '@/hooks/use-custom-toasts';
 import { set } from 'date-fns';
 import { ControllerRenderProps } from 'react-hook-form';
+import { useSession } from 'next-auth/react';
+import { redirect } from 'next/navigation'
 
 import { zodResolver } from "@hookform/resolvers/zod"
 import { CalendarIcon } from "@radix-ui/react-icons"
@@ -19,7 +21,7 @@ import { format } from "date-fns"
 import { useForm } from "react-hook-form"
 import { date, z } from "zod"
 
-import { cn } from "@/lib/utils"
+import { adminAuthenticated, cn } from "@/lib/utils"
 import { Calendar } from "@/components/ui/calendar"
 import {
     Form,
@@ -35,6 +37,7 @@ import {
     PopoverContent,
     PopoverTrigger,
 } from "@/components/ui/popover"
+import { FileDiff } from 'lucide-react';
 
 const FormSchema = z.object({
     dob: z.date({
@@ -77,9 +80,14 @@ const PilotoForm: React.FC<PilotoFormProps> = ({
     const [previewImage, setPreviewImage] = useState<string | null>(null);
     const [previewImageCasco, setPreviewImageCasco] = useState<string | null>(null);
     const router = useRouter();
+    const { data: session } = useSession()
     const { loginToast } = useCustomToasts()
 
     console.log('fechaNac?:', fechaNac)
+
+    if (!session?.user || session.user.role !== 'ADMIN') {
+        redirect('/notfound')
+    }
 
     const form = useForm<z.infer<typeof FormSchema>>({
         resolver: zodResolver(FormSchema),
@@ -123,7 +131,12 @@ const PilotoForm: React.FC<PilotoFormProps> = ({
 
                 console.log(payload)
 
-                const { data } = await axios.put(`http://localhost:8083/piloto`, payload)
+                // const { data } = await axios.put(`http://localhost:8083/piloto`, payload)
+                const data = await adminAuthenticated(`http://localhost:8083/piloto`, session, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    data: JSON.stringify(payload),
+                })
                 return data as string
             }
 
@@ -139,7 +152,12 @@ const PilotoForm: React.FC<PilotoFormProps> = ({
 
             console.log(payload)
 
-            const { data } = await axios.post('http://localhost:8083/piloto', payload)
+            // const { data } = await axios.post('http://localhost:8083/piloto', payload)
+            const data = await adminAuthenticated(`http://localhost:8083/piloto`, session, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                data: JSON.stringify(payload),
+            })
             return data as string
         },
         onError: (err) => {
