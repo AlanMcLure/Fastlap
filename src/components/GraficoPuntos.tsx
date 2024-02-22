@@ -37,7 +37,12 @@ function posicionAPuntos(posicion: number, vuelta_rapida: boolean): number {
     return puntos;
 }
 
-export const GraficoPuntos = () => {
+interface GraficoPuntosProps {
+    pilotoId: number;
+    anyo: number;
+}
+
+export const GraficoPuntos = ({ pilotoId, anyo }: GraficoPuntosProps) => {
     const [chartData, setChartData] = useState({
         labels: [],
         datasets: [
@@ -50,7 +55,7 @@ export const GraficoPuntos = () => {
     });
 
     useEffect(() => {
-        axios.get('http://localhost:8083/resultadocarrera/anyo/2021/piloto/1')
+        axios.get(`http://localhost:8083/resultadocarrera/anyo/${anyo}/piloto/${pilotoId}`)
             .then(response => {
                 const data = response.data;
                 // Extrae los datos que necesitas para tu gráfico
@@ -77,7 +82,7 @@ export const GraficoPuntos = () => {
                     ],
                 });
             });
-    }, []);
+    }, [pilotoId, anyo]);
 
     return (
         // <div>

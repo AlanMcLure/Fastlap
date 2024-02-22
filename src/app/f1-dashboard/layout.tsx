@@ -20,9 +20,10 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                     <Link href="/f1-dashboard/pilotos">
                         <SidebarItem icon={<UserCircle />} text="Pilotos" active={pathname.includes('piloto')} alert={false} />
                     </Link>
-                    <Link href="/f1-dashboard/carreras">
+                    {/* <Link href="/f1-dashboard/carreras">
                         <SidebarItem icon={<Flag />} text="Carreras" active={pathname.includes('carrera')} alert={false} />
-                    </Link>
+                    </Link> */}
+                    {/* Próximamente más */}
                 </Sidebar>
             </div>
             <main className="flex-grow ml-20 sm:ml-40">
