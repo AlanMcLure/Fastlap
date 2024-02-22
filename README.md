@@ -18,7 +18,7 @@ Construido con Next.js, TypeScript, Tailwind y Shadcn
 Para comenzar con este proyecto, ejecuta
 
 ```bash
-  git clone -b starter-code https://github.com/AlanMcLure/fastlap.git
+  git clone https://github.com/AlanMcLure/fastlap.git
 ```
 
 y copia estas variables .env.example en un archivo .env separado:
@@ -37,4 +37,4 @@ REDIS_URL=
 REDIS_SECRET=
 ```
 
-Puedes ayudarte del archivo .env.example
+En el archivo .env.example tienes los datos de ejemplo de uso
