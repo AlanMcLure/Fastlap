@@ -10,6 +10,7 @@ import { Post, User, Vote } from '@prisma/client'
 import { ArrowBigDown, ArrowBigUp, Loader2 } from 'lucide-react'
 import { notFound } from 'next/navigation'
 import { Suspense } from 'react'
+import Link from 'next/link'
 
 interface SubRedditPostPageProps {
   params: {
@@ -63,10 +64,10 @@ const SubRedditPostPage = async ({ params }: SubRedditPostPageProps) => {
 
         <div className='sm:w-0 w-full flex-1 bg-white p-4 rounded-sm'>
           <p className='max-h-40 mt-1 truncate text-xs text-gray-500'>
-            Publicado por <a 
+            Publicado por <Link
               className='hover:underline text-zinc-900 text-xs underline-offset-2'
               href={`/u/${post?.author.username ?? cachedPost.authorUsername}`}>
-            u/{post?.author.username ?? cachedPost.authorUsername}</a>{' '}
+              u/{post?.author.username ?? cachedPost.authorUsername}</Link>{' '}
             {formatTimeToNow(new Date(post?.createdAt ?? cachedPost.createdAt))}
           </p>
           <h1 className='text-xl font-semibold py-2 leading-6 text-gray-900'>

@@ -3,6 +3,7 @@
 import { Prisma, Subreddit } from '@prisma/client'
 import { useQuery } from '@tanstack/react-query'
 import axios from 'axios'
+import Link from 'next/link'
 import debounce from 'lodash.debounce'
 import { usePathname, useRouter } from 'next/navigation'
 import { FC, useCallback, useEffect, useRef, useState } from 'react'
@@ -18,9 +19,9 @@ import {
 import { useOnClickOutside } from '@/hooks/use-on-click-outside'
 import { Users } from 'lucide-react'
 
-interface SearchBarProps {}
+interface SearchBarProps { }
 
-const SearchBar: FC<SearchBarProps> = ({}) => {
+const SearchBar: FC<SearchBarProps> = ({ }) => {
   const [input, setInput] = useState<string>('')
   const pathname = usePathname()
   const commandRef = useRef<HTMLDivElement>(null)
@@ -90,7 +91,7 @@ const SearchBar: FC<SearchBarProps> = ({}) => {
                   key={subreddit.id}
                   value={subreddit.name}>
                   <Users className='mr-2 h-4 w-4' />
-                  <a href={`/r/${subreddit.name}`}>r/{subreddit.name}</a>
+                  <Link href={`/r/${subreddit.name}`}>r/{subreddit.name}</Link>
                 </CommandItem>
               ))}
             </CommandGroup>
