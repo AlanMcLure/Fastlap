@@ -19,6 +19,7 @@ export function UserAvatar({ user, ...props }: UserAvatarProps) {
             src={user.image}
             alt='profile picture'
             referrerPolicy='no-referrer'
+            sizes='(max-width: 600px) 100vw, (max-width: 1200px) 50vw, 800px'
           />
         </div>
       ) : (
