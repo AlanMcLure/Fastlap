@@ -19,7 +19,7 @@ const Page = () => {
   const { mutate: createCommunity, isLoading } = useMutation({
     mutationFn: async () => {
       const payload: CreateSubredditPayload = {
-        name: input,
+        name: input.toLowerCase(),
       }
 
       const { data } = await axios.post('/api/subreddit', payload)
@@ -29,16 +29,16 @@ const Page = () => {
       if (err instanceof AxiosError) {
         if (err.response?.status === 409) {
           return toast({
-            title: 'Subreddit already exists.',
-            description: 'Please choose a different name.',
+            title: 'Esa comunidad ya existe.',
+            description: 'Escoge un nombre distinto.',
             variant: 'destructive',
           })
         }
 
         if (err.response?.status === 422) {
           return toast({
-            title: 'Invalid subreddit name.',
-            description: 'Please choose a name between 3 and 21 letters.',
+            title: 'Nombre de comunidad inválido.',
+            description: 'Nombre entre 3 y 21 caracteres.',
             variant: 'destructive',
           })
         }
@@ -49,8 +49,8 @@ const Page = () => {
       }
 
       toast({
-        title: 'There was an error.',
-        description: 'Could not create subreddit.',
+        title: 'Ha ocurrido un error.',
+        description: 'No se pudo crear la comunidad.',
         variant: 'destructive',
       })
     },
