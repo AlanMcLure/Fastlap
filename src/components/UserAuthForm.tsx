@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/Button'
 import { useToast } from '@/hooks/use-toast'
 import { Icons } from './Icons'
 
-interface UserAuthFormProps extends React.HTMLAttributes<HTMLDivElement> {}
+interface UserAuthFormProps extends React.HTMLAttributes<HTMLDivElement> { }
 
 const UserAuthForm: FC<UserAuthFormProps> = ({ className, ...props }) => {
   const { toast } = useToast()
@@ -22,7 +22,7 @@ const UserAuthForm: FC<UserAuthFormProps> = ({ className, ...props }) => {
     } catch (error) {
       toast({
         title: 'Error',
-        description: 'There was an error logging in with Google',
+        description: 'Hubo un error logueando con Google',
         variant: 'destructive',
       })
     } finally {
