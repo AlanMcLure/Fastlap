@@ -14,9 +14,6 @@ interface DeletePostButtonProps {
 }
 
 const DeletePostButton: FC<DeletePostButtonProps> = ({ postId, authorId }) => {
-  const router = useRouter()
-  const pathname = usePathname()
-  const queryClient = useQueryClient()
 
   const { data: session } = useSession()
 
@@ -44,9 +41,6 @@ const DeletePostButton: FC<DeletePostButtonProps> = ({ postId, authorId }) => {
       })
     },
     onSuccess: () => {
-      queryClient.invalidateQueries(['infinite-query']) // Invalida todas las consultas con la clave 'post'
-
-      router.push(pathname);
 
       return toast({
         description: 'Tú post ha sido borrado.',

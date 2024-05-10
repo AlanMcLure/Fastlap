@@ -3,7 +3,7 @@
 import { INFINITE_SCROLL_PAGINATION_RESULTS } from '@/config'
 import { ExtendedPost } from '@/types/db'
 import { useIntersection } from '@mantine/hooks'
-import { useInfiniteQuery } from '@tanstack/react-query'
+import { useInfiniteQuery, useQueryClient } from '@tanstack/react-query'
 import axios from 'axios'
 import { FC, useEffect, useRef, useState } from 'react'
 import Post from './Post'
@@ -29,6 +29,7 @@ const PostFeed: FC<PostFeedProps> = ({ initialPosts, subredditName, username }) 
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [posts, setPosts] = useState(initialPosts);
+  const queryClient = useQueryClient();
 
   // const { data, fetchNextPage, isFetchingNextPage, isLoading } = useInfiniteQuery(
   //   ['infinite-query'],
@@ -85,7 +86,9 @@ const PostFeed: FC<PostFeedProps> = ({ initialPosts, subredditName, username }) 
       console.log('posts: ', posts);
       console.log('newPosts: ', newPosts);
       setCurrentPage(nextPage);
-      setPosts([...posts, ...newPosts]);
+      setPosts((prevPosts) => [...prevPosts, ...newPosts]);
+
+      queryClient.invalidateQueries(['posts']);
     } catch (error) {
       console.error('Error loading more posts:', error);
     } finally {
