@@ -5,7 +5,7 @@ import { ExtendedPost } from '@/types/db'
 import { useIntersection } from '@mantine/hooks'
 import { useInfiniteQuery, useQuery, useQueryClient } from '@tanstack/react-query'
 import axios from 'axios'
-import { FC, useEffect, useRef, useState } from 'react'
+import { FC, useEffect, useMemo, useRef, useState } from 'react'
 import Post from './Post'
 import { useSession } from 'next-auth/react'
 
@@ -31,10 +31,11 @@ const PostFeed: FC<PostFeedProps> = ({ initialPosts, subredditName, username }) 
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [limit, setLimit] = useState(PAGINATION_RESULTS);
+  const [postsLoaded, setPostsLoaded] = useState(false);
   // const [posts, setPosts] = useState(initialPosts);
   const queryClient = useQueryClient();
 
-  const { data: posts, isLoading, isError } = useQuery(
+  const { data: postsData, isLoading, isError } = useQuery(
     ['posts', { subredditName, username, limit }],
     async () => {
       let query = `/api/posts?limit=${limit}&page=1`;
@@ -51,6 +52,15 @@ const PostFeed: FC<PostFeedProps> = ({ initialPosts, subredditName, username }) 
       return data;
     }
   );
+
+  const posts = useMemo(() => {
+    if (!postsData) return initialPosts;
+    // Filtrar los nuevos posts para evitar duplicados
+    const newPosts = postsData.filter((newPost: ExtendedPost) => {
+      return !initialPosts.some((existingPost: ExtendedPost) => existingPost.id === newPost.id);
+    });
+    return [...initialPosts, ...newPosts];
+  }, [initialPosts, postsData]);
 
   // Función para recargar los posts
   const reloadPosts = async () => {
@@ -80,14 +90,21 @@ const PostFeed: FC<PostFeedProps> = ({ initialPosts, subredditName, username }) 
     }
   };
 
+  useEffect(() => {
+    if (posts && posts.length > 0) {
+      setPostsLoaded(true);
+    }
+  }, [posts]);
+
   return (
     <ul className='flex flex-col col-span-2 space-y-6'>
-      {
-        isLoading ? (
+        {isLoading && !postsLoaded && (
           <>
             <SkeletonCard />
           </>
-        ) : posts && (
+        )}
+        
+      {posts && (
           posts.map((post: ExtendedPost, index: number) => {
             const votesAmt: number = post.votes.reduce((acc: number, vote: Vote) => {
               if (vote.type === 'UP') return acc + 1;
@@ -126,7 +143,7 @@ const PostFeed: FC<PostFeedProps> = ({ initialPosts, subredditName, username }) 
             }
           })
         )}
-      {!isLoading && (
+      {postsLoaded && (
         <li className='flex justify-center'>
           {/* Mostrar el botón de recarga o el Loader según isLoadingMore */}
           {isLoadingMore ? (
