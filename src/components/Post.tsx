@@ -8,6 +8,7 @@ import { FC, useRef } from 'react'
 import EditorOutput from './EditorOutput'
 import PostVoteClient from './post-vote/PostVoteClient'
 import DeletePostButton from './DeletePostButton'
+import { useQueryClient } from '@tanstack/react-query'
 
 type PartialVote = Pick<Vote, 'type'>
 
@@ -30,6 +31,13 @@ const Post: FC<PostProps> = ({
   commentAmt,
 }) => {
   const pRef = useRef<HTMLParagraphElement>(null)
+
+  const queryClient = useQueryClient();
+
+  const invalidatePostsCache = () => {
+    queryClient.invalidateQueries(['posts']); // Invalidar la caché de los posts
+    console.log('Posts cache invalidated');
+  };
 
   return (
     <div className='rounded-md bg-white shadow'>
@@ -84,7 +92,7 @@ const Post: FC<PostProps> = ({
           className='w-fit flex items-center gap-2'>
           <MessageSquare className='h-4 w-4' /> {commentAmt} comentarios
         </Link>
-        <DeletePostButton postId={post.id} authorId={post.authorId} />
+        <DeletePostButton postId={post.id} authorId={post.authorId} invalidatePostsCache={invalidatePostsCache} />
       </div>
     </div>
   )

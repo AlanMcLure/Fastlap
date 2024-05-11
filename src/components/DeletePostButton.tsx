@@ -10,18 +10,21 @@ import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogD
 
 interface DeletePostButtonProps {
   postId: string,
-  authorId: string
+  authorId: string,
+  invalidatePostsCache: () => void;
 }
 
-const DeletePostButton: FC<DeletePostButtonProps> = ({ postId, authorId }) => {
+const DeletePostButton: FC<DeletePostButtonProps> = ({ postId, authorId, invalidatePostsCache }) => {
 
+  const router = useRouter();
+  const pathname = usePathname();
   const { data: session } = useSession()
 
   const [isDialogOpen, setDialogOpen] = useState(false)
 
-  const handleDelete = () => {
+  const handleDelete = async () => {
     setDialogOpen(false)
-    deletePost()
+    await deletePost();
   }
 
   const openDialog = () => {
@@ -41,6 +44,9 @@ const DeletePostButton: FC<DeletePostButtonProps> = ({ postId, authorId }) => {
       })
     },
     onSuccess: () => {
+
+      invalidatePostsCache();
+      router.push(pathname);
 
       return toast({
         description: 'Tú post ha sido borrado.',
