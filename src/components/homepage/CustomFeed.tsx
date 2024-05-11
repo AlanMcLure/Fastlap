@@ -1,4 +1,4 @@
-import { INFINITE_SCROLL_PAGINATION_RESULTS } from '@/config'
+import { PAGINATION_RESULTS } from '@/config'
 import { getAuthSession } from '@/lib/auth'
 import { db } from '@/lib/db'
 import PostFeed from '../PostFeed'
@@ -36,7 +36,7 @@ const CustomFeed = async () => {
       comments: true,
       subreddit: true,
     },
-    take: INFINITE_SCROLL_PAGINATION_RESULTS,
+    take: PAGINATION_RESULTS,
   })
 
   return <PostFeed initialPosts={posts} />

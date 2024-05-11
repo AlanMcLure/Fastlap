@@ -1,5 +1,5 @@
 import PostFeed from "@/components/PostFeed"
-import { INFINITE_SCROLL_PAGINATION_RESULTS } from "@/config"
+import { PAGINATION_RESULTS } from "@/config"
 import { db } from "@/lib/db"
 import { notFound } from "next/navigation"
 
@@ -33,7 +33,7 @@ const page = async ({ params }: PageProps) => {
     orderBy: {
       createdAt: 'desc'
     },
-    take: INFINITE_SCROLL_PAGINATION_RESULTS,
+    take: PAGINATION_RESULTS,
   })
 
   if (!posts) return notFound()
