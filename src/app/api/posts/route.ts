@@ -2,6 +2,14 @@ import { getAuthSession } from '@/lib/auth'
 import { db } from '@/lib/db'
 import { z } from 'zod'
 
+type FollowedCommunity = {
+  subreddit: {
+    id: string;
+    // otras propiedades de subreddit si las hay
+  };
+  // otras propiedades de followedCommunities si las hay
+};
+
 export async function GET(req: Request) {
   const url = new URL(req.url)
 
@@ -19,7 +27,7 @@ export async function GET(req: Request) {
       },
     })
 
-    followedCommunitiesIds = followedCommunities.map((sub) => sub.subreddit.id)
+    followedCommunitiesIds = followedCommunities.map((sub: FollowedCommunity ) => sub.subreddit.id)
   }
 
   try {

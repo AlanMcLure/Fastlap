@@ -54,7 +54,7 @@ export async function PATCH(req: Request) {
         })
 
         // Recount the votes
-        const votesAmt = post.votes.reduce((acc, vote) => {
+        const votesAmt = post.votes.reduce((acc: number, vote) => {
           if (vote.type === 'UP') return acc + 1
           if (vote.type === 'DOWN') return acc - 1
           return acc
@@ -90,7 +90,7 @@ export async function PATCH(req: Request) {
       })
 
       // Recount the votes
-      const votesAmt = post.votes.reduce((acc, vote) => {
+      const votesAmt = post.votes.reduce((acc: number, vote) => {
         if (vote.type === 'UP') return acc + 1
         if (vote.type === 'DOWN') return acc - 1
         return acc
@@ -122,7 +122,7 @@ export async function PATCH(req: Request) {
     })
 
     // Recount the votes
-    const votesAmt = post.votes.reduce((acc, vote) => {
+    const votesAmt = post.votes.reduce((acc: number, vote) => {
       if (vote.type === 'UP') return acc + 1
       if (vote.type === 'DOWN') return acc - 1
       return acc
