@@ -1,0 +1,9 @@
+version: '3.9'
+
+services:
+  fastlap:
+    container_name: fastlap
+    image: alanmclure/fastlap
+    build: .
+    ports:
+      - "3000:3000"
