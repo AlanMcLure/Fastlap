@@ -12,13 +12,15 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/DropdownMenu'
 import { UserAvatar } from '@/components/UserAvatar'
+import { UserRole } from '@prisma/client'
 
 interface User extends NextAuthUser {
-  username: string
+  username: string,
+  role: UserRole
 }
 
 interface UserAccountNavProps extends React.HTMLAttributes<HTMLDivElement> {
-  user: Pick<User, 'name' | 'image' | 'email' | 'username'>
+  user: Pick<User, 'name' | 'image' | 'email' | 'username' | 'role'>
 }
 
 export function UserAccountNav({ user }: UserAccountNavProps) {
@@ -34,6 +36,7 @@ export function UserAccountNav({ user }: UserAccountNavProps) {
         <div className='flex items-center justify-start gap-2 p-2'>
           <div className='flex flex-col space-y-1 leading-none'>
             {user.name && <p className='font-medium'>{user.name}</p>}
+            {user.role && <p className='font-semibold text-sm'>{user.role}</p>}
             {user.email && (
               <p className='w-[200px] truncate text-sm text-muted-foreground'>
                 {user.email}

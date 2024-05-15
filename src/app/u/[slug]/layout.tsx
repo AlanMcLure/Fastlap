@@ -73,6 +73,12 @@ const UserLayout = async ({
                 </dd>
               </div>
               <div className='flex justify-between gap-x-4 py-3'>
+                <dt className='text-gray-500'>Rol</dt>
+                <dd className='flex items-start gap-x-2'>
+                  <div className='text-gray-900'>{user.role}</div>
+                </dd>
+              </div>
+              <div className='flex justify-between gap-x-4 py-3'>
                 <dt className='text-gray-500'>Comunidades creadas</dt>
                 <dd className='flex items-start gap-x-2'>
                   <div className='text-gray-900'>{comunidadesCreadasCount}</div>
