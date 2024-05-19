@@ -26,28 +26,49 @@ export default function PilotsPage() {
 
     useEffect(() => {
         const fetchPilots = async () => {
-            let url = `http://localhost:8083/piloto?page=${page}&size=8`;
+            // let url = `http://localhost:8083/piloto?page=${page}&size=8`;
+
+            // if (season) {
+            //     url += `&temporada=${season}`;
+            // }
+
+            // if (podium) {
+            //     url = `http://localhost:8083/piloto/podio?page=${page}&size=8`;
+            //     if (season) {
+            //         url += `&temporada=${season}`;
+            //     }
+            // }
+
+            // if (winner) {
+            //     url = `http://localhost:8083/piloto/ganadores?page=${page}&size=8`;
+            //     if (season) {
+            //         url += `&temporada=${season}`;
+            //     }
+            // }
+
+            let url = `https://ergast.com/api/f1/drivers.json?page=${page}&size=8`;
 
             if (season) {
-                url += `&temporada=${season}`;
+                url = `https://ergast.com/api/f1/${season}/drivers.json?page=${page}&size=8`;
             }
 
             if (podium) {
-                url = `http://localhost:8083/piloto/podio?page=${page}&size=8`;
+                url = `https://ergast.com/api/f1/results/3/drivers.json?page=${page}&size=8`;
                 if (season) {
-                    url += `&temporada=${season}`;
+                    url = `https://ergast.com/api/f1/${season}/results/3/drivers.json?page=${page}&size=8`;
                 }
             }
 
             if (winner) {
-                url = `http://localhost:8083/piloto/ganadores?page=${page}&size=8`;
+                url = `https://ergast.com/api/f1/results/1/drivers.json?page=${page}&size=8`;
                 if (season) {
-                    url += `&temporada=${season}`;
+                    url = `https://ergast.com/api/f1/${season}/results/1/drivers.json?page=${page}&size=8`;
                 }
             }
 
             try {
                 const data = await authenticated(url, session);
+                console.log("data: ", data)
                 setPilots(data.content);
                 setTotalPages(data.totalPages);
                 totalElementsRef.current = data.totalElements;
