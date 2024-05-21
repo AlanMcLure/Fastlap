@@ -80,7 +80,7 @@ const LapTimesChart = () => {
         </select>
       </div>
       {loading ? (
-        <div>Loading...</div>
+        <div className="loader"></div>
       ) : error ? (
         <div>Error loading data: {error.message}</div>
       ) : (
