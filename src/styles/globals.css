@@ -81,7 +81,7 @@
   }
   body {
     @apply bg-background text-foreground;
-    font-family: 'Gabarito', 'Poppins', sans-serif;
+    font-family: 'Gabarito', 'Poppins', Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
     font-feature-settings: 'rlig' 1, 'calt' 1;
   }
 }
