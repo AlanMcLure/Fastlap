@@ -1,12 +1,26 @@
 import Navbar from '@/components/Navbar'
 import { cn } from '@/lib/utils'
-import { Inter } from 'next/font/google'
+import { Inter, Poppins, Gabarito } from 'next/font/google'
 import Providers from '@/components/Providers'
 import { Toaster } from '@/components/ui/Toaster'
 
 import '@/styles/globals.css'
 
 const inter = Inter({ subsets: ['latin'] })
+
+const poppins = Poppins({
+  weight: ['400', '700'],
+  style: ['normal'],
+  subsets: ['latin'],
+  display: 'swap',
+});
+
+const gabarito = Gabarito({
+  weight: ['400', '900'],
+  style: ['normal'],
+  subsets: ['latin'],
+  display: 'swap',
+});
 
 export const metadata = {
   title: 'FastLap',
@@ -24,10 +38,13 @@ export default function RootLayout({
     <html
       lang='en'
       className={cn(
-        'bg-white text-slate-900 antialiased light',
-        inter.className
+        'bg-white text-slate-900 antialiased light'
       )}>
-      <body className='min-h-screen pt-12 bg-slate-50 antialiased'>
+      <body className={cn(
+        'min-h-screen pt-12 bg-slate-50 antialiased',
+        poppins.className
+      )}>
+       
         <Providers>
           {/* @ts-expect-error Server Component */}
           <Navbar />
