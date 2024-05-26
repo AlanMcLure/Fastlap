@@ -60,7 +60,6 @@ module.exports = {
       },
       fontFamily: {
         sans: ['Inter', ...fontFamily.sans],
-        gabarito: ['Gabarito'],
         poppins: ['Poppins'],
       },
       keyframes: {
