@@ -60,7 +60,6 @@ const config = {
       },
       fontFamily: {
         // sans: ['var(--font-sans)', ...fontFamily.sans],
-        gabarito: ['Gabarito', 'sans-serif'],
         poppins: ['Poppins', 'sans-serif'],
       },
       keyframes: {

@@ -15,13 +15,6 @@ const poppins = Poppins({
   display: 'swap',
 });
 
-const gabarito = Gabarito({
-  weight: ['400', '900'],
-  style: ['normal'],
-  subsets: ['latin'],
-  display: 'swap',
-});
-
 export const metadata = {
   title: 'FastLap',
   description: 'La red social para los aficionados de la Fórmula 1',
