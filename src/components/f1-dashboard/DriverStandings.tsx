@@ -12,7 +12,7 @@ const DriverStandings = () => {
     const fetchStandings = async () => {
       setIsLoading(true);
       try {
-        const response = await axios.get(`http://ergast.com/api/f1/${season}/${classificationType}Standings.json`);
+        const response = await axios.get(`/api/ergast/standings?season=${season}&classificationType=${classificationType}`);
         const standingsList = response.data.MRData.StandingsTable.StandingsLists[0];
         let newStandings;
         if (classificationType === 'driver') {
