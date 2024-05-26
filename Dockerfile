@@ -15,7 +15,6 @@ RUN \
   else echo "Lockfile not found." && exit 1; \
   fi
 
-
 # Generate Prisma client
 COPY . .
 RUN npx prisma generate
