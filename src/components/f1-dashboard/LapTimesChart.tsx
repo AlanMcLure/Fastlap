@@ -99,7 +99,7 @@ const LapTimesChart = () => {
             />
             <YAxis 
                 label={{ value: 'Lap Time (s)', angle: -90, position: 'insideLeft' }} 
-                domain={[80, 110]} // 1:20 (80 segundos) a 1:50 (110 segundos)
+                domain={[1, 2]} // 1:20 (80 segundos) a 1:50 (110 segundos)
                 tickFormatter={(value) => {
                     const minutes = Math.floor(value / 60);
                     const seconds = value % 60;
