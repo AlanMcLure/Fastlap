@@ -52,7 +52,7 @@ const DriverStandings = () => {
   return (
     <div className="container mx-auto p-4">
       <div className="flex justify-between items-center mb-4">
-        <h1 className="text-2xl font-bold">{classificationType === 'driver' ? 'Driver Standings' : 'Team Standings'}</h1>
+        <h1 className="text-2xl font-bold">{classificationType === 'driver' ? 'Clasificación de Pilotos' : 'Clasificación de Constructores'}</h1>
         <div className="flex space-x-4">
           <select
             value={season}
@@ -140,8 +140,8 @@ const DriverStandings = () => {
             onChange={(e) => setClassificationType(e.target.value)}
             className="border border-gray-300 rounded p-2"
           >
-            <option value="driver">Drivers</option>
-            <option value="constructor">Teams</option>
+            <option value="driver">Pilotos</option>
+            <option value="constructor">Equipos</option>
           </select>
         </div>
       </div>
@@ -157,14 +157,14 @@ const DriverStandings = () => {
                 <th className="py-2 px-4 border-b-2 border-gray-200 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">POS</th>
                 {classificationType === 'driver' ? (
                   <>
-                    <th className="py-2 px-4 border-b-2 border-gray-200 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Driver</th>
-                    <th className="py-2 px-4 border-b-2 border-gray-200 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Nationality</th>
-                    <th className="py-2 px-4 border-b-2 border-gray-200 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Car</th>
+                    <th className="py-2 px-4 border-b-2 border-gray-200 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Piloto</th>
+                    <th className="py-2 px-4 border-b-2 border-gray-200 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Nacionalidad</th>
+                    <th className="py-2 px-4 border-b-2 border-gray-200 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Equipo</th>
                   </>
                 ) : (
                   <>
-                    <th className="py-2 px-4 border-b-2 border-gray-200 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Team</th>
-                    <th className="py-2 px-4 border-b-2 border-gray-200 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Nationality</th>
+                    <th className="py-2 px-4 border-b-2 border-gray-200 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Equipo</th>
+                    <th className="py-2 px-4 border-b-2 border-gray-200 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Nacionalidad</th>
                   </>
                 )}
                 <th className="py-2 px-4 border-b-2 border-gray-200 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">PTS</th>

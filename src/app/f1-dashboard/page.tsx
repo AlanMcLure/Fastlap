@@ -17,7 +17,7 @@ const DashboardPage: React.FC = () => {
 
     return (
         <div>
-            <h1>Bienvenido al Dashboard de F1</h1>
+            <h1 className="font-bold text-3xl md:text-4xl">Bienvenido al Dashboard de F1</h1>
             {/* <p className='mb-4'>Por favor, selecciona un piloto para ver su gráfico de puntos:</p>
             <select onChange={handlePilotoChange}>
                 <option value="">Selecciona un piloto</option>
