@@ -19,6 +19,7 @@ enum VoteType {
 enum UserRole {
   USER
   ADMIN
+  PREMIUM
 }
 
 model Account {

@@ -18,11 +18,13 @@ const Navbar = async () => {
           <p className='hidden text-zinc-900 text-1xl font-bold md:block'>FastLap</p>
         </Link>
 
-        {/* f1-dashboard link */}
-        <Link href='/f1-dashboard' className='flex gap-2 items-center'>
-          <LayoutDashboard className='h-8 w-8 sm:h-6 sm:w-6' />
-          <p className='hidden text-zinc-900 text-1xl font-bold md:block'>F1 Dashboard</p>
-        </Link>
+        {/* Conditionally render the F1 Dashboard link for ADMIN and PREMIUM users */}
+        {session?.user && (session.user.role === 'ADMIN' || session.user.role === 'PREMIUM') && (
+          <Link href='/f1-dashboard' className='flex gap-2 items-center'>
+            <LayoutDashboard className='h-8 w-8 sm:h-6 sm:w-6' />
+            <p className='hidden text-zinc-900 text-1xl font-bold md:block'>F1 Dashboard</p>
+          </Link>
+        )}
 
         {/* search bar */}
         <SearchBar />
