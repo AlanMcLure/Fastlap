@@ -1,22 +1,18 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { buffer } from 'micro';
+import { headers } from 'next/headers';
 import { Stripe } from 'stripe';
 import { db } from '@/lib/db';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
-export const config = {
-  api: {
-    bodyParser: false,
-  },
-};
+const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
 
-const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET!;
-
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  if (req.method === 'POST') {
+export default async function POST(req: NextApiRequest, res: NextApiResponse) {
+    
     const buf = await buffer(req);
-    const sig = req.headers['stripe-signature'];
+    const headersList = headers();
+    const sig = headersList.get('stripe-signature');
 
     let event: Stripe.Event;
 
@@ -49,8 +45,5 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     }
 
     res.status(200).json({ received: true });
-  } else {
-    res.setHeader('Allow', 'POST');
-    res.status(405).end('Method Not Allowed');
-  }
+
 }
