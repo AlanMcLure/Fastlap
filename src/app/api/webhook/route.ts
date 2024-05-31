@@ -8,7 +8,7 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
 const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
 
-export default async function POST(req: NextApiRequest, res: NextApiResponse) {
+export async function POST(req: NextApiRequest, res: NextApiResponse) {
     
     const buf = await buffer(req);
     const headersList = headers();
@@ -25,8 +25,8 @@ export default async function POST(req: NextApiRequest, res: NextApiResponse) {
 
     // Handle the event
     switch (event.type) {
-      case 'invoice.payment_succeeded':
-        const invoice = event.data.object as Stripe.Invoice;
+      case 'checkout.session.completed':
+        const invoice = event.data.object;
         const customerEmail = invoice.customer_email;
 
         if (customerEmail) {
