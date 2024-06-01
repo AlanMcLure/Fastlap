@@ -25,7 +25,7 @@ export async function POST(req: Request) {
         quantity: 1,
       },
     ],
-    success_url: `${origin}/f1-dashboard`,
+    success_url: `${origin}/home`,
     cancel_url: `${origin}/premium`,
   });
 
