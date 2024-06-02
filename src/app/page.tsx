@@ -43,7 +43,8 @@ export default async function Home() {
             </dl>
             
           </div>
-        <PremiumCard />
+        {/* Mostrar PremiumCard solo si el usuario es de tipo USER */}
+        {session?.user?.role === 'USER' && <PremiumCard />}
       </div>
       {/* Feed de posts */}
       <div className='md:col-span-2'>
