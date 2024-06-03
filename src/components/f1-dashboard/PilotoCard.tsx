@@ -5,9 +5,10 @@ import Image from 'next/image';
 
 export interface PilotStats {
     id: number;
-    nombre: string | null;
+    givenName: string | null;
+    familyName: string | null;
     fecha_nac: string | null;
-    nacionalidad: string | null;
+    nationality: string | null;
     img: string | null;
 }
 
@@ -16,8 +17,8 @@ interface PilotCardProps {
 }
 
 const PilotCard: React.FC<PilotCardProps> = ({ pilot }) => {
-    const pilotoNombre = pilot.nombre ?? 'Nombre desconocido';
-    const PilotoNacionalidad = pilot.nacionalidad ?? 'Nacionlidad desconocida';
+    const pilotoNombre = pilot.givenName + ' ' +  pilot.familyName ?? 'Nombre desconocido';
+    const PilotoNacionalidad = pilot.nationality ?? 'Nacionlidad desconocida';
 
     return (
         <Card className="w-full">
