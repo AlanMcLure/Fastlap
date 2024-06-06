@@ -9,6 +9,7 @@ import { useSession } from 'next-auth/react';
 import { Button } from '@/components/ui/Button';
 import { useRouter } from 'next/navigation';
 import { authenticated } from '@/lib/utils';
+import BackButton from '@/components/BackButton';
 
 export default function PilotsPage() {
   const [pilots, setPilots] = useState<PilotStats[]>([]);
@@ -72,7 +73,8 @@ export default function PilotsPage() {
 
   return (
     <div className='max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8'>
-      <div className='flex justify-between items-center mb-2'>
+      <BackButton defaultPath="/f1-dashboard" backText="Volver al Dashboard" />
+      <div className='flex justify-between items-center mb-2 mt-4'>
         <h1 className='font-bold text-3xl md:text-4xl mb-2'>Pilotos</h1>
         <Button onClick={() => {
           setWinner(!winner);
