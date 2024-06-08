@@ -65,7 +65,9 @@ const SearchBar: FC<SearchBarProps> = ({ }) => {
   return (
     <Command
       ref={commandRef}
-      className='relative rounded-lg border max-w-lg z-50 overflow-visible'>
+      className='relative rounded-lg border max-w-lg z-50 overflow-visible'
+      aria-label='Buscar comunidades'
+      role='search'>
       <CommandInput
         isLoading={isFetching}
         onValueChange={(text) => {
@@ -75,10 +77,14 @@ const SearchBar: FC<SearchBarProps> = ({ }) => {
         value={input}
         className='outline-none border-none focus:border-none focus:outline-none ring-0'
         placeholder='Buscar comunidades...'
+        aria-label='Campo de búsqueda'
       />
 
       {input.length > 0 && (
-        <CommandList className='absolute bg-white top-full inset-x-0 shadow rounded-b-md'>
+        <CommandList 
+          className='absolute bg-white top-full inset-x-0 shadow rounded-b-md'
+          role='listbox'
+          aria-expanded={true}>
           {isFetched && <CommandEmpty>Sin resultados.</CommandEmpty>}
           {(queryResults?.length ?? 0) > 0 ? (
             <CommandGroup heading='Comunidades'>
@@ -89,7 +95,9 @@ const SearchBar: FC<SearchBarProps> = ({ }) => {
                     router.refresh()
                   }}
                   key={subreddit.id}
-                  value={subreddit.name}>
+                  value={subreddit.name}
+                  role='option'
+                  aria-selected='false'>
                   <Users className='mr-2 h-4 w-4' />
                   <Link href={`/r/${subreddit.name}`}>r/{subreddit.name}</Link>
                 </CommandItem>

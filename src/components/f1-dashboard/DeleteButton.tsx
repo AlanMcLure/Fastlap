@@ -55,7 +55,7 @@ const DeleteButton: FC<DeleteButtonProps> = ({ id, seccion, onSuccess, onError, 
     return (
         <Dialog open={isDialogOpen} onOpenChange={setDialogOpen}>
             <Button
-                className='bg-red-500'
+                className='bg-red-700 text-white'
                 onClick={openDialog}
                 variant='destructive'
                 size='sm'>

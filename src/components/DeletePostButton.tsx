@@ -61,12 +61,14 @@ const DeletePostButton: FC<DeletePostButtonProps> = ({ postId, authorId, invalid
   return (
     <Dialog open={isDialogOpen} onOpenChange={setDialogOpen}>
       <Button
-        className='bg-red-500'
+        className='bg-red-700 text-white'
         onClick={openDialog}
         variant='destructive'
-        size='sm'>
+        size='sm'
+        aria-label='Borrar post'
+        role='button'>
         Borrar
-        <Trash2 className='ml-1.5' size={16} />
+        <Trash2 className='ml-1.5' size={16} aria-hidden='true' />
       </Button>
 
       <DialogContent>

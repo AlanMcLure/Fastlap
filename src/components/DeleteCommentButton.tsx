@@ -57,12 +57,14 @@ const DeleteCommentButton:FC<DeleteCommentButtonProps> = ({ commentId, authorId 
   return (
     <Dialog open={isDialogOpen} onOpenChange={setDialogOpen}>
       <Button
-        className='bg-red-500'
+        className='bg-red-700 text-white'
         onClick={openDialog}
         variant='destructive'
-        size='xs'>
+        size='xs'
+        aria-label='Borrar comentario'
+        role='button'>
         Borrar
-        <Trash2 className='ml-1.5' size={16} />
+        <Trash2 className='ml-1.5' size={16} aria-hidden='true' />
       </Button>
 
       <DialogContent>

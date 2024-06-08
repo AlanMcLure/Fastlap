@@ -25,10 +25,10 @@ export default async function Home() {
                 Inicio
               </p>
             </div>
-            <dl className='-my-3 divide-y divide-gray-100 px-5 py-4 text-sm leading-6'>
+            <div className='-my-3 divide-y divide-gray-100 px-5 py-4 text-sm leading-6'>
               <div className='flex justify-between gap-x-4 py-3'>
                 <p className='text-zinc-500'>
-                  Tú página princiap de FastLap. Encuentra las mejores comunidades de aficionados de la Fórmula 1. O crea tú mismo la tuya propia.
+                  Tu página principal de FastLap. Encuentra las mejores comunidades de aficionados de la Fórmula 1. O crea tú mismo la tuya propia.
                 </p>
               </div>
 
@@ -40,7 +40,7 @@ export default async function Home() {
                 Crear comunidad
               </Link>
               
-            </dl>
+            </div>
             
           </div>
         {/* Mostrar PremiumCard solo si el usuario es de tipo USER */}
