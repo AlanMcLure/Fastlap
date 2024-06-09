@@ -61,19 +61,13 @@ const LapTimesChart = () => {
           ))}
         </select>
         <select value={grandPrix} onChange={e => setGrandPrix(e.target.value)}>
-          <option value="">Select Grand Prix</option>
+          <option value="">Selecciona Gran Premio</option>
           {grandPrixOptions.map(gp => (
             <option key={gp.round} value={gp.round}>{gp.name}</option>
           ))}
         </select>
-        <select value={session} onChange={e => setSession(e.target.value)}>
-          <option value="">Select Session</option>
-          {sessions.map(s => (
-            <option key={s} value={s}>{s}</option>
-          ))}
-        </select>
         <select value={driver} onChange={e => setDriver(e.target.value)}>
-          <option value="">Select Driver</option>
+          <option value="">Selecciona Piloto</option>
           {drivers.map(d => (
             <option key={d.id} value={d.id}>{d.name}</option>
           ))}
