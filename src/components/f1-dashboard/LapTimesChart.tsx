@@ -76,7 +76,7 @@ const LapTimesChart = () => {
       {loading ? (
         <div className="loader"></div>
       ) : error ? (
-        <div>Error loading data: {error.message}</div>
+        <div>Error cargando los datos: {error.message}</div>
       ) : (
         <ResponsiveContainer width="100%" height={400}>
           <LineChart
