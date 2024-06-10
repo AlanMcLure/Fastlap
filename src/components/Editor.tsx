@@ -35,18 +35,14 @@ export const Editor: React.FC<EditorProps> = ({ subredditId }) => {
       content: null,
     },
   })
-  const ref = useRef<EditorJS>()
+  const ref = useRef<EditorJS | null>(null)
   const _titleRef = useRef<HTMLTextAreaElement>(null)
   const router = useRouter()
   const [isMounted, setIsMounted] = useState<boolean>(false)
   const pathname = usePathname()
 
   const { mutate: createPost } = useMutation({
-    mutationFn: async ({
-      title,
-      content,
-      subredditId,
-    }: PostCreationRequest) => {
+    mutationFn: async ({ title, content, subredditId }: PostCreationRequest) => {
       const payload: PostCreationRequest = { title, content, subredditId }
       const { data } = await axios.post('/api/subreddit/post/create', payload)
       return data
@@ -72,69 +68,68 @@ export const Editor: React.FC<EditorProps> = ({ subredditId }) => {
   })
 
   const initializeEditor = useCallback(async () => {
-    const EditorJS = (await import('@editorjs/editorjs')).default
-    const Header = (await import('@editorjs/header')).default
-    const Embed = (await import('@editorjs/embed')).default
-    const Table = (await import('@editorjs/table')).default
-    const List = (await import('@editorjs/list')).default
-    const Code = (await import('@editorjs/code')).default
-    const LinkTool = (await import('@editorjs/link')).default
-    const InlineCode = (await import('@editorjs/inline-code')).default
-    const ImageTool = (await import('@editorjs/image')).default
+    try {
+      const EditorJS = (await import('@editorjs/editorjs')).default
+      const Header = (await import('@editorjs/header')).default
+      const Embed = (await import('@editorjs/embed')).default
+      const Table = (await import('@editorjs/table')).default
+      const List = (await import('@editorjs/list')).default
+      const Code = (await import('@editorjs/code')).default
+      const LinkTool = (await import('@editorjs/link')).default
+      const InlineCode = (await import('@editorjs/inline-code')).default
+      const ImageTool = (await import('@editorjs/image')).default
 
-    // if (!document.getElementById('editor')) {
-    //   console.error('Element with id "editor" does not exist');
-    // } else {
-    if (!ref.current) {
-      const editor = new EditorJS({
-        holder: 'editor',
-        onReady() {
-          // ref.current = editor
-        },
-        placeholder: 'Escribe algo...',
-        inlineToolbar: true,
-        data: { blocks: [] },
-        tools: {
-          header: Header,
-          linkTool: {
-            class: LinkTool,
-            config: {
-              endpoint: '/api/link',
-            },
+      if (!ref.current) {
+        const editor = new EditorJS({
+          holder: 'editor',
+          onReady: () => {
+            ref.current = editor
           },
-          image: {
-            class: ImageTool,
-            config: {
-              uploader: {
-                async uploadByFile(file: File) {
-                  // upload to uploadthing
-                  const [res] = await uploadFiles([file], 'imageUploader')
+          placeholder: 'Escribe algo...',
+          inlineToolbar: true,
+          data: { blocks: [] },
+          tools: {
+            header: Header,
+            linkTool: {
+              class: LinkTool,
+              config: {
+                endpoint: '/api/link',
+              },
+            },
+            image: {
+              class: ImageTool,
+              config: {
+                uploader: {
+                  async uploadByFile(file: File) {
+                    const [res] = await uploadFiles([file], 'imageUploader')
 
-                  return {
-                    success: 1,
-                    file: {
-                      url: res.fileUrl,
-                    },
-                  }
+                    return {
+                      success: 1,
+                      file: {
+                        url: res.fileUrl,
+                      },
+                    }
+                  },
                 },
               },
             },
+            list: List,
+            code: Code,
+            inlineCode: InlineCode,
+            table: Table,
+            embed: Embed,
           },
-          list: List,
-          code: Code,
-          inlineCode: InlineCode,
-          table: Table,
-          embed: Embed,
-        },
-      })
-      ref.current = editor
+        })
+        ref.current = editor
+      }
+    } catch (error) {
+      console.error('Failed to initialize the editor:', error)
     }
   }, [])
 
   useEffect(() => {
     if (Object.keys(errors).length) {
       for (const [_key, value] of Object.entries(errors)) {
-        value
         toast({
           title: 'Algo fue mal',
           description: (value as { message: string }).message,
@@ -151,20 +146,21 @@ export const Editor: React.FC<EditorProps> = ({ subredditId }) => {
   }, [])
 
   useEffect(() => {
-    const init = async () => {
-      await initializeEditor()
-
-      setTimeout(() => {
-        _titleRef?.current?.focus()
-      }, 0)
-    }
-
     if (isMounted) {
+      const init = async () => {
+        await initializeEditor()
+        setTimeout(() => {
+          _titleRef?.current?.focus()
+        }, 0)
+      }
+
       init()
 
       return () => {
-        ref.current?.destroy()
-        ref.current = undefined
+        if (ref.current) {
+          ref.current.destroy()
+          ref.current = null
+        }
       }
     }
   }, [isMounted, initializeEditor])
