@@ -29,7 +29,7 @@ const DashboardPage: React.FC = () => {
             <Button onClick={handleEnviarClick}>Enviar</Button>
             {enviar && pilotoSeleccionado && temporada && <GraficoPuntos pilotoId={pilotoSeleccionado} anyo={temporada} />} */}
             <DriverStandings></DriverStandings>
-            <LapTimesChart></LapTimesChart>
+            {/* <LapTimesChart></LapTimesChart> */}
         </div>
     );
 };

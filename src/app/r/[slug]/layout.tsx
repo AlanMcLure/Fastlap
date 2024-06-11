@@ -6,7 +6,7 @@ import { db } from '@/lib/db'
 import { format } from 'date-fns'
 import type { Metadata } from 'next'
 import Link from 'next/link'
-import { notFound } from 'next/navigation'
+import { notFound, usePathname } from 'next/navigation'
 import { ReactNode } from 'react'
 
 export const metadata: Metadata = {
@@ -101,14 +101,14 @@ const Layout = async ({
                   subredditName={subreddit.name}
                 />
               ) : null}
-              <Link
-                className={buttonVariants({
-                  variant: 'outline',
-                  className: 'w-full mb-6',
-                })}
-                href={`${slug}/submit`}>
-                Crear publicación
-              </Link>
+                <Link
+                  className={buttonVariants({
+                    variant: 'outline',
+                    className: 'w-full mb-6',
+                  })}
+                  href={`/r/${slug}/submit`}>
+                  Crear publicación
+                </Link>
             </dl>
           </div>
         </div>
