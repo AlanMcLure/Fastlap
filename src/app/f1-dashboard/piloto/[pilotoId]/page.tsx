@@ -1,118 +1,70 @@
-'use client'
+'use client';
 
-import { useRouter } from 'next/navigation';
-import Image from 'next/image';
 import React, { useEffect, useState } from 'react';
-import { GraficoPuntos } from '@/components/GraficoPuntos';
-import EditButton from '@/components/f1-dashboard/EditButton';
-import DeleteButton from '@/components/f1-dashboard/DeleteButton';
-import { toast } from '@/hooks/use-toast';
 import BackButton from '@/components/BackButton';
-import { useSession } from 'next-auth/react';
-import { authenticated } from '@/lib/utils';
 import axios from 'axios';
+import { useParams } from 'next/navigation';
 
-interface Piloto {
-    id: string;
-    nombre: string;
-    fecha_nac: string;
-    nacionalidad: string;
-    img: string;
-    img_flag: string | null;
-    lugar_nac: string | null;
-    casco: string | null;
+interface PilotStats {
+    driverId: number;
+    givenName: string | null;
+    familyName: string | null;
+    dateOfBirth: string | null;
+    nationality: string | null;
+    permanentNumber: string | null;
+    img: string | null;
+    team: string | null;
+    country: string | null;
+    podiums: number | null;
+    points: number | null;
+    grandsPrixEntered: number | null;
+    worldChampionships: number | null;
+    highestRaceFinish: string | null;
+    highestGridPosition: string | null;
+    placeOfBirth: string | null;
 }
 
-interface PilotoData {
-    piloto: Piloto;
-    puntosConseguidos: number;
-    victorias: number;
-    podios: number;
-    carrerasDisputadas: number;
-    poles: number;
-    vueltasRapidas: number;
-    mejorPosicionCarrera: number;
-    vecesMejorPosicionCarrera: number;
-    mejorPosicionClasificacion: number;
-    vecesMejorPosicionClasificacion: number;
-    abandonos: number;
-}
-
-interface PilotoPageProps {
-    params: {
-        pilotoId: string;
-    };
-}
-
-const PilotoPage: React.FC<PilotoPageProps> = ({ params }) => {
-    const { pilotoId } = params
-    const [pilotoData, setPilotoData] = useState<PilotoData | null>(null);
-    const router = useRouter();
-    const { data: session } = useSession()
-
-    const [driverData, setDriverData] = useState(null);
+const PilotoPage: React.FC = () => {
+    const { pilotoId } = useParams();
+    const [pilot, setPilot] = useState<PilotStats | null>(null);
     const [isLoading, setIsLoading] = useState(true);
-    const [error, setError] = useState(null);
+    const [error, setError] = useState<string | null>(null);
+
+    console.log("pilotoId: ", pilotoId);
 
     useEffect(() => {
         if (pilotoId) {
-            authenticated(`http://localhost:8083/piloto/${pilotoId}/detalles`, session)
-                // fetch(`http://localhost:8083/piloto/${pilotoId}/detalles`)
-                // .then(response => {
-                //     if (!response.ok) {
-                //         throw new Error('Piloto no encontrado');
-                //     }
-                //     return response.json();
-                // })
-                .then(data => {
-                    if (!data || !data.piloto || !data.piloto.id) {
-                        throw new Error('Piloto no encontrado');
-                    }
-                    setPilotoData(data);
-                })
-                .catch(error => {
-                    console.error(error);
-                    router.push('/notfound'); // Redirige al usuario a la página de "no encontrado"
-                });
+            const fetchPilotData = async () => {
+                try {
+                    const response = await axios.get(`/api/ergast/driver?driverId=${pilotoId}`);
+                    setPilot(response.data.content); // Asegúrate de acceder a los datos correctamente
+                } catch (error) {
+                    console.error('Error fetching pilot data:', error);
+                    setError('Error fetching pilot data');
+                } finally {
+                    setIsLoading(false);
+                }
+            };
+
+            fetchPilotData();
         }
-    }, [pilotoId, router]);
-
-    useEffect(() => {
-        const fetchDriverData = async () => {
-          setIsLoading(true);
-          try {
-            const response = await axios.get(`http://ergast.com/api/f1/drivers/${pilotoId}.json`);
-            const driver = response.data.MRData.DriverTable.Drivers[0];
-            // Fake data for demonstration purposes, replace with actual response data
-            setDriverData({
-              givenName: driver.givenName,
-              familyName: driver.familyName,
-              number: driver.permanentNumber,
-              nationality: driver.nationality,
-              dateOfBirth: driver.dateOfBirth,
-              team: "Aston Martin", // You need to map this from your own data source
-              podiums: 106, // You need to map this from your own data source
-              points: 2300, // You need to map this from your own data source
-              grandsPrixEntered: 386, // You need to map this from your own data source
-              worldChampionships: 2, // You need to map this from your own data source
-              highestRaceFinish: "1 (x32)", // You need to map this from your own data source
-              highestGridPosition: 1, // You need to map this from your own data source
-              placeOfBirth: "Oviedo, Spain", // You need to map this from your own data source
-              imageUrl: "https://example.com/path/to/image.jpg" // You need to map this from your own data source
-            });
-          } catch (error) {
-            setError(error);
-          } finally {
-            setIsLoading(false);
-          }
-        };
-
-        fetchDriverData();
     }, [pilotoId]);
 
-    if (!pilotoData) {
-        return <div>Cargando...</div>;
+    if (isLoading) {
+        return <div className='loader'></div>;
     }
+
+    if (error) {
+        return <div>Error al cargar los datos del piloto.</div>;
+    }
+
+    if (!pilot) {
+        return <div>Piloto no encontrado.</div>;
+    }
+
+    const pilotoNombre = `${pilot.givenName} ${pilot.familyName}` || 'Nombre desconocido';
+    const pilotoNacionalidad = pilot.nationality || 'Nacionalidad desconocida';
+    const pilotoFechaNac = pilot.dateOfBirth ? new Date(pilot.dateOfBirth).toLocaleDateString() : 'Fecha de nacimiento desconocida';
 
     return (
         <div>
@@ -120,59 +72,53 @@ const PilotoPage: React.FC<PilotoPageProps> = ({ params }) => {
                 <div className='w-full mb-2'>
                     <BackButton defaultPath="/f1-dashboard/pilotos" backText="Volver al Dashboard" />
                 </div>
-                {/* {session?.user.role === 'ADMIN' && (<div className="absolute top-0 right-0 p-4">
-                    <EditButton seccion="piloto" id={pilotoData.piloto.id} />
-                    <DeleteButton id={pilotoData.piloto.id}
-                        seccion="piloto"
-                        genero="masculino"
-                        onSuccess={() => {
-                            router.push('/f1-dashboard/pilotos');
-                            toast({
-                                title: 'Piloto eliminado',
-                                description: 'El piloto ha sido eliminado correctamente',
-                                variant: 'default',
-                            });
-                        }}
-                        onError={() => {
-                            toast({
-                                title: 'Error al eliminar el piloto',
-                                description: 'El piloto no ha sido eliminado correctamente',
-                                variant: 'destructive',
-                            });
-                            console.error('Error al eliminar el piloto');
-                        }}
-                    />
-                </div>)} */}
                 <div className="container mx-auto p-4">
-      <div className="flex flex-col md:flex-row items-center md:items-start">
-        <div className="w-full md:w-1/3 p-4">
-          <img src={driverData.imageUrl} alt={`${driverData.givenName} ${driverData.familyName}`} className="w-full rounded-lg" />
-        </div>
-        <div className="w-full md:w-2/3 p-4">
-          <div className="flex items-center mb-4">
-            <h1 className="text-4xl font-bold">{`${driverData.givenName} ${driverData.familyName}`}</h1>
-            <div className="ml-4 text-2xl">{driverData.number}</div>
-            <div className="ml-4">
-              <img src={`https://countryflagsapi.com/png/${driverData.nationality.toLowerCase()}`} alt={driverData.nationality} className="w-8 h-8" />
-            </div>
-          </div>
-          <div className="text-lg mb-4">
-            <strong>Team:</strong> {driverData.team}
-          </div>
-          <div className="grid grid-cols-2 gap-4 text-lg">
-            <div><strong>Country:</strong> {driverData.nationality}</div>
-            <div><strong>Podiums:</strong> {driverData.podiums}</div>
-            <div><strong>Points:</strong> {driverData.points}</div>
-            <div><strong>Grands Prix entered:</strong> {driverData.grandsPrixEntered}</div>
-            <div><strong>World Championships:</strong> {driverData.worldChampionships}</div>
-            <div><strong>Highest race finish:</strong> {driverData.highestRaceFinish}</div>
-            <div><strong>Highest grid position:</strong> {driverData.highestGridPosition}</div>
-            <div><strong>Date of birth:</strong> {new Date(driverData.dateOfBirth).toLocaleDateString()}</div>
-            <div><strong>Place of birth:</strong> {driverData.placeOfBirth}</div>
-          </div>
-        </div>
-      </div>
-    </div>
+                    <div className="flex flex-col md:flex-row items-center md:items-start">
+                        <div className="w-full md:w-1/3 p-4">
+                            {pilot.img ? (
+                                <img src={pilot.img} alt={pilotoNombre} className="w-full rounded-lg" />
+                            ) : (
+                                <img src='/default-driver.png' alt={pilotoNombre} className="w-full rounded-lg" />
+                            )}
+                            <div className="text-center mt-4">
+                                <h1 className="text-3xl font-bold">{pilotoNombre}</h1>
+                                <p className="text-xl">{pilot.permanentNumber ? `#${pilot.permanentNumber}` : 'Número desconocido'}</p>
+                            </div>
+                        </div>
+                        <div className="w-full md:w-2/3 p-4">
+                            <div className="text-lg mb-4">
+                                <strong>Fecha de nacimiento:</strong> {pilotoFechaNac}
+                            </div>
+                            <div className="text-lg mb-4">
+                                <strong>Equipo:</strong> {pilot.team || 'Equipo desconocido'}
+                            </div>
+                            <div className="text-lg mb-4">
+                                <strong>País:</strong> {pilot.nationality || 'País desconocido'}
+                            </div>
+                            <div className="text-lg mb-4">
+                                <strong>Podios:</strong> {pilot.podiums ?? 'Desconocido'}
+                            </div>
+                            <div className="text-lg mb-4">
+                                <strong>Puntos:</strong> {pilot.points ?? 'Desconocido'}
+                            </div>
+                            <div className="text-lg mb-4">
+                                <strong>Grandes Premios:</strong> {pilot.grandsPrixEntered ?? 'Desconocido'}
+                            </div>
+                            <div className="text-lg mb-4">
+                                <strong>Campeonatos Mundiales:</strong> {pilot.worldChampionships ?? 'Desconocido'}
+                            </div>
+                            <div className="text-lg mb-4">
+                                <strong>Mejor posición en carrera:</strong> {pilot.highestRaceFinish ?? 'Desconocido'}
+                            </div>
+                            <div className="text-lg mb-4">
+                                <strong>Mejor posición en parrilla:</strong> {pilot.highestGridPosition ?? 'Desconocido'}
+                            </div>
+                            <div className="text-lg mb-4">
+                                <strong>Lugar de nacimiento:</strong> {pilot.placeOfBirth ?? 'Desconocido'}
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     );

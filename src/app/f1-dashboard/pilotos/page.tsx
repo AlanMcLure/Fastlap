@@ -10,6 +10,12 @@ import { Button } from '@/components/ui/Button';
 import { useRouter } from 'next/navigation';
 import { authenticated } from '@/lib/utils';
 import BackButton from '@/components/BackButton';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip"
 
 export default function PilotsPage() {
   const [pilots, setPilots] = useState<PilotStats[]>([]);
@@ -17,9 +23,9 @@ export default function PilotsPage() {
   const [totalPages, setTotalPages] = useState(0);
   const totalElementsRef = useRef(20);
   const router = useRouter();
-  const { data: session } = useSession()
+  const { data: session } = useSession();
 
-  const [season, setSeason] = useState('');
+  const [season, setSeason] = useState('2024');
   const [winner, setWinner] = useState(false);
   const [podium, setPodium] = useState(false);
 
@@ -29,7 +35,7 @@ export default function PilotsPage() {
     const fetchPilots = async () => {
       let url = `/api/ergast/driver?page=${page}`;
 
-      if (season) {
+      if (season && season !== 'current') {
         url += `&season=${season}`;
       }
 
@@ -74,34 +80,69 @@ export default function PilotsPage() {
   return (
     <div className='max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8'>
       <BackButton defaultPath="/f1-dashboard" backText="Volver al Dashboard" />
-      <div className='flex justify-between items-center mb-2 mt-4'>
+      <div className='flex flex-col sm:flex-row justify-between items-center mb-4 mt-4'>
         <h1 className='font-bold text-3xl md:text-4xl mb-2'>Pilotos</h1>
-        <Button onClick={() => {
-          setWinner(!winner);
-          setPage(0);
-        }}><Trophy /></Button>
-        <Button onClick={() => {
-          setPodium(!podium);
-          setPage(0);
-        }}><Medal /></Button>
-        {/* {session?.user.role === 'ADMIN' && <CreateButton seccion="piloto" />} */}
+        <div className='flex flex-wrap space-x-2 items-center'>
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button onClick={() => {
+                  setWinner(!winner);
+                  setPage(0);
+                }}><Trophy /></Button>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Pilotos ganadores</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button onClick={() => {
+                  setPodium(!podium);
+                  setPage(0);
+                }}><Medal /></Button>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Pilotos con podium</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+          {/* {session?.user.role === 'ADMIN' && <CreateButton seccion="piloto" />} */}
+          <div>
+            {/* <label className="mb-2 font-medium text-gray-700">Temporada:</label> */}
+            <select
+              value={season}
+              onChange={e => {
+                setSeason(e.target.value);
+                setPage(0);
+              }}
+              className="border border-gray-300 rounded p-2"
+            >
+              <option value="current">Todos</option>
+              {Array.from({ length: 75 }, (_, i) => {
+                const year = 2024 - i;
+                return (
+                  <option key={year} value={year}>
+                    {year}
+                  </option>
+                );
+              })}
+            </select>
+          </div>
+        </div>        
       </div>
       <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 '>
         {pilots && pilots.length > 0 ? (
           pilots.map(pilot => (
-            <Link href={`/f1-dashboard/piloto/${pilot.id}`} key={pilot.id}>
-              <PilotCard key={pilot.id} pilot={pilot} />
+            <Link href={`/f1-dashboard/piloto/${pilot.driverId}`} key={pilot.driverId}>
+              <PilotCard key={pilot.driverId} pilot={pilot} />
             </Link>
           ))
         ) : (
           <p>No se encontraron pilotos que cumplan con el filtro.</p>
         )}
-      </div>
-      <div>
-        <label>
-          Temporada:
-          <input type="text" value={season} onChange={e => setSeason(e.target.value)} />
-        </label>
       </div>
       <div className="flex items-center justify-between border-t border-gray-200 px-4 py-3 sm:px-6 mt-2">
         <div className="flex flex-1 justify-between sm:hidden">
@@ -114,7 +155,7 @@ export default function PilotsPage() {
           </button>
           <button
             onClick={handleNextPage}
-            disabled={page === totalPages}
+            disabled={page === totalPages - 1}
             className="relative ml-3 inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
           >
             Siguiente

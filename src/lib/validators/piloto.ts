@@ -2,8 +2,8 @@ import { z } from 'zod'
 
 export const CreatePilotoValidator = z.object({
     nombre: z.string().nullable(),
-    fecha_nac: z.string().nullable().refine(value => value === null || !isNaN(Date.parse(value)), {
-        message: "fecha_nac must be a valid date string",
+    dateOfBirth: z.string().nullable().refine(value => value === null || !isNaN(Date.parse(value)), {
+        message: "dateOfBirth must be a valid date string",
     }),
     nacionalidad: z.string().nullable(),
     img_flag: z.string().url().nullable(),

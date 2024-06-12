@@ -4,10 +4,10 @@ import { Avatar, AvatarImage } from '../ui/Avatar';
 import Image from 'next/image';
 
 export interface PilotStats {
-    id: number;
+    driverId: number;
     givenName: string | null;
     familyName: string | null;
-    fecha_nac: string | null;
+    dateOfBirth: string | null;
     nationality: string | null;
     img: string | null;
 }

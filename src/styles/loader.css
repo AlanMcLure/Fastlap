@@ -1,6 +1,7 @@
-/* HTML: <div class="loader"></div> */
+/* Loader CSS */
 .loader {
-  width: 650px;
+  width: 100%;
+  max-width: 650px;
   height: 12px;
   --c:#000 50%,#0000 0;
   background: 
@@ -10,9 +11,16 @@
   background-size: 8px calc(100%/3);
   background-repeat: repeat-x;
   animation: l8 .25s infinite linear;
-}
-@keyframes l8 {
-    100% {background-position: -8px 0%,-8px 50%,-8px 100%}
+  margin: auto; /* Centrar horizontalmente */
 }
 
-/* Intentar hacer uno de un coche */
+@keyframes l8 {
+  100% { background-position: -8px 0%, -8px 50%, -8px 100%; }
+}
+
+/* Media query para pantallas pequeñas */
+@media (max-width: 640px) {
+  .loader {
+    width: 90%; /* Ajusta el tamaño del loader para pantallas pequeñas */
+  }
+}
