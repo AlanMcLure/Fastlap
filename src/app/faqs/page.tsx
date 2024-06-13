@@ -20,11 +20,7 @@ const faqData = [
   },
   {
     question: '¿Cómo puedo contactar con el soporte?',
-    answer: 'Puedes contactar con el soporte enviando un correo electrónico a soporte@example.com o llamando al (123) 456-7890.'
-  },
-  {
-    question: '¿Es necesario crear una cuenta para ver las noticias?',
-    answer: 'No, no es necesario crear una cuenta para ver las noticias. Sin embargo, registrarte te permitirá acceder a funciones adicionales.'
+    answer: 'Puedes contactar con el soporte enviando un correo electrónico a fastlapsoporte@gmail.com.'
   }
 ];
 

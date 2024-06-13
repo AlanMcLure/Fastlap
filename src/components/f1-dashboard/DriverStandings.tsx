@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 
-const DriverStandings = () => {
+const DriverStandings = ({ round = null }) => {
   const [standings, setStandings] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -12,7 +12,7 @@ const DriverStandings = () => {
     const fetchStandings = async () => {
       setIsLoading(true);
       try {
-        const response = await axios.get(`/api/ergast/standings?season=${season}&classificationType=${classificationType}`);
+        const response = await axios.get(`/api/ergast/standings?season=${season}&classificationType=${classificationType}${round ? `&round=${round}` : ''}`);
         const standingsList = response.data.MRData.StandingsTable.StandingsLists[0];
         let newStandings;
         if (classificationType === 'driver') {
@@ -47,28 +47,30 @@ const DriverStandings = () => {
     };
 
     fetchStandings();
-  }, [season, classificationType]);
+  }, [season, classificationType, round]);
 
   return (
     <div className="container mx-auto p-4">
       <div className="flex flex-col md:flex-row justify-between items-center mb-4">
         <h2 className="text-2xl font-bold mb-2 md:mb-0">{classificationType === 'driver' ? 'Clasificación de Pilotos' : 'Clasificación de Constructores'}</h2>
         <div className="flex space-x-4">
-          <select
-            value={season}
-            onChange={(e) => setSeason(e.target.value)}
-            className="border border-gray-300 rounded p-2"
-          >
-            {/* Lista de opciones de temporada */}
-            {Array.from({ length: 75 }, (_, i) => {
-              const year = 2024 - i;
-              return (
-                <option key={year} value={year}>
-                  {year}
-                </option>
-              );
-            })}
-          </select>
+          {!round && (
+            <select
+              value={season}
+              onChange={(e) => setSeason(e.target.value)}
+              className="border border-gray-300 rounded p-2"
+            >
+              {/* Lista de opciones de temporada */}
+              {Array.from({ length: 75 }, (_, i) => {
+                const year = 2024 - i;
+                return (
+                  <option key={year} value={year}>
+                    {year}
+                  </option>
+                );
+              })}
+            </select>
+          )}
           <select
             value={classificationType}
             onChange={(e) => setClassificationType(e.target.value)}
@@ -93,7 +95,7 @@ const DriverStandings = () => {
                   <>
                     <th className="py-2 px-4 border-b-2 border-gray-200 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Piloto</th>
                     <th className="hidden sm:table-cell py-2 px-4 border-b-2 border-gray-200 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Nacionalidad</th>
-                    <th className="hidden sm:table-cell py-2 px-4 border-b-2 border-gray-200 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Equipo</th>
+                    <th className="hidden md:table-cell py-2 px-4 border-b-2 border-gray-200 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Equipo</th>
                   </>
                 ) : (
                   <>
@@ -114,13 +116,13 @@ const DriverStandings = () => {
                         {standing.driver}
                         <dl className='lg:hidden font-light'>
                           <dt className='sr-only sm:hidden'>Equipo:</dt>
-                          <dd className='sm:hidden text-gray-500'>
+                          <dd className='md:hidden text-gray-500'>
                             {standing.car}
                           </dd>
-                        </dl>  
+                        </dl>
                       </td>
                       <td className="hidden sm:table-cell py-2 px-4 border-b border-gray-200">{standing.nationality}</td>
-                      <td className="hidden sm:table-cell py-2 px-4 border-b border-gray-200">{standing.car}</td>
+                      <td className="hidden md:table-cell py-2 px-4 border-b border-gray-200">{standing.car}</td>
                     </>
                   ) : (
                     <>

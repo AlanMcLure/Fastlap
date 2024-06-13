@@ -60,6 +60,10 @@ export function UserAccountNav({ user }: UserAccountNavProps) {
         <DropdownMenuItem asChild>
           <Link href='/settings'>Ajustes</Link>
         </DropdownMenuItem>
+
+        <DropdownMenuItem asChild>
+          <Link href='/faqs'>FAQs</Link>
+        </DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem
           className='cursor-pointer'

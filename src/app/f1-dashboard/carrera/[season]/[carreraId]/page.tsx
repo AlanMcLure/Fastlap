@@ -3,6 +3,8 @@
 import React, { useEffect, useState } from 'react';
 import RaceResults from '@/components/f1-dashboard/RaceResults';
 import { useParams } from 'next/navigation';
+import BackButton from '@/components/BackButton';
+import DriverStandings from '@/components/f1-dashboard/DriverStandings';
 
 const RaceResultsPage = () => {
 
@@ -39,15 +41,19 @@ const RaceResultsPage = () => {
     }
   }, [season, carreraId]);
 
-  if (loading) return <p>Loading...</p>;
-  if (error) return <p>Error: {error}</p>;
-
+  if (loading) return <div className='loader'></div>;
+  if (error) return <><div className='w-full mb-2'><BackButton defaultPath="/f1-dashboard/carreras" backText="Volver al Dashboard" />
+</div><p>La carrera aún no ha ocurrido</p></>;
   return (
     <div className="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
+      <div className='w-full mb-2'>
+        <BackButton defaultPath="/f1-dashboard/carreras" backText="Volver al Dashboard" />
+      </div>
       <h1 className="font-bold text-3xl md:text-4xl mb-2">
         Resultados de la Carrera {season} - Ronda {carreraId}
       </h1>
       <RaceResults raceData={raceData} />
+      <DriverStandings round={carreraId}></DriverStandings>
     </div>
   );
 };
