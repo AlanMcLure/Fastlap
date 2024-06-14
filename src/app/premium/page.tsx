@@ -38,7 +38,7 @@ export default async function PremiumPage() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
                     <div>
                         <h2 className="mb-4 text-4xl tracking-tight font-extrabold text-gray-900 dark:text-white">Un nuevo mundo de estadísticas de F1 a tu alcance.</h2>
-                        <p className="mb-6 font-light text-gray-500 md:text-lg dark:text-gray-400">Flowbite helps you connect with friends and communities of people who share your interests. Connecting with your friends and family as well as discovering new ones is easy with features like Groups.</p>
+                        <p className="mb-6 font-light text-gray-500 md:text-lg dark:text-gray-400">Accede a estadísticas exclusivas, gráficos detallados y datos históricos para llevar tu pasión por la Fórmula 1 al siguiente nivel. Suscríbete a nuestro plan premium y descubre información que solo los verdaderos fanáticos pueden disfrutar.</p>
                     </div>
                     {prices.map(price => (
                         <div key={price.id} className='rounded-lg border border-gray-200 p-6 bg-white shadow-sm'>

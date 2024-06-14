@@ -12,7 +12,7 @@ const CountdownCard: React.FC<CountdownCardProps> = ({ nextRace }) => {
 
     useEffect(() => {
         const calculateTimeLeft = () => {
-            const raceDateTime = new Date(`${nextRace.date}`);
+            const raceDateTime = new Date(`${nextRace.date}T${nextRace.time}Z`);
             const difference = +raceDateTime - +new Date();
             if (difference > 0) {
                 setTimeLeft({
@@ -32,20 +32,23 @@ const CountdownCard: React.FC<CountdownCardProps> = ({ nextRace }) => {
 
     return (
         <div className="card bg-white shadow-lg rounded-lg p-6 mb-6">
-            <h2 className="font-bold text-2xl mb-4">Próximo Gran Premio: {nextRace.raceName}</h2>
-            {/* <p className="text-lg mb-4">Empieza en:</p> */}
-            <div className="countdown flex justify-center text-2xl">
-                <div className="mx-2">
-                    <span>{timeLeft.days}</span> <span>días</span>
+            <h2 className="font-bold text-2xl mb-4 text-center">Próximo Gran Premio: {nextRace.raceName}</h2>
+            <div className="countdown flex justify-center text-2xl sm:text-3xl md:text-4xl lg:text-5xl">
+                <div className="flex flex-col items-center mx-2">
+                    <span className="font-bold">{timeLeft.days}</span>
+                    <span className="text-sm sm:text-base">días</span>
                 </div>
-                <div className="mx-2">
-                    <span>{timeLeft.hours}</span> <span>horas</span>
+                <div className="flex flex-col items-center mx-2">
+                    <span className="font-bold">{timeLeft.hours}</span>
+                    <span className="text-sm sm:text-base">horas</span>
                 </div>
-                <div className="mx-2">
-                    <span>{timeLeft.minutes}</span> <span>minutos</span>
+                <div className="flex flex-col items-center mx-2">
+                    <span className="font-bold">{timeLeft.minutes}</span>
+                    <span className="text-sm sm:text-base">minutos</span>
                 </div>
-                <div className="mx-2">
-                    <span>{timeLeft.seconds}</span> <span>segundos</span>
+                <div className="flex flex-col items-center mx-2">
+                    <span className="font-bold">{timeLeft.seconds}</span>
+                    <span className="text-sm sm:text-base">segundos</span>
                 </div>
             </div>
         </div>
