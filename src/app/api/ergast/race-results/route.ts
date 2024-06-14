@@ -17,7 +17,6 @@ export async function GET(req: Request) {
       throw new Error('Network response was not ok');
     }
     const data = await response.json();
-    console.log('API Data:', data); // Agrega este console log para ver los datos de la API
     return NextResponse.json({ content: data.MRData.RaceTable.Races[0].Results }, { status: 200 });
   } catch (error) {
     return NextResponse.json({ message: error.message }, { status: 500 });

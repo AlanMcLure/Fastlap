@@ -48,8 +48,6 @@ export async function DELETE(
       return new Response(error.message, { status: 400 })
     }
 
-    console.log(error);
-
     return new Response(
       'Could not delete post at this time. Please try later',
       { status: 500 }

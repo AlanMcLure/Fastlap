@@ -44,8 +44,6 @@ const UserLayout = async ({
     }
   })
 
-  console.log(user)
-
   if (!user) return notFound()
 
   const session = await getAuthSession()

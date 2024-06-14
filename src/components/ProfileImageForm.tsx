@@ -50,8 +50,6 @@ export function ProfileImageForm({ user, className, ...props }: ProfileImageForm
                 imageUrl = res.fileUrl;
             }
 
-            console.log(imageUrl);
-
             const { data } = await axios.patch(`/api/profile-image/`, { imageUrl })
             return data
         },

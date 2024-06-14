@@ -15,18 +15,15 @@ const RaceResultsPage = () => {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    console.log(`Season: ${season}, CarreraId: ${carreraId}`); // Debug: log season and carreraId
     if (season && carreraId) {
       const fetchRaceData = async () => {
         setLoading(true); // Ensure loading is true at the start
-        console.log(`Fetching data for season: ${season}, carreraId: ${carreraId}`);
         try {
           const response = await fetch(`/api/ergast/race-results?season=${season}&round=${carreraId}`);
           if (!response.ok) {
             throw new Error('Failed to fetch race data');
           }
           const data = await response.json();
-          console.log('Fetched Race Data:', data); // Check the fetched data
           setRaceData(data.content);
         } catch (error) {
           setError(error.message);

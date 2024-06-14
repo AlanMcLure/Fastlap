@@ -30,8 +30,6 @@ const PilotoPage: React.FC = () => {
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
-    console.log("pilotoId: ", pilotoId);
-
     useEffect(() => {
         if (pilotoId) {
             const fetchPilotData = async () => {

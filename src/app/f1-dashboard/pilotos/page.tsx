@@ -29,8 +29,6 @@ export default function PilotsPage() {
   const [winner, setWinner] = useState(false);
   const [podium, setPodium] = useState(false);
 
-  console.log('PilotsPage', session);
-
   useEffect(() => {
     const fetchPilots = async () => {
       let url = `/api/ergast/driver?page=${page}`;

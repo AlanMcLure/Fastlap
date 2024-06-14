@@ -69,8 +69,6 @@ export const GraficoPuntos = ({ pilotoId, anyo }: GraficoPuntosProps) => {
                     return puntosAcumulados;
                 });
 
-                console.log(data);
-
                 setChartData({
                     labels: labels,
                     datasets: [

@@ -36,7 +36,6 @@ const Post: FC<PostProps> = ({
 
   const invalidatePostsCache = () => {
     queryClient.invalidateQueries(['posts']); // Invalidar la caché de los posts
-    console.log('Posts cache invalidated');
   };
 
   return (
