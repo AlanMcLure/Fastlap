@@ -15,16 +15,16 @@ export const newsData = [
   },
   {
       id: 2,
-      title: 'Lewis Hamilton se Retira: Un Adiós a una Leyenda',
-      summary: 'El siete veces campeón del mundo, Lewis Hamilton, ha anunciado su retiro...',
+      title: 'Lewis Hamilton a Ferrari: Un Nuevo Comienzo',
+      summary: 'El siete veces campeón del mundo, Lewis Hamilton, ha anunciado su traslado a Ferrari...',
       content: `
-      <p>El siete veces campeón del mundo, Lewis Hamilton, ha anunciado su retiro de la Fórmula 1 al final de la temporada 2024. En una emotiva conferencia de prensa, Hamilton expresó su gratitud a los fans y al equipo Mercedes.</p><br>
+      <p>El siete veces campeón del mundo, Lewis Hamilton, ha anunciado su traslado a Ferrari para la temporada 2025. En una sorprendente y emotiva conferencia de prensa, Hamilton expresó su entusiasmo por el nuevo desafío y su gratitud hacia Mercedes.</p><br>
 
-      <p>Hamilton, que debutó en 2007, ha tenido una carrera llena de éxitos y ha dejado una huella imborrable en la historia del deporte. Con más de 100 victorias y numerosos récords, su legado es indiscutible.</p><br>
+      <p>Hamilton, que debutó en 2007, ha tenido una carrera llena de éxitos con Mercedes, y su cambio a Ferrari marca el inicio de una nueva era. "Estoy increíblemente emocionado de unirme a Ferrari y comenzar este nuevo capítulo. Siempre he admirado a Ferrari y estoy ansioso por trabajar con el equipo para llevarlos de vuelta a la cima," dijo Hamilton.</p><br>
 
-      <p>El equipo Mercedes ha anunciado que rendirá un homenaje especial a Hamilton en la última carrera de la temporada en Abu Dhabi.</p><br>
+      <p>El equipo Ferrari ha acogido con entusiasmo la llegada de Hamilton. El jefe del equipo, Fred Vasseur, declaró: "La llegada de Lewis es un testimonio de nuestra ambición de volver a ser competitivos. Su experiencia y talento serán invaluables para nuestro equipo."</p><br>
 
-      <p>Los fans y colegas han inundado las redes sociales con mensajes de apoyo y agradecimiento, destacando no solo sus logros en la pista, sino también su impacto fuera de ella, como defensor de la diversidad y la igualdad.</p><br>
+      <p>Los fans y colegas han reaccionado con sorpresa y emoción a la noticia, inundando las redes sociales con mensajes de apoyo. Muchos están ansiosos por ver cómo se desarrollará esta nueva colaboración y qué logros podrán alcanzar juntos.</p><br>
       `,
   },
   {
