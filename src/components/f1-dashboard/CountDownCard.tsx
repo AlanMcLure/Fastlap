@@ -12,7 +12,7 @@ const CountdownCard: React.FC<CountdownCardProps> = ({ nextRace }) => {
 
     useEffect(() => {
         const calculateTimeLeft = () => {
-            const raceDateTime = new Date(`${nextRace.date}T${nextRace.time}Z`);
+            const raceDateTime = new Date(`${nextRace.date}`);
             const difference = +raceDateTime - +new Date();
             if (difference > 0) {
                 setTimeLeft({
