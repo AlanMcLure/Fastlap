@@ -14,7 +14,7 @@ export default async function Home() {
 
   return (
     <>
-      <h1 className='font-bold text-3xl md:text-4xl'>Tú feed</h1>
+      <h1 className='font-bold text-3xl md:text-4xl'>prueba</h1>
       <div className='grid grid-cols-1 md:grid-cols-3 gap-y-4 md:gap-x-4 py-6'>
         {/* Subreddit info y PremiumCard */}
         <div className='space-y-4 order-first md:order-last'>
@@ -39,15 +39,15 @@ export default async function Home() {
                 href={`/r/create`}>
                 Crear comunidad
               </Link>
-              
+
             </div>
-            
+
           </div>
-        {/* Mostrar PremiumCard solo si el usuario es de tipo USER */}
-        {session?.user?.role === 'USER' && <PremiumCard />}
-      </div>
-      {/* Feed de posts */}
-      <div className='md:col-span-2'>
+          {/* Mostrar PremiumCard solo si el usuario es de tipo USER */}
+          {session?.user?.role === 'USER' && <PremiumCard />}
+        </div>
+        {/* Feed de posts */}
+        <div className='md:col-span-2'>
           {/* @ts-expect-error server component */}
           {session ? <CustomFeed /> : <GeneralFeed />}
         </div>
