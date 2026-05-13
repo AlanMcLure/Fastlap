@@ -1,10 +1,31 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 
-const DriverStandings = ({ round = null }) => {
-  const [standings, setStandings] = useState([]);
+type DriverStandingRow = {
+  pos: string
+  driver: string
+  nationality: string
+  car: string
+  pts: string
+}
+
+type ConstructorStandingRow = {
+  pos: string
+  team: string
+  nationality: string
+  pts: string
+}
+
+type StandingRow = DriverStandingRow | ConstructorStandingRow
+
+interface DriverStandingsProps {
+  round?: string | string[]
+}
+
+const DriverStandings = ({ round }: DriverStandingsProps) => {
+  const [standings, setStandings] = useState<StandingRow[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState<Error | null>(null);
   const [season, setSeason] = useState('current');
   const [classificationType, setClassificationType] = useState('driver');
 
@@ -14,9 +35,9 @@ const DriverStandings = ({ round = null }) => {
       try {
         const response = await axios.get(`/api/ergast/standings?season=${season}&classificationType=${classificationType}${round ? `&round=${round}` : ''}`);
         const standingsList = response.data.MRData.StandingsTable.StandingsLists[0];
-        let newStandings;
+        let newStandings: StandingRow[];
         if (classificationType === 'driver') {
-          newStandings = standingsList.DriverStandings.map((driverStanding) => {
+          newStandings = standingsList.DriverStandings.map((driverStanding: any): DriverStandingRow => {
             const driver = driverStanding.Driver;
             const constructor = driverStanding.Constructors[0];
             return {
@@ -28,7 +49,7 @@ const DriverStandings = ({ round = null }) => {
             };
           });
         } else {
-          newStandings = standingsList.ConstructorStandings.map((constructorStanding) => {
+          newStandings = standingsList.ConstructorStandings.map((constructorStanding: any): ConstructorStandingRow => {
             const constructor = constructorStanding.Constructor;
             return {
               pos: constructorStanding.position,
@@ -39,8 +60,8 @@ const DriverStandings = ({ round = null }) => {
           });
         }
         setStandings(newStandings);
-      } catch (error) {
-        setError(error);
+      } catch (err) {
+        setError(err instanceof Error ? err : new Error('Unknown error'));
       } finally {
         setIsLoading(false);
       }
@@ -113,20 +134,20 @@ const DriverStandings = ({ round = null }) => {
                   {classificationType === 'driver' ? (
                     <>
                       <td className="py-2 px-4 border-b border-gray-200">
-                        {standing.driver}
+                        {(standing as DriverStandingRow).driver}
                         <dl className='lg:hidden font-light'>
                           <dt className='sr-only sm:hidden'>Equipo:</dt>
                           <dd className='md:hidden text-gray-500'>
-                            {standing.car}
+                            {(standing as DriverStandingRow).car}
                           </dd>
                         </dl>
                       </td>
                       <td className="hidden sm:table-cell py-2 px-4 border-b border-gray-200">{standing.nationality}</td>
-                      <td className="hidden md:table-cell py-2 px-4 border-b border-gray-200">{standing.car}</td>
+                      <td className="hidden md:table-cell py-2 px-4 border-b border-gray-200">{(standing as DriverStandingRow).car}</td>
                     </>
                   ) : (
                     <>
-                      <td className="py-2 px-4 border-b border-gray-200">{standing.team}</td>
+                      <td className="py-2 px-4 border-b border-gray-200">{(standing as ConstructorStandingRow).team}</td>
                       <td className="hidden sm:table-cell py-2 px-4 border-b border-gray-200">{standing.nationality}</td>
                     </>
                   )}

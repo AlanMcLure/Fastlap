@@ -36,7 +36,7 @@ export const Editor: React.FC<EditorProps> = ({ subredditId }) => {
     },
   })
   const ref = useRef<EditorJS | null>(null)
-  const _titleRef = useRef<HTMLTextAreaElement>(null)
+  const _titleRef = useRef<HTMLTextAreaElement | null>(null)
   const router = useRouter()
   const [isMounted, setIsMounted] = useState<boolean>(false)
   const pathname = usePathname()
@@ -193,7 +193,6 @@ export const Editor: React.FC<EditorProps> = ({ subredditId }) => {
           <TextareaAutosize
             ref={(e) => {
               titleRef(e)
-              // @ts-ignore
               _titleRef.current = e
             }}
             {...rest}

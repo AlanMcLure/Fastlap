@@ -10,9 +10,9 @@ const RaceResultsPage = () => {
 
   const { season, carreraId } = useParams();
 
-  const [raceData, setRaceData] = useState(null);
+  const [raceData, setRaceData] = useState<any[] | null>(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     if (season && carreraId) {
@@ -26,7 +26,7 @@ const RaceResultsPage = () => {
           const data = await response.json();
           setRaceData(data.content);
         } catch (error) {
-          setError(error.message);
+          setError(error instanceof Error ? error.message : 'Unknown error');
         } finally {
           setLoading(false);
         }

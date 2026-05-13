@@ -340,7 +340,7 @@ export async function GET(req: Request) {
                     placeOfBirth: 'Shanghai, China'
                 };
             } else {
-                const getRandomNumber = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
+                const getRandomNumber = (min: number, max: number) => Math.floor(Math.random() * (max - min + 1)) + min;
 
                 driver = {
                     ...data.MRData.DriverTable.Drivers[0],

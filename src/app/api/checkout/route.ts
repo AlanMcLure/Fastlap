@@ -13,10 +13,13 @@ export async function POST(req: Request) {
 
   const origin = req.headers.get('origin');
 
-  const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
+  const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
+    apiVersion: '2024-04-10',
+    typescript: true,
+  });
 
   const Stripesession = await stripe.checkout.sessions.create({
-    customer_email: session.user.email,
+    customer_email: session.user.email ?? undefined,
     mode: "subscription",
     payment_method_types: ["card"],
     line_items: [

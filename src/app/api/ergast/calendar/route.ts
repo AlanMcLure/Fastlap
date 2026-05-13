@@ -22,6 +22,7 @@ export async function GET(req: Request) {
 
         return NextResponse.json({ content: paginatedRaces, totalPages: Math.ceil(races.length / limit), totalElements: races.length }, { status: 200 });
     } catch (error) {
-        return NextResponse.json({ message: error.message }, { status: 500 });
+        const message = error instanceof Error ? error.message : 'Unknown error';
+        return NextResponse.json({ message }, { status: 500 });
     }
 }

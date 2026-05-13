@@ -3,9 +3,12 @@ import { Stripe } from 'stripe';
 import { db } from '@/lib/db';
 import { NextResponse } from 'next/server';
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
+  apiVersion: '2024-04-10',
+  typescript: true,
+});
 
-const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
+const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET!;
 
 export async function POST(req: Request) {
     
@@ -18,8 +21,8 @@ export async function POST(req: Request) {
     try {
       event = stripe.webhooks.constructEvent(body, sig!, webhookSecret);
     } catch (err) {
-      console.error(`Webhook Error: ${err.message}`);
-      return NextResponse.json({ error: err.message }, { status: 400 });
+      const message = err instanceof Error ? err.message : 'Unknown error';
+      return NextResponse.json({ error: message }, { status: 400 });
     }
 
     // Handle the event

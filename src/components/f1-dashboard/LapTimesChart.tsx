@@ -4,14 +4,16 @@ import {
   LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer
 } from 'recharts';
 
+type LapPoint = { lap: number; time: number }
+
 const LapTimesChart = () => {
   const [year, setYear] = useState('2024');
   const [grandPrix, setGrandPrix] = useState('');
   const [session, setSession] = useState('');
   const [driver, setDriver] = useState('');
-  const [lapTimes, setLapTimes] = useState([]);
+  const [lapTimes, setLapTimes] = useState<LapPoint[]>([]);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState<Error | null>(null);
 
   // Opciones de filtros
   const years = ['2023', '2024']; // Agrega más años según sea necesario
@@ -35,14 +37,14 @@ const LapTimesChart = () => {
       const response = await axios.get(`http://ergast.com/api/f1/${year}/${grandPrix}/drivers/${driver}/${session}.json`);
       const lapsData = response.data.MRData.RaceTable.Races[0]?.Laps || [];
 
-      const lapData = lapsData.map(lap => ({
+      const lapData: LapPoint[] = lapsData.map((lap: any) => ({
         lap: parseInt(lap.number, 10),
-        time: parseFloat(lap.Timings.find(timing => timing.driverId === driver)?.time.replace(':', '.'))
+        time: parseFloat(lap.Timings.find((timing: any) => timing.driverId === driver)?.time.replace(':', '.'))
       }));
 
       setLapTimes(lapData);
     } catch (err) {
-      setError(err);
+      setError(err instanceof Error ? err : new Error('Unknown error'));
     } finally {
       setLoading(false);
     }

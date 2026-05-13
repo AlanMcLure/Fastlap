@@ -4,8 +4,10 @@ import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
+type Race = { round: string; raceName: string; date: string }
+
 const RaceCalendar = () => {
-  const [calendar, setCalendar] = useState([]);
+  const [calendar, setCalendar] = useState<Race[]>([]);
   const [season, setSeason] = useState(new Date().getFullYear().toString());
   const router = useRouter();
 

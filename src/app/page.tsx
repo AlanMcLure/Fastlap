@@ -48,7 +48,6 @@ export default async function Home() {
         </div>
         {/* Feed de posts */}
         <div className='md:col-span-2'>
-          {/* @ts-expect-error server component */}
           {session ? <CustomFeed /> : <GeneralFeed />}
         </div>
       </div>

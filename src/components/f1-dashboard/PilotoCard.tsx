@@ -17,7 +17,9 @@ interface PilotCardProps {
 }
 
 const PilotCard: React.FC<PilotCardProps> = ({ pilot }) => {
-    const pilotoNombre = pilot.givenName + ' ' +  pilot.familyName ?? 'Nombre desconocido';
+    const pilotoNombre = pilot.givenName && pilot.familyName
+        ? `${pilot.givenName} ${pilot.familyName}`
+        : 'Nombre desconocido';
     const PilotoNacionalidad = pilot.nationality ?? 'Nacionlidad desconocida';
 
     return (

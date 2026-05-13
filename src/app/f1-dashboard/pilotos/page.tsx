@@ -8,7 +8,6 @@ import CreateButton from '@/components/f1-dashboard/CreateButton';
 import { useSession } from 'next-auth/react';
 import { Button } from '@/components/ui/Button';
 import { useRouter } from 'next/navigation';
-import { authenticated } from '@/lib/utils';
 import BackButton from '@/components/BackButton';
 import {
   Tooltip,

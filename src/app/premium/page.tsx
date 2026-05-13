@@ -14,10 +14,13 @@ export const metadata = {
 }
 
 async function loadPrices() {
-    const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
+    const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
+      apiVersion: '2024-04-10',
+      typescript: true,
+    });
     const prices = await stripe.prices.list();
     const sortedPrices = prices.data.sort(
-      (a, b) => a.unit_amount - b.unit_amount
+      (a, b) => (a.unit_amount ?? 0) - (b.unit_amount ?? 0)
     );
     return sortedPrices;
   }
@@ -52,10 +55,10 @@ export default async function PremiumPage() {
                             />
                             </div>
                             <p className='text-gray-700 mb-4 mt-6'>
-                            ¡Accede a todas las funciones exclusivas por solo {price.unit_amount / 100}€/mes!
+                            ¡Accede a todas las funciones exclusivas por solo {(price.unit_amount ?? 0) / 100}€/mes!
                             </p>
                             <div className='flex justify-between items-center'>
-                            <p className='text-2xl font-semibold'>{price.unit_amount / 100}€/mes</p>
+                            <p className='text-2xl font-semibold'>{(price.unit_amount ?? 0) / 100}€/mes</p>
                             {/* <button className={buttonVariants({ size: 'lg', className: 'bg-rose-600 text-white' })}>
                                 Suscribirse
                                 <CreditCard className='ml-2 h-5 w-5' />

@@ -1,6 +1,10 @@
 import React from 'react';
 
-const RaceResults = ({ raceData }) => {
+interface RaceResultsProps {
+  raceData: any[] | null
+}
+
+const RaceResults = ({ raceData }: RaceResultsProps) => {
   if (!raceData || raceData.length === 0) {
     return <p>No se encontraron resultados para esta carrera.</p>;
   }
@@ -30,7 +34,7 @@ const RaceResults = ({ raceData }) => {
               </tr>
             </thead>
             <tbody>
-              {raceData.map((standing, index) => (
+              {raceData.map((standing: any, index: number) => (
                 <tr key={index} className="hover:bg-gray-100">
                   <td className="py-2 px-4 border-b border-gray-200">{standing.position}</td>
                   <td className="py-2 px-4 border-b border-gray-200">

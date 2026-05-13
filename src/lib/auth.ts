@@ -1,7 +1,6 @@
 import { db } from '@/lib/db'
 import { PrismaAdapter } from '@next-auth/prisma-adapter'
 import { UserRole } from '@prisma/client'
-import { as } from '@upstash/redis/zmscore-a4ec4c2a'
 import { nanoid } from 'nanoid'
 import { NextAuthOptions, getServerSession } from 'next-auth'
 import GoogleProvider from 'next-auth/providers/google'

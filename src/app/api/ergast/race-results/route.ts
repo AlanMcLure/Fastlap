@@ -19,6 +19,7 @@ export async function GET(req: Request) {
     const data = await response.json();
     return NextResponse.json({ content: data.MRData.RaceTable.Races[0].Results }, { status: 200 });
   } catch (error) {
-    return NextResponse.json({ message: error.message }, { status: 500 });
+    const message = error instanceof Error ? error.message : 'Unknown error';
+    return NextResponse.json({ message }, { status: 500 });
   }
 }
