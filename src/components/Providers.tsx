@@ -8,7 +8,14 @@ interface LayoutProps {
   children: ReactNode
 }
 
-const queryClient = new QueryClient()
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 60_000,
+      cacheTime: 300_000,
+    },
+  },
+})
 
 const Providers: FC<LayoutProps> = ({ children }) => {
   return (

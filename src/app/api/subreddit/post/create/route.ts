@@ -1,5 +1,6 @@
 import { getAuthSession } from '@/lib/auth'
 import { db } from '@/lib/db'
+import { postRatelimit } from '@/lib/ratelimit'
 import { PostValidator } from '@/lib/validators/post'
 import { z } from 'zod'
 
@@ -13,6 +14,11 @@ export async function POST(req: Request) {
 
     if (!session?.user) {
       return new Response('Unauthorized', { status: 401 })
+    }
+
+    const { success } = await postRatelimit.limit(session.user.id)
+    if (!success) {
+      return new Response('Demasiadas peticiones. Espera un momento.', { status: 429 })
     }
 
     // verify user is subscribed to passed subreddit id
@@ -30,7 +36,7 @@ export async function POST(req: Request) {
     await db.post.create({
       data: {
         title,
-        content,
+        content: content ?? undefined,
         authorId: session.user.id,
         subredditId,
       },

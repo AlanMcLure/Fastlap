@@ -39,20 +39,20 @@ Inventario de mejoras detectadas tras revisar el código. Agrupadas por impacto 
 
 ## ⚡ Rendimiento
 
-### 6. DB hit en cada request autenticada
-- **Archivo**: [src/lib/auth.ts:37](src/lib/auth.ts#L37)
+### ✅ 6. DB hit en cada request autenticada
+- **Archivo**: [src/lib/auth.ts](src/lib/auth.ts)
 - **Problema**: el callback `jwt` ejecuta `db.user.findFirst` *en cada llamada*, no solo en el login. Cada navegación autenticada genera una query a Postgres.
-- **Acción**: rehidratar desde el token; solo tocar BD en el primer sign-in (`user` presente) o tras un trigger explícito.
+- **Acción**: ~~rehidratar desde el token~~. **Hecho** — `if (!user) return token` al inicio del callback; el parámetro `user` solo existe en el evento de sign-in. **Nota**: si el rol cambia vía Stripe webhook, el token refleja el cambio en el próximo sign-in.
 
-### 7. `QueryClient` sin defaults
-- **Archivo**: [src/components/Providers.tsx:11](src/components/Providers.tsx#L11)
-- **Problema**: sin `staleTime` ni `gcTime` configurados, se refetchea por defecto en cada mount → más tráfico del necesario.
-- **Acción**: definir defaults razonables (ej. `staleTime: 60_000`).
+### ✅ 7. `QueryClient` sin defaults
+- **Archivo**: [src/components/Providers.tsx](src/components/Providers.tsx)
+- **Problema**: sin `staleTime` ni `cacheTime` configurados, se refetchea por defecto en cada mount → más tráfico del necesario.
+- **Acción**: ~~definir defaults razonables~~. **Hecho** — `staleTime: 60_000`, `cacheTime: 300_000`.
 
-### 8. Página principal con caching desactivado
-- **Archivo**: [src/app/page.tsx:9-10](src/app/page.tsx#L9-L10)
-- **Problema**: `export const dynamic = 'force-dynamic'` + `fetchCache = 'force-no-store'` desactivan todo el caching de Next. Revisar si realmente es necesario.
-- **Acción**: revisar y, donde se pueda, dejar que Next decida.
+### ✅ 8. Página principal con caching desactivado
+- **Archivo**: [src/app/page.tsx](src/app/page.tsx)
+- **Problema**: `export const dynamic = 'force-dynamic'` + `fetchCache = 'force-no-store'` desactivan todo el caching de Next.
+- **Acción**: ~~eliminar las dos directivas~~. **Hecho** — `getAuthSession()` lee cookies internamente y ya marca la página como dinámica automáticamente.
 
 ---
 
@@ -93,10 +93,10 @@ Inventario de mejoras detectadas tras revisar el código. Agrupadas por impacto 
 - **Problema**: `"name": "reddit-clone"`, debería ser `"fastlap"`.
 - **Acción**: ~~renombrar~~. **Hecho.**
 
-### 13. ⚠️ `.env` comiteado al repo
-- **Archivo**: `.env` (890 bytes en el repo).
-- **Problema crítico**: si contiene secretos reales, están expuestos en el historial de git.
-- **Acción**: rotar todos los secretos, añadir `.env` a `.gitignore`, y limpiar el historial (`git filter-repo` o equivalente).
+### ✅ 13. `.env` comiteado al repo
+- **Archivo**: `.env`.
+- **Problema**: posible exposición de secretos en el historial.
+- **Acción**: **No era un problema real** — `.env` ya estaba en `.gitignore` y nunca fue añadido al historial de git (`git log -- .env` sin resultados). Verificado.
 
 ---
 
@@ -109,10 +109,10 @@ Inventario de mejoras detectadas tras revisar el código. Agrupadas por impacto 
 
 > **Edge case detectado al refactorizar**: si los votos bajan por debajo de `CACHE_AFTER_UPVOTES` tras un toggle/downvote, el caché en Redis queda *stale* (nunca se invalida). Comportamiento heredado del código original. Mejora pendiente: invalidar `post:${postId}` cuando `votesAmt < CACHE_AFTER_UPVOTES`.
 
-### 15. Comentarios explicativos innecesarios en handlers
-- **Archivo**: [src/app/api/posts/route.ts:93-105](src/app/api/posts/route.ts#L93-L105)
+### ✅ 15. Comentarios explicativos innecesarios en handlers
+- **Archivo**: [src/app/api/posts/route.ts](src/app/api/posts/route.ts)
 - **Problema**: 13 líneas de comentario en español describiendo paso a paso lo que ya hace el código de arriba. Ruido.
-- **Acción**: borrar.
+- **Acción**: ~~borrar~~. **Hecho.**
 
 ### ✅ 16. `@ts-expect-error` / `@ts-ignore` repartidos
 - **Archivos**: 4 en async Server Components ([layout.tsx](src/app/layout.tsx), [page.tsx](src/app/page.tsx), [r/[slug]/post/[postId]/page.tsx](src/app/r/[slug]/post/[postId]/page.tsx) ×2) y 1 en [Editor.tsx](src/components/Editor.tsx).
@@ -153,10 +153,10 @@ Inventario de mejoras detectadas tras revisar el código. Agrupadas por impacto 
 - **Problema**: `({ raceData })` sin tipar.
 - **Acción**: añadida `interface RaceResultsProps { raceData: any[] | null }`.
 
-### 17. Validación pobre del contenido del post
-- **Archivo**: [src/lib/validators/post.ts:13](src/lib/validators/post.ts#L13)
+### ✅ 17. Validación pobre del contenido del post
+- **Archivo**: [src/lib/validators/post.ts](src/lib/validators/post.ts)
 - **Problema**: `content: z.any()` — se pierde toda validación del JSON de EditorJS.
-- **Acción**: definir un schema mínimo del shape de EditorJS (`{ blocks: Array<...> }`).
+- **Acción**: ~~definir un schema mínimo~~. **Hecho** — `EditorContent` con `blocks: Array<{ type: string, data: Record<string, any> }>`, `time?` y `version?`. Zod rechaza bodies malformados antes de tocar la BD.
 
 ---
 
@@ -164,21 +164,21 @@ Inventario de mejoras detectadas tras revisar el código. Agrupadas por impacto 
 
 ### 18. Migrar mutaciones a Server Actions
 - **Problema**: la mayoría de `/api/*` son mutaciones llamadas desde el cliente con `axios`. En App Router las Server Actions son más limpias y eliminan la deserialización manual + validación duplicada.
-- **Acción**: pasar gradualmente create/delete/vote a Server Actions.
+- **Análisis**: 9 endpoints candidatos. Los 2 de voto (`post/vote`, `comment/vote`) tienen optimistic updates con TanStack Query — migrarlos requiere `useOptimistic` de React 19, **no disponible en Next.js 14**. Los otros 7 (create, delete, subscribe, etc.) son migrables sin drama. **Pendiente** — mejor abordar tras migrar a Next 15.
 
-### 19. `relationMode = "prisma"` quita integridad referencial
-- **Archivo**: [prisma/schema.prisma:11](prisma/schema.prisma#L11)
-- **Problema**: sin FKs en la BD, datos inconsistentes son posibles si algo escribe fuera de Prisma o una transacción falla a medias.
-- **Acción**: si tu Postgres soporta FKs (lo soporta), pasar a `foreignKeys`.
+### ✅ 19. `relationMode = "prisma"` quita integridad referencial
+- **Archivo**: [prisma/schema.prisma](prisma/schema.prisma)
+- **Problema**: sin FKs en la BD, datos inconsistentes son posibles si algo escribe fuera de Prisma.
+- **Acción**: ~~pasar a `foreignKeys`~~. **Hecho** — eliminado `relationMode = "prisma"`, añadidos `@@index` en las FK de `Account`, `Session`, `Subreddit`, `Post` y `Comment`. Aplicado con `prisma db push` sobre Neon sin pérdida de datos.
 
-### 20. Sin rate limiting
+### ✅ 20. Sin rate limiting
 - **Problema**: votar/comentar/crear posts no tiene rate limit. Un script puede ametrallar.
-- **Acción**: añadir `@upstash/ratelimit` sobre los endpoints públicos.
+- **Acción**: ~~añadir `@upstash/ratelimit`~~. **Hecho** — [src/lib/ratelimit.ts](src/lib/ratelimit.ts) con 3 limitadores sobre el Redis existente: votos (10/10s), posts (5/min), comentarios (10/min). Devuelve 429 con mensaje en español.
 
-### 21. Posible SSRF en `/api/link`
+### ✅ 21. Posible SSRF en `/api/link`
 - **Archivo**: [src/app/api/link/route.ts](src/app/api/link/route.ts)
-- **Problema**: el LinkTool de EditorJS permite que un usuario meta cualquier URL para previsualizar. Sin validación, un atacante puede usarla para escanear la red interna.
-- **Acción**: validar host (no IPs privadas), protocolo (solo `http/https`), y poner timeout corto.
+- **Problema**: el LinkTool de EditorJS permite cualquier URL para previsualizar → escaneo de red interna.
+- **Acción**: ~~validar host y protocolo~~. **Hecho** — `isSafeUrl()` bloquea IPs privadas (127.x, 10.x, 172.16–31.x, 192.168.x, link-local) y protocolos no http/https. Añadido `timeout: 5000` y `maxRedirects: 3`.
 
 ---
 

@@ -34,14 +34,17 @@ export const authOptions: NextAuthOptions = {
     },
 
     async jwt({ token, user }) {
+      // user is only present on sign-in — rehydrate from DB then, not on every request
+      if (!user) return token
+
       const dbUser = await db.user.findFirst({
         where: {
           email: token.email,
-        }
+        },
       })
 
       if (!dbUser) {
-        token.id = user!.id
+        token.id = user.id
         return token
       }
 

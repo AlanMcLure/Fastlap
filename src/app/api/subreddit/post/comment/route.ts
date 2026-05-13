@@ -1,5 +1,6 @@
 import { getAuthSession } from '@/lib/auth'
 import { db } from '@/lib/db'
+import { commentRatelimit } from '@/lib/ratelimit'
 import { CommentValidator } from '@/lib/validators/comment'
 import { z } from 'zod'
 
@@ -13,6 +14,11 @@ export async function PATCH(req: Request) {
 
     if (!session?.user) {
       return new Response('Unauthorized', { status: 401 })
+    }
+
+    const { success } = await commentRatelimit.limit(session.user.id)
+    if (!success) {
+      return new Response('Demasiadas peticiones. Espera un momento.', { status: 429 })
     }
 
     // if no existing vote, create a new vote

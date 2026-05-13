@@ -1,6 +1,7 @@
 import { getAuthSession } from '@/lib/auth'
 import { db } from '@/lib/db'
 import { redis } from '@/lib/redis'
+import { voteRatelimit } from '@/lib/ratelimit'
 import { PostVoteValidator } from '@/lib/validators/vote'
 import { CachedPost } from '@/types/redis'
 import { Post, User, VoteType } from '@prisma/client'
@@ -45,6 +46,11 @@ export async function PATCH(req: Request) {
     const session = await getAuthSession()
     if (!session?.user) {
       return new Response('Unauthorized', { status: 401 })
+    }
+
+    const { success } = await voteRatelimit.limit(session.user.id)
+    if (!success) {
+      return new Response('Demasiadas peticiones. Espera un momento.', { status: 429 })
     }
 
     const existingVote = await db.vote.findFirst({
