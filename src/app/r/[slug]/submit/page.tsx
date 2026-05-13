@@ -4,15 +4,14 @@ import { db } from '@/lib/db'
 import { notFound } from 'next/navigation'
 
 interface pageProps {
-  params: {
-    slug: string
-  }
+  params: Promise<{ slug: string }>
 }
 
 const page = async ({ params }: pageProps) => {
+  const { slug } = await params
   const subreddit = await db.subreddit.findFirst({
     where: {
-      name: params.slug,
+      name: slug,
     },
   })
 
@@ -27,7 +26,7 @@ const page = async ({ params }: pageProps) => {
             Crear publicación
           </h3>
           <p className='ml-2 mt-1 truncate text-sm text-gray-500'>
-            en r/{params.slug}
+            en r/{slug}
           </p>
         </div>
       </div>

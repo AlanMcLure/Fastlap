@@ -13,17 +13,14 @@ import { Suspense } from 'react'
 import Link from 'next/link'
 
 interface SubRedditPostPageProps {
-  params: {
-    postId: string
-  }
+  params: Promise<{ postId: string }>
 }
 
-export const dynamic = 'force-dynamic'
-export const fetchCache = 'force-no-store'
-
 const SubRedditPostPage = async ({ params }: SubRedditPostPageProps) => {
+  const { postId } = await params
+
   const cachedPost = (await redis.hgetall(
-    `post:${params.postId}`
+    `post:${postId}`
   )) as CachedPost
 
   let post: (Post & { votes: Vote[]; author: User }) | null = null
@@ -31,7 +28,7 @@ const SubRedditPostPage = async ({ params }: SubRedditPostPageProps) => {
   if (!cachedPost) {
     post = await db.post.findFirst({
       where: {
-        id: params.postId,
+        id: postId,
       },
       include: {
         votes: true,
@@ -51,7 +48,7 @@ const SubRedditPostPage = async ({ params }: SubRedditPostPageProps) => {
             getData={async () => {
               return await db.post.findUnique({
                 where: {
-                  id: params.postId,
+                  id: postId,
                 },
                 include: {
                   votes: true,
@@ -80,6 +77,7 @@ const SubRedditPostPage = async ({ params }: SubRedditPostPageProps) => {
               <Loader2 className='h-5 w-5 animate-spin text-zinc-500' />
             }>
             <CommentsSection postId={post?.id ?? cachedPost.id} />
+
           </Suspense>
         </div>
       </div>

@@ -4,9 +4,10 @@ import { z } from 'zod';
 
 export async function DELETE(
   req: Request,
-  { params }: { params: { id: string } }
-  ) {
+  { params }: { params: Promise<{ id: string }> }
+) {
   try {
+    const { id } = await params
     const session = await getAuthSession();
 
     if (!session?.user) {
@@ -14,29 +15,20 @@ export async function DELETE(
     }
 
     const comment = await db.comment.findUnique({
-      where: {
-        id: params.id,
-      },
+      where: { id },
     });
-  
+
     if (!comment) {
       return new Response('Comment not found', { status: 404 })
     }
 
     await db.comment.updateMany({
-      where: {
-        replyToId: params.id,
-      },
-      data: {
-        replyToId: null,
-      },
+      where: { replyToId: id },
+      data: { replyToId: null },
     })
 
     await db.comment.delete({
-      where: {
-        id: params.id,
-      },
-    
+      where: { id },
     })
 
     return new Response('OK')

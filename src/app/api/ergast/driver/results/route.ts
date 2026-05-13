@@ -30,7 +30,7 @@ export async function GET(req: Request) {
         ];
 
         try {
-            const responses = await Promise.all(urls.map(url => fetch(url)));
+            const responses = await Promise.all(urls.map(url => fetch(url, { cache: 'force-cache' })));
             const data = await Promise.all(responses.map(res => res.json()));
             
             // Combinar los resultados y eliminar duplicados
@@ -53,7 +53,7 @@ export async function GET(req: Request) {
     }
 
     try {
-        const response = await fetch(url);
+        const response = await fetch(url, { cache: 'force-cache' });
         if (!response.ok) {
             throw new Error('Network response was not ok');
         }

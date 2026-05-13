@@ -3,10 +3,11 @@ import { db } from '@/lib/db'
 import { z } from 'zod';
 
 export async function DELETE(
-  req: Request,
-  { params }: { params: { id: string } }
+  _req: Request,
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params
     const session = await getAuthSession();
 
     if (!session?.user) {
@@ -14,9 +15,7 @@ export async function DELETE(
     }
 
     const post = await db.post.findUnique({
-      where: {
-        id: params.id,
-      },
+      where: { id },
     });
 
     if (!post) {
@@ -28,18 +27,12 @@ export async function DELETE(
     }
 
     await db.comment.updateMany({
-      where: {
-        postId: params.id,
-      },
-      data: {
-        replyToId: null,
-      },
+      where: { postId: id },
+      data: { replyToId: null },
     })
 
     await db.post.delete({
-      where: {
-        id: params.id,
-      },
+      where: { id },
     })
 
     return new Response('OK')

@@ -9,7 +9,7 @@ export async function GET(req: Request) {
     const url = `https://ergast.com/api/f1/${season}/${round}/drivers/${driver}/laps.json`
     
     try {
-        const response = await fetch(url)
+        const response = await fetch(url, { cache: 'force-cache' })
         if (!response.ok) {
             throw new Error('Network response was not ok')
         }

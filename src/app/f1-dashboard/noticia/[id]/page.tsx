@@ -9,8 +9,8 @@ import BackButton from '@/components/BackButton';
 
 const NewsDetailPage = () => {
     const params = useParams();
-    const id = Array.isArray(params.id) ? params.id[0] : params.id;
-    const newsArticle = newsData.find(article => article.id === parseInt(id, 10));
+    const rawId = Array.isArray(params.id) ? params.id[0] : params.id;
+    const newsArticle = rawId ? newsData.find(article => article.id === parseInt(rawId, 10)) : undefined;
 
     if (!newsArticle) {
         return (
