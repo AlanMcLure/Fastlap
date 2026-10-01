@@ -82,7 +82,7 @@ const DriverStandings = ({ round }: DriverStandingsProps) => {
             <select
               value={season}
               onChange={(e) => setSeason(e.target.value)}
-              className="border border-gray-300 rounded p-2"
+              className="border border-input rounded p-2"
             >
               {/* Lista de opciones de temporada */}
               {Array.from({ length: 75 }, (_, i) => {
@@ -98,7 +98,7 @@ const DriverStandings = ({ round }: DriverStandingsProps) => {
           <select
             value={classificationType}
             onChange={(e) => setClassificationType(e.target.value)}
-            className="border border-gray-300 rounded p-2"
+            className="border border-input rounded p-2"
           >
             <option value="driver">Pilotos</option>
             <option value="constructor">Equipos</option>
@@ -111,50 +111,50 @@ const DriverStandings = ({ round }: DriverStandingsProps) => {
         <DataError onRetry={() => setAttempt((n) => n + 1)} />
       ) : (
         <div className="overflow-auto">
-          <table className="min-w-full bg-white table-auto overflow-scroll">
-            <thead className="bg-gray-100">
+          <table className="min-w-full bg-card table-auto overflow-scroll">
+            <thead className="bg-secondary">
               <tr>
-                <th className="py-2 px-4 border-b-2 border-gray-200 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">POS</th>
+                <th className="py-2 px-4 border-b-2 border-border text-left text-xs font-semibold text-muted-foreground uppercase tracking-wider">POS</th>
                 {classificationType === 'driver' ? (
                   <>
-                    <th className="py-2 px-4 border-b-2 border-gray-200 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Piloto</th>
-                    <th className="hidden sm:table-cell py-2 px-4 border-b-2 border-gray-200 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Nacionalidad</th>
-                    <th className="hidden md:table-cell py-2 px-4 border-b-2 border-gray-200 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Equipo</th>
+                    <th className="py-2 px-4 border-b-2 border-border text-left text-xs font-semibold text-muted-foreground uppercase tracking-wider">Piloto</th>
+                    <th className="hidden sm:table-cell py-2 px-4 border-b-2 border-border text-left text-xs font-semibold text-muted-foreground uppercase tracking-wider">Nacionalidad</th>
+                    <th className="hidden md:table-cell py-2 px-4 border-b-2 border-border text-left text-xs font-semibold text-muted-foreground uppercase tracking-wider">Equipo</th>
                   </>
                 ) : (
                   <>
-                    <th className="py-2 px-4 border-b-2 border-gray-200 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Equipo</th>
-                    <th className="hidden sm:table-cell py-2 px-4 border-b-2 border-gray-200 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Nacionalidad</th>
+                    <th className="py-2 px-4 border-b-2 border-border text-left text-xs font-semibold text-muted-foreground uppercase tracking-wider">Equipo</th>
+                    <th className="hidden sm:table-cell py-2 px-4 border-b-2 border-border text-left text-xs font-semibold text-muted-foreground uppercase tracking-wider">Nacionalidad</th>
                   </>
                 )}
-                <th className="py-2 px-4 border-b-2 border-gray-200 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">PTS</th>
+                <th className="py-2 px-4 border-b-2 border-border text-left text-xs font-semibold text-muted-foreground uppercase tracking-wider">PTS</th>
               </tr>
             </thead>
             <tbody>
               {standings.map((standing, index) => (
-                <tr key={index} className="hover:bg-gray-100">
-                  <td className="py-2 px-4 border-b border-gray-200">{standing.pos}</td>
+                <tr key={index} className="hover:bg-secondary">
+                  <td className="py-2 px-4 border-b border-border">{standing.pos}</td>
                   {classificationType === 'driver' ? (
                     <>
-                      <td className="py-2 px-4 border-b border-gray-200">
+                      <td className="py-2 px-4 border-b border-border">
                         {(standing as DriverStandingRow).driver}
                         <dl className='lg:hidden font-light'>
                           <dt className='sr-only sm:hidden'>Equipo:</dt>
-                          <dd className='md:hidden text-gray-500'>
+                          <dd className='md:hidden text-muted-foreground'>
                             {(standing as DriverStandingRow).car}
                           </dd>
                         </dl>
                       </td>
-                      <td className="hidden sm:table-cell py-2 px-4 border-b border-gray-200">{standing.nationality}</td>
-                      <td className="hidden md:table-cell py-2 px-4 border-b border-gray-200">{(standing as DriverStandingRow).car}</td>
+                      <td className="hidden sm:table-cell py-2 px-4 border-b border-border">{standing.nationality}</td>
+                      <td className="hidden md:table-cell py-2 px-4 border-b border-border">{(standing as DriverStandingRow).car}</td>
                     </>
                   ) : (
                     <>
-                      <td className="py-2 px-4 border-b border-gray-200">{(standing as ConstructorStandingRow).team}</td>
-                      <td className="hidden sm:table-cell py-2 px-4 border-b border-gray-200">{standing.nationality}</td>
+                      <td className="py-2 px-4 border-b border-border">{(standing as ConstructorStandingRow).team}</td>
+                      <td className="hidden sm:table-cell py-2 px-4 border-b border-border">{standing.nationality}</td>
                     </>
                   )}
-                  <td className="py-2 px-4 border-b border-gray-200">{standing.pts}</td>
+                  <td className="py-2 px-4 border-b border-border">{standing.pts}</td>
                 </tr>
               ))}
             </tbody>

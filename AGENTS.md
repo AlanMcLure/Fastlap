@@ -85,6 +85,15 @@ Typed, validated access to Jolpica-F1 for the rebuilt dashboard (see [docs/PLAN-
 - Tests use **synthetic** fixtures in `__fixtures__/`. Real responses can be captured with `node scripts/capture-f1-fixtures.mjs` (needs internet) into `__fixtures__/real/`; `contract.test.ts` then validates the schemas against them.
 - The old `/api/ergast/*` routes still exist until the dashboard pages are migrated to this layer (plan slices 2–5).
 
+### Design system ("Nothing" language, direction B)
+
+Dark by default with a light theme (`<html data-theme="dark|light">`, set before first paint by an inline script in [src/app/layout.tsx](src/app/layout.tsx) and switched by [ThemeToggle](src/components/ThemeToggle.tsx), saved in `localStorage.theme`). Details and rationale: [docs/AUDITORIA-VISUAL.md](docs/AUDITORIA-VISUAL.md).
+
+- **Tokens** live in [src/styles/globals.css](src/styles/globals.css) as RGB channels (`--background`, `--card`, `--muted`, `--border`, `--input` (the visible border), `--primary`, `--signal`, `--success`, …) and are mapped in [tailwind.config.ts](tailwind.config.ts) (`bg-card`, `text-muted-foreground`, `border-input`, `text-signal`, `text-display`, …). **Never hard-code colours** (`bg-white`, `text-gray-500`, `bg-red-500`) or use `dark:` variants: use the semantic classes so both themes work.
+- **Fonts** (via `next/font/google`): Space Grotesk (`font-sans`, body), Space Mono (`font-mono`, labels) and Doto (`font-display`, dot-matrix). Use the `.label` class for small uppercase mono metadata (never for user-written text) and `.display` for headlines or big numbers, at most **once per screen**.
+- **Rules:** the primary button is an inverted pill (white on black in dark); red (`signal`/`destructive`) is only for live status, errors and destructive actions, never decoration; no shadows or gradients (the dot grid, `.dot-grid`, is the one allowed motif); dividers only between identical items; `text-faint` (#666) is for decorative/disabled elements, not for text that must be read.
+- Buttons are pills (`rounded-full`), cards use `rounded-lg`/`rounded-xl` with a border and `bg-card`.
+
 ### Client state and data fetching
 
 - Global providers in [src/components/Providers.tsx](src/components/Providers.tsx): `SessionProvider` (NextAuth) wrapped in a `QueryClientProvider` (TanStack Query v5, `staleTime` 60s, `gcTime` 300s). Client components that mutate server state should use `useMutation` with optimistic updates — see [Editor.tsx](src/components/Editor.tsx) and the post-vote components in [src/components/post-vote/](src/components/post-vote/) for the established pattern.

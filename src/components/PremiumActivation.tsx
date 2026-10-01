@@ -33,8 +33,8 @@ const PremiumActivation = () => {
   if (active) {
     return (
       <>
-        <h1 className='text-2xl font-bold text-gray-900'>¡Ya eres Premium!</h1>
-        <p className='mt-3 text-gray-600'>
+        <h1 className='text-2xl font-bold text-foreground'>¡Ya eres Premium!</h1>
+        <p className='mt-3 text-muted-foreground'>
           Tu suscripción está activa y ya puedes acceder al F1 Dashboard.
         </p>
         <Link href='/f1-dashboard' className={buttonVariants({ className: 'mt-6' })}>
@@ -47,8 +47,8 @@ const PremiumActivation = () => {
   if (attempts >= MAX_ATTEMPTS) {
     return (
       <>
-        <h1 className='text-2xl font-bold text-gray-900'>Pago recibido</h1>
-        <p className='mt-3 text-gray-600'>
+        <h1 className='text-2xl font-bold text-foreground'>Pago recibido</h1>
+        <p className='mt-3 text-muted-foreground'>
           Estamos confirmando tu suscripción. Si en unos minutos no tienes acceso,
           cierra sesión y vuelve a entrar.
         </p>
@@ -61,8 +61,8 @@ const PremiumActivation = () => {
 
   return (
     <>
-      <Loader2 className='mx-auto h-8 w-8 animate-spin text-zinc-500' />
-      <p className='mt-4 text-gray-600'>Activando tu suscripción Premium…</p>
+      <Loader2 className='mx-auto h-8 w-8 animate-spin text-muted-foreground' />
+      <p className='mt-4 text-muted-foreground'>Activando tu suscripción Premium…</p>
     </>
   )
 }

@@ -8,7 +8,7 @@ export const Icons = {
  preserveAspectRatio="xMidYMid meet">
 
 <g transform="translate(0.000000,512.000000) scale(0.100000,-0.100000)"
-fill="#000000" stroke="none">
+fill="currentColor" stroke="none">
 <path d="M2412 3268 c-16 -16 -15 -43 2 -57 9 -8 162 -10 551 -9 500 3 539 4
 549 21 8 12 8 22 0 35 -10 16 -49 17 -551 20 -411 2 -542 -1 -551 -10z"/>
 <path d="M3612 3268 c-6 -6 -12 -20 -12 -29 0 -32 25 -40 125 -37 80 2 100 6

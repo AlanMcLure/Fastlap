@@ -45,11 +45,11 @@ export default async function PremiumPage() {
             <section className='py-8 px-4 mx-auto max-w-screen-xl lg:py-16 lg:px-6'>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
                     <div>
-                        <h2 className="mb-4 text-4xl tracking-tight font-extrabold text-gray-900 dark:text-white">Un nuevo mundo de estadísticas de F1 a tu alcance.</h2>
-                        <p className="mb-6 font-light text-gray-500 md:text-lg dark:text-gray-400">Accede a estadísticas exclusivas, gráficos detallados y datos históricos para llevar tu pasión por la Fórmula 1 al siguiente nivel. Suscríbete a nuestro plan premium y descubre información que solo los verdaderos fanáticos pueden disfrutar.</p>
+                        <h2 className="mb-4 text-4xl tracking-tight font-extrabold text-foreground">Un nuevo mundo de estadísticas de F1 a tu alcance.</h2>
+                        <p className="mb-6 font-light text-muted-foreground md:text-lg">Accede a estadísticas exclusivas, gráficos detallados y datos históricos para llevar tu pasión por la Fórmula 1 al siguiente nivel. Suscríbete a nuestro plan premium y descubre información que solo los verdaderos fanáticos pueden disfrutar.</p>
                     </div>
                     {prices.map(price => (
-                        <div key={price.id} className='rounded-lg border border-gray-200 p-6 bg-white shadow-sm'>
+                        <div key={price.id} className='rounded-lg border border-border p-6 bg-card'>
                             <div className='relative h-64 w-full'>
                             <Image
                                 src='/f1-grafico.jpg'
@@ -59,7 +59,7 @@ export default async function PremiumPage() {
                                 objectPosition='center top'
                             />
                             </div>
-                            <p className='text-gray-700 mb-4 mt-6'>
+                            <p className='text-foreground mb-4 mt-6'>
                             ¡Accede a todas las funciones exclusivas por solo {(price.unit_amount ?? 0) / 100}€/mes!
                             </p>
                             <div className='flex justify-between items-center'>

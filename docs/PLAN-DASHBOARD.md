@@ -37,7 +37,7 @@ Fuentes secundarias (fichas de tiendas, artículos, GitHub); no hay datos de des
 | D2 | ¿Dashboard de pago o público? | **Público para usuarios con sesión mientras Premium esté apagado** (flag `NEXT_PUBLIC_PREMIUM_ENABLED`, apagado por defecto). Abrirlo también a visitantes sin sesión queda por decidir (ayuda al SEO y a captar registros). |
 | D3 | Fuente de datos | Jolpica-F1 para históricos. Datos en vivo: ver §6. |
 | D4 | Noticias | **Pendiente.** Propuesta: eliminar hasta tener una fuente real de contenido. |
-| D5 | Rumbo visual | **Pendiente**, ver [AUDITORIA-VISUAL.md](AUDITORIA-VISUAL.md). |
+| D5 | Rumbo visual | **Decidido: dirección B** (Nothing con tablas de telemetría, oscuro por defecto con selector). Ver [AUDITORIA-VISUAL.md](AUDITORIA-VISUAL.md). |
 
 ## 4. Riesgos
 
@@ -93,7 +93,7 @@ Servidor primero; sin datos inventados; tipado de extremo a extremo (Zod en la f
 | 4 | Detalle de carrera | Resultados, parrilla, vuelta rápida, paradas | ⏳ |
 | 5 | Pilotos | Listado y perfil con estadísticas calculadas de resultados reales | ⏳ |
 | 6 | Copia propia + API propia | Modelos Prisma, sincronización, lectura desde la BD | ⏳ |
-| V1 | Sistema de diseño | Tokens, tipografía, modo oscuro, componentes (según D5) | ⏳ |
+| V1 | Sistema de diseño | Tokens, tipografía, modo oscuro, componentes (dirección B) | ✅ |
 | 7 | Hub de fin de semana de carrera | Hilo automático por GP con resultados y votación de Piloto del Día | ⏳ |
 | 8 | Ligas de pronósticos en las comunidades | Pronóstico de clasificación/sprint/carrera, puntuación automática, reglas configurables | ⏳ |
 | V2 | Rediseño de pantallas clave | Feed, tarjeta de post, comunidad, hub de carrera | ⏳ |

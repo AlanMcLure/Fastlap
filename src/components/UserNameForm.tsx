@@ -91,7 +91,7 @@ export function UserNameForm({ user, className, ...props }: UserNameFormProps) {
         <CardContent>
           <div className='relative grid gap-1'>
             <div className='absolute top-0 left-0 w-8 h-10 grid place-items-center'>
-              <span className='text-sm text-zinc-400'>u/</span>
+              <span className='text-sm text-muted-foreground'>u/</span>
             </div>
             <Label className='sr-only' htmlFor='name'>
               Nombre
@@ -103,7 +103,7 @@ export function UserNameForm({ user, className, ...props }: UserNameFormProps) {
               {...register('name')}
             />
             {errors?.name && (
-              <p className='px-1 text-xs text-red-600'>{errors.name.message}</p>
+              <p className='px-1 text-xs text-signal'>{errors.name.message}</p>
             )}
           </div>
         </CardContent>

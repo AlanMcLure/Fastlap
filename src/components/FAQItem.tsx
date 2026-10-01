@@ -15,7 +15,7 @@ const FAQItem: React.FC<FAQItemProps> = ({ question, answer }) => {
   };
 
   return (
-    <div className="border-b border-gray-200 py-4">
+    <div className="border-b border-border py-4">
       <button
         onClick={toggleFAQ}
         className="w-full text-left flex justify-between items-center focus:outline-none"
@@ -23,7 +23,7 @@ const FAQItem: React.FC<FAQItemProps> = ({ question, answer }) => {
         <span className="font-semibold text-lg">{question}</span>
         <span>{isOpen ? '-' : '+'}</span>
       </button>
-      {isOpen && <p className="mt-2 text-gray-600">{answer}</p>}
+      {isOpen && <p className="mt-2 text-muted-foreground">{answer}</p>}
     </div>
   );
 };

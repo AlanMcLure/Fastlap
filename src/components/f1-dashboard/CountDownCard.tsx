@@ -31,7 +31,7 @@ const CountdownCard: React.FC<CountdownCardProps> = ({ nextRace }) => {
     }, [nextRace]);
 
     return (
-        <div className="card bg-white shadow-lg rounded-lg p-6 mb-6">
+        <div className="card bg-card rounded-lg p-6 mb-6">
             <h2 className="font-bold text-2xl mb-4 text-center">Próximo Gran Premio: {nextRace.raceName}</h2>
             <div className="countdown flex justify-center text-2xl sm:text-3xl md:text-4xl lg:text-5xl">
                 <div className="flex flex-col items-center mx-2">

@@ -20,12 +20,12 @@ const page = async ({ params }: pageProps) => {
   return (
     <div className='flex flex-col items-start gap-6'>
       {/* heading */}
-      <div className='border-b border-gray-200 pb-5'>
+      <div className='border-b border-border pb-5'>
         <div className='-ml-2 -mt-2 flex flex-wrap items-baseline'>
-          <h3 className='ml-2 mt-2 text-base font-semibold leading-6 text-gray-900'>
+          <h3 className='ml-2 mt-2 text-base font-semibold leading-6 text-foreground'>
             Crear publicación
           </h3>
-          <p className='ml-2 mt-1 truncate text-sm text-gray-500'>
+          <p className='ml-2 mt-1 truncate text-sm text-muted-foreground'>
             en r/{slug}
           </p>
         </div>

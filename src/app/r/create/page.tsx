@@ -64,12 +64,12 @@ const Page = () => {
       <div className='w-full'>
         <BackButton />
       </div>
-      <div className='relative bg-white w-full h-fit p-4 rounded-lg space-y-6 mt-6 self-center'>
+      <div className='relative bg-card w-full h-fit p-4 rounded-lg space-y-6 mt-6 self-center'>
         <div className='flex justify-between items-center'>
           <h1 className='text-xl font-semibold'>Crear una Comunidad</h1>
         </div>
 
-        <hr className='bg-red-500 h-px' />
+        <hr className='bg-border h-px' />
 
         <div>
           <p className='text-lg font-medium'>Nombre</p>
@@ -77,7 +77,7 @@ const Page = () => {
             Los nombres de las comunidades no pueden ser cambiados (de momento).
           </p>
           <div className='relative'>
-            <p className='absolute text-sm left-0 w-8 inset-y-0 grid place-items-center text-zinc-400'>
+            <p className='absolute text-sm left-0 w-8 inset-y-0 grid place-items-center text-muted-foreground'>
               r/
             </p>
             <Input

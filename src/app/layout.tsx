@@ -1,24 +1,22 @@
 import Navbar from '@/components/Navbar'
 import { cn } from '@/lib/utils'
-import { Inter, Poppins, Gabarito } from 'next/font/google'
+import { Doto, Space_Grotesk, Space_Mono } from 'next/font/google'
 import Providers from '@/components/Providers'
 import { Toaster } from '@/components/ui/Toaster'
 
 import '@/styles/globals.css'
 
-const inter = Inter({ subsets: ['latin'] })
-
-const poppins = Poppins({
-  weight: ['400', '700'],
-  style: ['normal'],
-  subsets: ['latin'],
-  display: 'swap',
-});
+const sans = Space_Grotesk({ subsets: ['latin'], variable: '--font-sans', display: 'swap' })
+const mono = Space_Mono({ weight: ['400', '700'], subsets: ['latin'], variable: '--font-mono', display: 'swap' })
+const display = Doto({ weight: ['700'], subsets: ['latin'], variable: '--font-display', display: 'swap' })
 
 export const metadata = {
   title: 'FastLap',
   description: 'La red social para los aficionados de la Fórmula 1',
 }
+
+// Applies the saved theme before first paint so there is no light/dark flash. Dark is the default.
+const themeScript = `try{document.documentElement.dataset.theme=localStorage.getItem('theme')==='light'?'light':'dark'}catch(e){document.documentElement.dataset.theme='dark'}`
 
 export default function RootLayout({
   children,
@@ -29,15 +27,14 @@ export default function RootLayout({
 }) {
   return (
     <html
-      lang='en'
-      className={cn(
-        'bg-white text-slate-900 antialiased light'
-      )}>
-      <body className={cn(
-        'min-h-screen pt-12 bg-slate-50 antialiased',
-        poppins.className
-      )}>
-       
+      lang='es'
+      data-theme='dark'
+      suppressHydrationWarning
+      className={cn(sans.variable, mono.variable, display.variable)}>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: themeScript }} />
+      </head>
+      <body className='min-h-screen pt-12 bg-background text-foreground antialiased'>
         <Providers>
           <Navbar />
           {authModal}

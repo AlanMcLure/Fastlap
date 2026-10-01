@@ -175,7 +175,7 @@ export default PostFeed
 
 // {isLoadingMore && (
 //   <li className='flex justify-center'>
-//     {/* <Loader2 className='w-6 h-6 text-zinc-500 animate-spin' /> */}
+//     {/* <Loader2 className='w-6 h-6 text-muted-foreground animate-spin' /> */}
 //     <div className="loader"></div>
 //   </li>
 // )}

@@ -41,7 +41,7 @@ Pantallas revisadas: inicio (con y sin sesión), inicio de sesión, comunidad, p
 ### V0 · Arreglos rápidos (sin decisiones de diseño) — ✅ hecho
 E1, E2, T1–T5 y D6. Resuelve E1, E2, E3, T1–T5 y D6 (este último solo con `aria-label`; el icono sigue sin texto visible en móvil, decisión de V1). Es corrección, no rediseño: textos y fechas en español (`date-fns/locale/es`), plural correcto, `aria-label` en español, barra lateral del dashboard que no tape el contenido (colapsada por defecto en móvil), mensajes de error en español con botón "Reintentar" en vez de redirigir al 404.
 
-### V1 · Sistema de diseño (necesita decisión D5)
+### V1 · Sistema de diseño — ✅ hecho (dirección B elegida)
 - **Tokens** (colores, tipografía, espaciado, radios) en variables CSS de Tailwind/Shadcn, con **modo claro y oscuro** y selector de tema.
 - **Identidad**: logotipo vectorial propio, color de acento y tratamiento de datos (números tabulares, tablas legibles). Sin logos ni colores oficiales de F1 ni de equipos como marca propia (ver R2 del plan).
 - **Componentes base** coherentes: botones (primario/secundario/destructivo), tarjetas, tablas, estados vacío/carga/error, selectores con estilo.
@@ -93,3 +93,9 @@ Se maquetaron tres direcciones con los mismos datos de ejemplo (`docs/diseno/`):
 ### Lo que falta
 - Que elijas A, B o C (o una mezcla) y digas si el color de equipo en la torre te gusta.
 - Si tienes **dos o tres webs concretas** que te gusten, pásamelas: lo que he podido consultar son descripciones, no páginas renderizadas, y con una captura tuya afino más.
+
+## 5. Estado de V1
+
+Elegida la dirección **B**. Implementado: tokens en CSS con tema oscuro por defecto y claro con selector (sin parpadeo al cargar), tipografías Space Grotesk / Space Mono / Doto, botones en píldora (primario invertido, destructivo con contorno rojo), barra superior nueva, y todos los colores fijos de la app sustituidos por tokens (también eliminadas las sombras). Reglas en `AGENTS.md`.
+
+Queda para **V2** (rediseño de pantallas, con la dirección B de las maquetas): tarjeta de post con vista previa y acciones en menú, módulo de próximo GP en el feed, hub de carrera y la clasificación como torre de tiempos; además un logotipo vectorial propio (el actual es una línea muy fina y pequeña).

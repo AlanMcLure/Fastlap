@@ -79,7 +79,7 @@ const CommentsSection = async ({ postId }: CommentsSectionProps) => {
                     return (
                       <div
                         key={reply.id}
-                        className='ml-2 py-2 pl-4 border-l-2 border-zinc-200'>
+                        className='ml-2 py-2 pl-4 border-l-2 border-border'>
                         <PostComment
                           comment={reply}
                           currentVote={replyVote}

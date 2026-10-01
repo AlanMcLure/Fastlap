@@ -58,46 +58,46 @@ const UserLayout = async ({
           <ul className='flex flex-col col-span-2 space-y-6'>{children}</ul>
 
           {/* info sidebar */}
-          <div className='overflow-hidden h-fit rounded-lg border border-gray-200 order-first md:order-last'>
-            <div className='bg-red-200 px-6 py-4'>
+          <div className='overflow-hidden h-fit rounded-lg border border-border order-first md:order-last'>
+            <div className='bg-muted px-6 py-4'>
               <p className='font-semibold py-3'>Sobre {user.username}</p>
             </div>
-            <dl className='divide-y divide-gray-100 px-6 py-4 text-sm leading-6 bg-white'>
+            <dl className='divide-y divide-border px-6 py-4 text-sm leading-6 bg-card'>
               <div className='flex justify-between gap-x-4 py-3'>
-                <dt className='text-gray-500'>Desde</dt>
-                <dd className='text-gray-700'>
+                <dt className='text-muted-foreground'>Desde</dt>
+                <dd className='text-foreground'>
                   <time dateTime={user.createdAt.toDateString()}>
                     {format(user.createdAt, 'd MMMM yyyy', {locale: es})}
                   </time>
                 </dd>
               </div>
               <div className='flex justify-between gap-x-4 py-3'>
-                <dt className='text-gray-500'>Tipo de usuario</dt>
+                <dt className='text-muted-foreground'>Tipo de usuario</dt>
                 <dd className='flex items-start gap-x-2'>
-                  <div className='text-gray-900'>{user.role}</div>
+                  <div className='text-foreground'>{user.role}</div>
                 </dd>
               </div>
               <div className='flex justify-between gap-x-4 py-3'>
-                <dt className='text-gray-500'>Comunidades creadas</dt>
+                <dt className='text-muted-foreground'>Comunidades creadas</dt>
                 <dd className='flex items-start gap-x-2'>
-                  <div className='text-gray-900'>{comunidadesCreadasCount}</div>
+                  <div className='text-foreground'>{comunidadesCreadasCount}</div>
                 </dd>
               </div>
               <div className='flex justify-between gap-x-4 py-3'>
-                <dt className='text-gray-500'>Posts</dt>
+                <dt className='text-muted-foreground'>Posts</dt>
                 <dd className='flex items-start gap-x-2'>
-                  <div className='text-gray-900'>{postCount}</div>
+                  <div className='text-foreground'>{postCount}</div>
                 </dd>
               </div>
               <div className='flex justify-between gap-x-4 py-3'>
-                <dt className='text-gray-500'>Votos</dt>
+                <dt className='text-muted-foreground'>Votos</dt>
                 <dd className='flex items-start gap-x-2'>
-                  <div className='text-gray-900'>{voteCount}</div>
+                  <div className='text-foreground'>{voteCount}</div>
                 </dd>
               </div>
               {session?.user?.id === user.id ? (
                 <div className='flex justify-between gap-x-4 py-3'>
-                  <dt className='text-gray-500'>Este es tu perfil</dt>
+                  <dt className='text-muted-foreground'>Este es tu perfil</dt>
                 </div>
               ) : null}
               {/* <Link
@@ -151,28 +151,28 @@ export default UserLayout
 //           <ul className='flex flex-col col-span-2 space-y-6'>{children}</ul>
 
 //           {/* info sidebar */}
-//           <div className='overflow-hidden h-fit rounded-lg border border-gray-200 order-first md:order-last'>
-//             <div className='bg-red-200 px-6 py-4'>
+//           <div className='overflow-hidden h-fit rounded-lg border border-border order-first md:order-last'>
+//             <div className='bg-muted px-6 py-4'>
 //               <p className='font-semibold py-3'>About User {user.username}</p>
 //             </div>
-//             <dl className='divide-y divide-gray-100 px-6 py-4 text-sm leading-6 bg-white'>
+//             <dl className='divide-y divide-border px-6 py-4 text-sm leading-6 bg-card'>
 //               <div className='flex justify-between gap-x-4 py-3'>
-//                 <dt className='text-gray-500'>Joined</dt>
-//                 <dd className='text-gray-700'>
+//                 <dt className='text-muted-foreground'>Joined</dt>
+//                 <dd className='text-foreground'>
 //                   <time dateTime={user.createdAt.toDateString()}>
 //                     {format(user.createdAt, 'MMMM d, yyyy')}
 //                   </time>
 //                 </dd>
 //               </div>
 //               <div className='flex justify-between gap-x-4 py-3'>
-//                 <dt className='text-gray-500'>Posts</dt>
+//                 <dt className='text-muted-foreground'>Posts</dt>
 //                 <dd className='flex items-start gap-x-2'>
-//                   <div className='text-gray-900'>{user.posts.length}</div>
+//                   <div className='text-foreground'>{user.posts.length}</div>
 //                 </dd>
 //               </div>
 //               {session?.user?.id === user.id ? (
 //                 <div className='flex justify-between gap-x-4 py-3'>
-//                   <dt className='text-gray-500'>This is your profile</dt>
+//                   <dt className='text-muted-foreground'>This is your profile</dt>
 //                 </div>
 //               ) : null}
 //               <Link

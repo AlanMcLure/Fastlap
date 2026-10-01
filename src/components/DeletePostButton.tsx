@@ -61,7 +61,6 @@ const DeletePostButton: FC<DeletePostButtonProps> = ({ postId, authorId, invalid
   return (
     <Dialog open={isDialogOpen} onOpenChange={setDialogOpen}>
       <Button
-        className='bg-red-700 text-white'
         onClick={openDialog}
         variant='destructive'
         size='sm'
@@ -80,7 +79,7 @@ const DeletePostButton: FC<DeletePostButtonProps> = ({ postId, authorId, invalid
         </DialogHeader>
         <DialogFooter>
           <Button size='xs' variant='outline' type="button" onClick={() => setDialogOpen(false)}>Cancelar</Button>
-          <Button size='xs' type="submit" onClick={handleDelete}>Confirmar</Button>
+          <Button size='xs' variant='destructive' type="submit" onClick={handleDelete}>Confirmar</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

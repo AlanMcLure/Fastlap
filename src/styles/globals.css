@@ -1,76 +1,75 @@
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap');
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap'); */
-
+/*
+ * Design tokens — "Nothing" language (shared with the hub project).
+ * Colours are RGB channels so Tailwind opacity modifiers keep working
+ * (bg-background/80). Dark is the default theme; light is set with
+ * <html data-theme="light"> by the theme toggle.
+ */
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 47.4% 11.2%;
+    --background: 0 0 0;
+    --foreground: 232 232 232;
+    --display: 255 255 255;
 
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
+    --card: 17 17 17;
+    --card-foreground: 232 232 232;
+    --popover: 17 17 17;
+    --popover-foreground: 232 232 232;
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 222.2 47.4% 11.2%;
+    --muted: 26 26 26;
+    --muted-foreground: 153 153 153;
+    --faint: 102 102 102; /* decorative or disabled only: below AA as text */
 
-    --card: 0 0% 100%;
-    --card-foreground: 222.2 47.4% 11.2%;
+    --border: 34 34 34;
+    --input: 51 51 51; /* the "visible" border */
+    --ring: 153 153 153;
 
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
+    --primary: 255 255 255;
+    --primary-foreground: 0 0 0;
+    --secondary: 26 26 26;
+    --secondary-foreground: 232 232 232;
+    --accent: 34 34 34;
+    --accent-foreground: 255 255 255;
 
-    --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 210 40% 98%;
+    --signal: 215 25 33; /* red: live, errors, alerts — not a decoration */
+    --destructive: 215 25 33;
+    --destructive-foreground: 255 255 255;
+    --success: 74 158 92;
+    --warning: 212 168 67;
 
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
-
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
-
-    --destructive: 0 100% 50%;
-    --destructive-foreground: 210 40% 98%;
-
-    --ring: 215 20.2% 65.1%;
-
-    --radius: 0.5rem;
+    --radius: 0.75rem;
+    color-scheme: dark;
   }
 
-  .dark {
-    --background: 224 71% 4%;
-    --foreground: 213 31% 91%;
+  :root[data-theme='light'] {
+    --background: 245 245 245;
+    --foreground: 26 26 26;
+    --display: 0 0 0;
 
-    --muted: 223 47% 11%;
-    --muted-foreground: 215.4 16.3% 56.9%;
+    --card: 255 255 255;
+    --card-foreground: 26 26 26;
+    --popover: 255 255 255;
+    --popover-foreground: 26 26 26;
 
-    --popover: 224 71% 4%;
-    --popover-foreground: 215 20.2% 65.1%;
+    --muted: 238 238 238;
+    --muted-foreground: 102 102 102;
+    --faint: 153 153 153;
 
-    --card: 224 71% 4%;
-    --card-foreground: 213 31% 91%;
+    --border: 232 232 232;
+    --input: 204 204 204;
+    --ring: 102 102 102;
 
-    --border: 216 34% 17%;
-    --input: 216 34% 17%;
+    --primary: 0 0 0;
+    --primary-foreground: 245 245 245;
+    --secondary: 238 238 238;
+    --secondary-foreground: 26 26 26;
+    --accent: 232 232 232;
+    --accent-foreground: 0 0 0;
 
-    --primary: 210 40% 98%;
-    --primary-foreground: 222.2 47.4% 1.2%;
-
-    --secondary: 222.2 47.4% 11.2%;
-    --secondary-foreground: 210 40% 98%;
-
-    --accent: 216 34% 17%;
-    --accent-foreground: 210 40% 98%;
-
-    --destructive: 0 63% 31%;
-    --destructive-foreground: 210 40% 98%;
-
-    --ring: 216 34% 17%;
-
-    --radius: 0.5rem;
+    color-scheme: light;
   }
 }
 
@@ -79,8 +78,63 @@
     @apply border-border;
   }
   body {
-    @apply bg-background text-foreground;
-    font-family: 'Poppins';
+    @apply bg-background font-sans text-foreground antialiased;
     font-feature-settings: 'rlig' 1, 'calt' 1;
+  }
+  select {
+    @apply rounded-full border border-input bg-card px-3 py-2 text-sm text-foreground;
+  }
+  ::selection {
+    background: rgb(var(--display) / 0.85);
+    color: rgb(var(--background));
+  }
+}
+
+@layer components {
+  /* Small uppercase mono labels: metadata, tabs, section names. Not for user text. */
+  .label {
+    @apply font-mono text-[11px] uppercase leading-tight tracking-[0.08em] text-muted-foreground;
+  }
+  /* Dot-matrix display type: one use per screen, headlines and big numbers only. */
+  .display {
+    @apply font-display font-bold leading-none tracking-tight text-display;
+  }
+  /* Faint dot grid, the one decorative motif allowed. */
+  .dot-grid {
+    background-image: radial-gradient(circle, rgb(var(--input)) 1px, transparent 1px);
+    background-size: 16px 16px;
+  }
+
+  /* Theme toggle: show the label of the theme you would switch to. */
+  :root[data-theme='light'] .when-dark,
+  :root:not([data-theme='light']) .when-light {
+    display: none;
+  }
+
+  /* Rich text (EditorJS output) follows the tokens in both themes. */
+  .prose {
+    --tw-prose-body: rgb(var(--foreground));
+    --tw-prose-headings: rgb(var(--display));
+    --tw-prose-lead: rgb(var(--muted-foreground));
+    --tw-prose-links: rgb(var(--display));
+    --tw-prose-bold: rgb(var(--display));
+    --tw-prose-counters: rgb(var(--muted-foreground));
+    --tw-prose-bullets: rgb(var(--faint));
+    --tw-prose-hr: rgb(var(--border));
+    --tw-prose-quotes: rgb(var(--foreground));
+    --tw-prose-quote-borders: rgb(var(--input));
+    --tw-prose-captions: rgb(var(--muted-foreground));
+    --tw-prose-code: rgb(var(--display));
+    --tw-prose-pre-code: rgb(var(--foreground));
+    --tw-prose-pre-bg: rgb(var(--card));
+    --tw-prose-th-borders: rgb(var(--input));
+    --tw-prose-td-borders: rgb(var(--border));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
   }
 }

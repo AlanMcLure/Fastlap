@@ -65,7 +65,7 @@ const SearchBar: FC<SearchBarProps> = ({ }) => {
   return (
     <Command
       ref={commandRef}
-      className='relative rounded-lg border max-w-lg z-50 overflow-visible'
+      className='relative z-50 mx-auto h-10 w-full min-w-0 max-w-lg flex-1 overflow-visible rounded-full border border-input bg-card [&_[cmdk-input-wrapper]]:border-0 [&_[cmdk-input-wrapper]]:h-full'
       aria-label='Buscar comunidades'
       role='search'>
       <CommandInput
@@ -75,14 +75,14 @@ const SearchBar: FC<SearchBarProps> = ({ }) => {
           debounceRequest()
         }}
         value={input}
-        className='outline-none border-none focus:border-none focus:outline-none ring-0'
+        className='h-9 outline-none border-none focus:border-none focus:outline-none ring-0'
         placeholder='Buscar comunidades...'
         aria-label='Campo de búsqueda'
       />
 
       {input.length > 0 && (
         <CommandList 
-          className='absolute bg-white top-full inset-x-0 shadow rounded-b-md'
+          className='absolute top-full inset-x-0 mt-2 rounded-xl border border-border bg-popover'
           role='listbox'
           aria-expanded={true}>
           {isFetched && <CommandEmpty>Sin resultados.</CommandEmpty>}

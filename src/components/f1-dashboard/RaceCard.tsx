@@ -52,14 +52,14 @@ const RaceCard: React.FC<RaceCardProps> = ({ race }) => {
     const country = Circuit?.Location?.country;
 
     return (
-        <Card className="bg-white shadow-md rounded-lg overflow-hidden flex flex-col justify-between h-36 sm:h-48">
+        <Card className="bg-card rounded-lg overflow-hidden flex flex-col justify-between h-36 sm:h-48">
             <CardHeader className="px-4 py-2">
                 <CardTitle className="text-lg font-semibold">{raceName}</CardTitle>
             </CardHeader>
             <CardContent className="px-4 py-2 flex-1">
                 <p className="text-base">{circuitName}</p>
-                <p className="text-sm text-gray-600">{locality}, {country}</p>
-                <p className="text-sm text-gray-600">{new Date(date).toLocaleDateString()}</p>
+                <p className="text-sm text-muted-foreground">{locality}, {country}</p>
+                <p className="text-sm text-muted-foreground">{new Date(date).toLocaleDateString()}</p>
             </CardContent>
         </Card>
     );

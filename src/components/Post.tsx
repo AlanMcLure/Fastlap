@@ -39,7 +39,7 @@ const Post: FC<PostProps> = ({
   };
 
   return (
-    <div className='rounded-md bg-white shadow'>
+    <div className='rounded-md bg-card'>
       <div className='px-6 py-4 flex justify-between'>
         <PostVoteClient
           postId={post.id}
@@ -48,11 +48,11 @@ const Post: FC<PostProps> = ({
         />
 
         <div className='w-0 flex-1'>
-          <div className='max-h-40 mt-1 text-xs text-gray-500'>
+          <div className='max-h-40 mt-1 text-xs text-muted-foreground'>
             {subredditName ? (
               <>
                 <Link
-                  className='underline text-zinc-900 text-sm underline-offset-2'
+                  className='underline text-foreground text-sm underline-offset-2'
                   href={`/r/${subredditName}`}>
                   r/{subredditName}
                 </Link>
@@ -60,7 +60,7 @@ const Post: FC<PostProps> = ({
               </>
             ) : null}
             <span>Publicado por <Link
-              className='hover:underline text-zinc-900 text-xs underline-offset-2'
+              className='hover:underline text-foreground text-xs underline-offset-2'
               href={`/u/${post.author.username}`}>
               u/{post.author.username}
             </Link>
@@ -68,7 +68,7 @@ const Post: FC<PostProps> = ({
             {formatTimeToNow(new Date(post.createdAt))}
           </div>
           <Link href={`/r/${subredditName}/post/${post.id}`}>
-            <h1 className='text-lg font-semibold py-2 leading-6 text-gray-900'>
+            <h1 className='text-lg font-semibold py-2 leading-6 text-foreground'>
               {post.title}
             </h1>
           </Link>
@@ -79,13 +79,13 @@ const Post: FC<PostProps> = ({
             <EditorOutput content={post.content} />
             {pRef.current?.clientHeight === 160 ? (
               // blur bottom if content is too long
-              <div className='absolute bottom-0 left-0 h-24 w-full bg-gradient-to-t from-white to-transparent'></div>
+              <div className='absolute bottom-0 left-0 h-24 w-full bg-gradient-to-t from-card to-transparent'></div>
             ) : null}
           </div>
         </div>
       </div>
 
-      <div className='bg-gray-50 z-20 text-sm px-4 py-4 sm:px-6 flex justify-between'>
+      <div className='bg-muted z-20 text-sm px-4 py-4 sm:px-6 flex justify-between'>
         <Link
           href={`/r/${subredditName}/post/${post.id}`}
           className='w-fit flex items-center gap-2'>

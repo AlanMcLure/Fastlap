@@ -24,14 +24,14 @@ export default function Sidebar({ children }: SidebarProps) {
 
     return (
         <aside className="h-full">
-            <nav className="h-full flex flex-col bg-white border-r shadow-sm">
+            <nav className="h-full flex flex-col bg-card border-r">
                 <div className="p-4 pb-2 flex justify-between items-center">
                     <Icons.logo className={`h-8 w-8 ${expanded ? "" : "hidden"}`} />
                     <button
                         onClick={() => setExpanded((curr) => !curr)}
                         aria-label={expanded ? "Contraer menú" : "Expandir menú"}
                         aria-expanded={expanded}
-                        className="p-1.5 rounded-lg bg-gray-50 hover:bg-gray-100"
+                        className="p-1.5 rounded-lg bg-muted hover:bg-accent"
                     >
                         {expanded ? <ChevronFirst /> : <ChevronLast />}
                     </button>
@@ -62,8 +62,8 @@ export function SidebarItem({ icon, text, active, alert }: SidebarItemProps) {
         font-medium rounded-md cursor-pointer
         transition-colors group
         ${active
-                    ? "bg-gradient-to-tr from-red-200 to-red-100 text-red-800"
-                    : "hover:bg-red-50 text-gray-600"
+                    ? "bg-accent text-display"
+                    : "text-muted-foreground hover:bg-accent/60 hover:text-display"
                 }
     `}
         >
@@ -76,7 +76,7 @@ export function SidebarItem({ icon, text, active, alert }: SidebarItemProps) {
             </span>
             {alert && (
                 <div
-                    className={`absolute right-2 w-2 h-2 rounded bg-red-400 ${expanded ? "" : "top-2"
+                    className={`absolute right-2 w-2 h-2 rounded bg-signal ${expanded ? "" : "top-2"
                         }`}
                 />
             )}
@@ -85,7 +85,7 @@ export function SidebarItem({ icon, text, active, alert }: SidebarItemProps) {
                 <div
                     className={`
           absolute left-full rounded-md px-2 py-1 ml-6
-          bg-red-100 text-red-800 text-sm
+          border border-border bg-popover text-popover-foreground text-sm
           invisible opacity-20 -translate-x-3 transition-all
           group-hover:visible group-hover:opacity-100 group-hover:translate-x-0
       `}

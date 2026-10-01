@@ -71,28 +71,28 @@ const Layout = async ({
           <ul className='flex flex-col col-span-2 space-y-6'>{children}</ul>
 
           {/* info sidebar */}
-          <div className='overflow-hidden h-fit rounded-lg border border-gray-200 order-first md:order-last'>
-            <div className='bg-red-200 px-6 py-4'>
+          <div className='overflow-hidden h-fit rounded-lg border border-border order-first md:order-last'>
+            <div className='bg-muted px-6 py-4'>
               <p className='font-semibold py-3'>Sobre r/{subreddit.name}</p>
             </div>
-            <dl className='divide-y divide-gray-100 px-6 py-4 text-sm leading-6 bg-white'>
+            <dl className='divide-y divide-border px-6 py-4 text-sm leading-6 bg-card'>
               <div className='flex justify-between gap-x-4 py-3'>
-                <dt className='text-gray-500'>Creado</dt>
-                <dd className='text-gray-700'>
+                <dt className='text-muted-foreground'>Creado</dt>
+                <dd className='text-foreground'>
                   <time dateTime={subreddit.createdAt.toDateString()}>
                     {format(subreddit.createdAt, "d 'de' MMMM 'de' yyyy", { locale: es })}
                   </time>
                 </dd>
               </div>
               <div className='flex justify-between gap-x-4 py-3'>
-                <dt className='text-gray-500'>Miembros</dt>
+                <dt className='text-muted-foreground'>Miembros</dt>
                 <dd className='flex items-start gap-x-2'>
-                  <div className='text-gray-900'>{memberCount}</div>
+                  <div className='text-foreground'>{memberCount}</div>
                 </dd>
               </div>
               {subreddit.creatorId === session?.user?.id ? (
                 <div className='flex justify-between gap-x-4 py-3'>
-                  <dt className='text-gray-500'>Eres el creador de esta comunidad</dt>
+                  <dt className='text-muted-foreground'>Eres el creador de esta comunidad</dt>
                 </div>
               ) : null}
 

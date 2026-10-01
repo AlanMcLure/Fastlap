@@ -69,7 +69,7 @@ export default PilotCard;
 
 // export default function Component() {
 //   return (
-//     <Card className="max-w-md mx-auto bg-white rounded-xl shadow-md overflow-hidden md:max-w-2xl">
+//     <Card className="max-w-md mx-auto bg-card rounded-xl overflow-hidden md:max-w-2xl">
 //       <div className="md:flex">
 //         <div className="md:flex-shrink-0">
 //           <img
@@ -86,19 +86,19 @@ export default PilotCard;
 //         </div>
 //         <div className="p-8">
 //           <div className="uppercase tracking-wide text-sm text-indigo-500 font-semibold">Driver's Name</div>
-//           <p className="mt-2 text-gray-500">Nationality: British</p>
-//           <p className="mt-2 text-gray-500">Team: Mercedes</p>
-//           <p className="mt-2 text-gray-500">Number: 44</p>
-//           <div className="mt-2 flex items-center text-gray-500">
-//             <TrophyIcon className="h-5 w-5 text-gray-500" />
+//           <p className="mt-2 text-muted-foreground">Nationality: British</p>
+//           <p className="mt-2 text-muted-foreground">Team: Mercedes</p>
+//           <p className="mt-2 text-muted-foreground">Number: 44</p>
+//           <div className="mt-2 flex items-center text-muted-foreground">
+//             <TrophyIcon className="h-5 w-5 text-muted-foreground" />
 //             <p className="ml-2">Total Wins: 100</p>
 //           </div>
-//           <div className="mt-2 flex items-center text-gray-500">
-//             <PodcastIcon className="h-5 w-5 text-gray-500" />
+//           <div className="mt-2 flex items-center text-muted-foreground">
+//             <PodcastIcon className="h-5 w-5 text-muted-foreground" />
 //             <p className="ml-2">Total Podiums: 150</p>
 //           </div>
-//           <div className="mt-2 flex items-center text-gray-500">
-//             <FlagIcon className="h-5 w-5 text-gray-500" />
+//           <div className="mt-2 flex items-center text-muted-foreground">
+//             <FlagIcon className="h-5 w-5 text-muted-foreground" />
 //             <p className="ml-2">Total Pole Positions: 100</p>
 //           </div>
 //         </div>

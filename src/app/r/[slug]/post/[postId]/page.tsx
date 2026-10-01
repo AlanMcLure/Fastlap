@@ -58,15 +58,15 @@ const SubRedditPostPage = async ({ params }: SubRedditPostPageProps) => {
           />
         </Suspense>
 
-        <div className='sm:w-0 w-full flex-1 bg-white p-4 rounded-sm'>
-          <p className='max-h-40 mt-1 truncate text-xs text-gray-500'>
+        <div className='sm:w-0 w-full flex-1 bg-card p-4 rounded-sm'>
+          <p className='max-h-40 mt-1 truncate text-xs text-muted-foreground'>
             Publicado por <Link
-              className='hover:underline text-zinc-900 text-xs underline-offset-2'
+              className='hover:underline text-foreground text-xs underline-offset-2'
               href={`/u/${post?.author.username ?? cachedPost.authorUsername}`}>
               u/{post?.author.username ?? cachedPost.authorUsername}</Link>{' '}
             {formatTimeToNow(new Date(post?.createdAt ?? cachedPost.createdAt))}
           </p>
-          <h1 className='text-xl font-semibold py-2 leading-6 text-gray-900'>
+          <h1 className='text-xl font-semibold py-2 leading-6 text-foreground'>
             {post?.title ?? cachedPost.title}
           </h1>
 
@@ -74,7 +74,7 @@ const SubRedditPostPage = async ({ params }: SubRedditPostPageProps) => {
 
           <Suspense
             fallback={
-              <Loader2 className='h-5 w-5 animate-spin text-zinc-500' />
+              <Loader2 className='h-5 w-5 animate-spin text-muted-foreground' />
             }>
             <CommentsSection postId={post?.id ?? cachedPost.id} />
 
@@ -90,17 +90,17 @@ function PostVoteShell() {
     <div className='flex items-center flex-col pr-6 w-20'>
       {/* upvote */}
       <div className={buttonVariants({ variant: 'ghost' })}>
-        <ArrowBigUp className='h-5 w-5 text-zinc-700' />
+        <ArrowBigUp className='h-5 w-5 text-foreground' />
       </div>
 
       {/* score */}
-      <div className='text-center py-2 font-medium text-sm text-zinc-900'>
+      <div className='text-center py-2 font-medium text-sm text-foreground'>
         <Loader2 className='h-3 w-3 animate-spin' />
       </div>
 
       {/* downvote */}
       <div className={buttonVariants({ variant: 'ghost' })}>
-        <ArrowBigDown className='h-5 w-5 text-zinc-700' />
+        <ArrowBigDown className='h-5 w-5 text-foreground' />
       </div>
     </div>
   )
