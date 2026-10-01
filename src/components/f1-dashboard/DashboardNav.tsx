@@ -8,6 +8,7 @@ const SECTIONS = [
   { href: '/f1-dashboard/clasificacion', label: 'CLASIFICACIÓN', prefixes: ['/f1-dashboard/clasificacion'] },
   { href: '/f1-dashboard/carreras', label: 'CARRERAS', prefixes: ['/f1-dashboard/carreras', '/f1-dashboard/carrera/'] },
   { href: '/f1-dashboard/pilotos', label: 'PILOTOS', prefixes: ['/f1-dashboard/pilotos', '/f1-dashboard/piloto/'] },
+  { href: '/f1-dashboard/comparar', label: 'COMPARAR', prefixes: ['/f1-dashboard/comparar'] },
   { href: '/f1-dashboard/noticias', label: 'NOTICIAS', prefixes: ['/f1-dashboard/noticias', '/f1-dashboard/noticia/'] },
 ]
 

@@ -55,6 +55,11 @@ const DriverPage = async ({ params }: DriverPageProps) => {
             <h1 className='mt-2 text-3xl font-bold text-display md:text-5xl'>
               {driver.givenName} <span className='block'>{driver.familyName}</span>
             </h1>
+            <Link
+              href={`/f1-dashboard/comparar?a=${driver.driverId}`}
+              className='label mt-4 inline-block rounded-full border border-input px-4 py-2.5 text-display transition-colors hover:border-display'>
+              COMPARAR CON OTRO PILOTO
+            </Link>
             <p className='mt-3 text-muted-foreground'>
               Nació el {formatRaceDate(driver.dateOfBirth)}
               {driver.url && (
