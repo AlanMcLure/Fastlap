@@ -1,6 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { fixture } from './fixtures'
+import { setSnapshotStore } from './snapshots'
 import {
   getCalendar,
   getConstructorStandings,
@@ -22,6 +23,7 @@ let fetchMock: ReturnType<typeof vi.fn>
 const requested = () => fetchMock.mock.calls.map((c) => new URL(c[0] as string).pathname + new URL(c[0] as string).search)
 
 beforeEach(() => {
+  setSnapshotStore(null)
   fetchMock = vi.fn()
   vi.stubGlobal('fetch', fetchMock)
 })

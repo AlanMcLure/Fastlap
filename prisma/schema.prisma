@@ -154,3 +154,11 @@ model CommentVote {
 
   @@id([userId, commentId])
 }
+
+/// Own copy of finished Jolpica-F1 data (see src/lib/f1/snapshots.ts). Only data
+/// that can no longer change is stored; `key` encodes the query and a schema version.
+model F1Snapshot {
+  key       String   @id
+  payload   Json
+  updatedAt DateTime @updatedAt
+}

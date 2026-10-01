@@ -14,7 +14,7 @@ Documentos relacionados: [AUDITORIA-VISUAL.md](AUDITORIA-VISUAL.md) (estado visu
 | Noticias escritas a mano en el código | `lib/newsData.ts` | ⏳ pendiente de D4 |
 | 18 `useEffect` que piden datos desde el navegador | `app/f1-dashboard/**` | ⏳ rebanadas 2–5 |
 | Respuestas de la API con `any` | rutas y componentes | ✅ capa `src/lib/f1/` con Zod; falta migrar las páginas |
-| Sin copia propia de los datos | todo | ⏳ rebanada 6 |
+| Sin copia propia de los datos | todo | ✅ rebanada 6 |
 | Errores en inglés y redirección a un 404 si falla la API; la barra lateral tapa el contenido | `pilotos`, layout del dashboard | ✅ V0 |
 
 ## 2. Hallazgos de la investigación (mercado y licencia)
@@ -92,7 +92,7 @@ Servidor primero; sin datos inventados; tipado de extremo a extremo (Zod en la f
 | 3 | Clasificaciones | Pilotos y constructores, selector de temporada, evolución (gráfico) | ✅ |
 | 4 | Detalle de carrera | Resultados, parrilla, vuelta rápida, paradas | ✅ |
 | 5 | Pilotos | Listado y perfil con estadísticas calculadas de resultados reales | ✅ |
-| 6 | Copia propia + API propia | Modelos Prisma, sincronización, lectura desde la BD | ⏳ |
+| 6 | Copia propia + API propia | Tabla `F1Snapshot`, lectura a través de la BD, sincronización, API de lectura | ✅ (ver nota) |
 | V1 | Sistema de diseño | Tokens, tipografía, modo oscuro, componentes (dirección B) | ✅ |
 | 7 | Hub de fin de semana de carrera | Hilo automático por GP con resultados y votación de Piloto del Día | ⏳ |
 | 8 | Ligas de pronósticos en las comunidades | Pronóstico de clasificación/sprint/carrera, puntuación automática, reglas configurables | ⏳ |
@@ -113,3 +113,13 @@ Antes de encender Premium: resolver R1.
 2. Escribir a Jolpica sobre uso comercial (lo envía el autor del proyecto).
 3. Capturar fixtures reales desde una máquina con internet.
 4. Empezar por la rebanada 2 (V0 ya está hecho).
+
+## Rebanada 6: copia propia (decisiones)
+
+- **Una tabla de instantáneas en vez de modelos normalizados** (`F1Snapshot`: clave + JSON). Motivo: las páginas ya consumen exactamente estas formas; normalizar resultados, paradas y clasificaciones duplicaría el esquema de Jolpica sin ganar consultas que hoy necesitemos. Si más adelante hacen falta consultas cruzadas (récords, comparar pilotos), se normaliza entonces, partiendo de estas copias.
+- **Solo se guarda lo definitivo**: temporadas cerradas y carreras con más de 3 días. La temporada en curso sigue yendo a Jolpica con caché de Next.
+- **Tolerante a fallos**: si la BD falla se usa Jolpica; si Jolpica falla y hay copia, se sirve la copia (verificado con el mock apagado).
+- **Sincronización** manual o con cron (`/api/f1/sync`, `CRON_SECRET`), máximo 3 temporadas por llamada por el límite de 500 peticiones/hora. Además la copia se rellena sola con el uso.
+- **API de lectura** pública, solo temporadas cerradas, con atribución CC BY-NC-SA.
+- **Licencia:** copiar y servir los datos sigue sujeto a CC BY-NC-SA 4.0 (uso no comercial). Antes de monetizar hay que acordar licencia con Jolpica. Los datos reales aún no se han probado (sandbox sin acceso).
+- No cubre todavía los datos por piloto (`getDriverResults`, `getDriverSeasons`): son carreras de toda su carrera y cambian durante la temporada en curso.
