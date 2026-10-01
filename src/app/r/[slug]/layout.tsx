@@ -6,7 +6,7 @@ import { db } from '@/lib/db'
 import { format } from 'date-fns'
 import type { Metadata } from 'next'
 import Link from 'next/link'
-import { notFound, usePathname } from 'next/navigation'
+import { notFound } from 'next/navigation'
 import { ReactNode } from 'react'
 
 export const metadata: Metadata = {
@@ -16,11 +16,12 @@ export const metadata: Metadata = {
 
 const Layout = async ({
   children,
-  params: { slug },
+  params,
 }: {
   children: ReactNode
-  params: { slug: string }
+  params: Promise<{ slug: string }>
 }) => {
+  const { slug } = await params
   const session = await getAuthSession()
 
   const subreddit = await db.subreddit.findFirst({

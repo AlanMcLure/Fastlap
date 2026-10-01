@@ -16,11 +16,12 @@ interface PageProps {
 
 const UserLayout = async ({
   children,
-  params: { slug },
+  params,
 }: {
   children: ReactNode
-  params: { slug: string }
+  params: Promise<{ slug: string }>
 }) => {
+  const { slug } = await params
 
   const user = await db.user.findFirst({
     where: { username: slug },
