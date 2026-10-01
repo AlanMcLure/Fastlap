@@ -1,3 +1,4 @@
+import { ERGAST_BASE_URL, ERGAST_FETCH_OPTIONS } from '@/lib/ergast'
 import { NextResponse } from 'next/server';
 
 export async function GET(req: Request) {
@@ -6,10 +7,10 @@ export async function GET(req: Request) {
     const page = parseInt(searchParams.get('page') || '0', 10);
     const limit = parseInt(searchParams.get('limit') || '8', 10);
 
-    const url = `https://ergast.com/api/f1/${season}.json`;
+    const url = `${ERGAST_BASE_URL}/${season}.json`;
 
     try {
-        const response = await fetch(url, { cache: 'force-cache' });
+        const response = await fetch(url, ERGAST_FETCH_OPTIONS);
         if (!response.ok) {
             throw new Error('Network response was not ok');
         }

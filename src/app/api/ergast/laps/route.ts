@@ -1,3 +1,4 @@
+import { ERGAST_BASE_URL, ERGAST_FETCH_OPTIONS } from '@/lib/ergast'
 import { NextResponse } from 'next/server'
 
 export async function GET(req: Request) {
@@ -6,10 +7,10 @@ export async function GET(req: Request) {
     const round = searchParams.get('classificationType')
     const driver = searchParams.get('driver')
      
-    const url = `https://ergast.com/api/f1/${season}/${round}/drivers/${driver}/laps.json`
+    const url = `${ERGAST_BASE_URL}/${season}/${round}/drivers/${driver}/laps.json`
     
     try {
-        const response = await fetch(url, { cache: 'force-cache' })
+        const response = await fetch(url, ERGAST_FETCH_OPTIONS)
         if (!response.ok) {
             throw new Error('Network response was not ok')
         }

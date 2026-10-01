@@ -1,3 +1,4 @@
+import { ERGAST_BASE_URL, ERGAST_FETCH_OPTIONS } from '@/lib/ergast'
 import { NextResponse } from 'next/server'
 
 export async function GET(req: Request) {
@@ -7,11 +8,11 @@ export async function GET(req: Request) {
     const round = searchParams.get('round');
 
     const url = round
-        ? `http://ergast.com/api/f1/${season}/${round}/${classificationType}Standings.json`
-        : `http://ergast.com/api/f1/${season}/${classificationType}Standings.json`;
+        ? `${ERGAST_BASE_URL}/${season}/${round}/${classificationType}Standings.json`
+        : `${ERGAST_BASE_URL}/${season}/${classificationType}Standings.json`;
 
     try {
-        const response = await fetch(url, { cache: 'force-cache' });
+        const response = await fetch(url, ERGAST_FETCH_OPTIONS);
         if (!response.ok) {
             throw new Error('Network response was not ok');
         }

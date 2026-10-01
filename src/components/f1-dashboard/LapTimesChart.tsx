@@ -1,3 +1,4 @@
+import { ERGAST_BASE_URL } from '@/lib/ergast'
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import {
@@ -34,7 +35,7 @@ const LapTimesChart = () => {
     setError(null);
 
     try {
-      const response = await axios.get(`http://ergast.com/api/f1/${year}/${grandPrix}/drivers/${driver}/${session}.json`);
+      const response = await axios.get(`${ERGAST_BASE_URL}/${year}/${grandPrix}/drivers/${driver}/${session}.json`);
       const lapsData = response.data.MRData.RaceTable.Races[0]?.Laps || [];
 
       const lapData: LapPoint[] = lapsData.map((lap: any) => ({

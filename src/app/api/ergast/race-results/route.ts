@@ -1,3 +1,4 @@
+import { ERGAST_BASE_URL, ERGAST_FETCH_OPTIONS } from '@/lib/ergast'
 import { NextResponse } from 'next/server';
 
 export async function GET(req: Request) {
@@ -9,10 +10,10 @@ export async function GET(req: Request) {
     return NextResponse.json({ message: 'Season and round parameters are required' }, { status: 400 });
   }
 
-  const url = `https://ergast.com/api/f1/${season}/${round}/results.json`;
+  const url = `${ERGAST_BASE_URL}/${season}/${round}/results.json`;
 
   try {
-    const response = await fetch(url, { cache: 'force-cache' });
+    const response = await fetch(url, ERGAST_FETCH_OPTIONS);
     if (!response.ok) {
       throw new Error('Network response was not ok');
     }

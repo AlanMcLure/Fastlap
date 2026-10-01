@@ -1,3 +1,4 @@
+import { ERGAST_BASE_URL, ERGAST_FETCH_OPTIONS, fetchAllDrivers } from '@/lib/ergast'
 import { NextResponse } from 'next/server';
 
 export async function GET(req: Request) {
@@ -8,39 +9,32 @@ export async function GET(req: Request) {
     const podium = searchParams.get('podium') === 'true';
     
     const pageNum = parseInt(page, 10);
-    let url = `https://ergast.com/api/f1/drivers.json?limit=8&offset=${pageNum * 8}`;
+    let url = `${ERGAST_BASE_URL}/drivers.json?limit=8&offset=${pageNum * 8}`;
 
     if (season) {
-        url = `https://ergast.com/api/f1/${season}/drivers.json?limit=8&offset=${pageNum * 8}`;
+        url = `${ERGAST_BASE_URL}/${season}/drivers.json?limit=8&offset=${pageNum * 8}`;
     }
 
     if (winner) {
-        url = `https://ergast.com/api/f1/results/1/drivers.json?limit=8&offset=${pageNum * 8}`;
+        url = `${ERGAST_BASE_URL}/results/1/drivers.json?limit=8&offset=${pageNum * 8}`;
         if (season) {
-            url = `https://ergast.com/api/f1/${season}/results/1/drivers.json?limit=8&offset=${pageNum * 8}`;
+            url = `${ERGAST_BASE_URL}/${season}/results/1/drivers.json?limit=8&offset=${pageNum * 8}`;
         }
     }
 
     if (podium) {
         // Realizar múltiples solicitudes para posiciones de podio
-        const urls = [
-            season ? `https://ergast.com/api/f1/${season}/results/1/drivers.json?limit=1000` : `https://ergast.com/api/f1/results/1/drivers.json?limit=1000`,
-            season ? `https://ergast.com/api/f1/${season}/results/2/drivers.json?limit=1000` : `https://ergast.com/api/f1/results/2/drivers.json?limit=1000`,
-            season ? `https://ergast.com/api/f1/${season}/results/3/drivers.json?limit=1000` : `https://ergast.com/api/f1/results/3/drivers.json?limit=1000`,
-        ];
+        const paths = [1, 2, 3].map(position =>
+            season ? `${season}/results/${position}/drivers.json` : `results/${position}/drivers.json`
+        );
 
         try {
-            const responses = await Promise.all(urls.map(url => fetch(url, { cache: 'force-cache' })));
-            const data = await Promise.all(responses.map(res => res.json()));
-            
+            const results = await Promise.all(paths.map(fetchAllDrivers));
+
             // Combinar los resultados y eliminar duplicados
             const driversSet = new Set<string>();
-            data.forEach(result => {
-                result.MRData.DriverTable.Drivers.forEach((driver: unknown) => {
-                    driversSet.add(JSON.stringify(driver));
-                });
-            });
-            
+            results.flat().forEach(driver => driversSet.add(JSON.stringify(driver)));
+
             const drivers = Array.from(driversSet).map(driver => JSON.parse(driver));
             const totalElements = drivers.length;
             const totalPages = Math.ceil(totalElements / 8);
@@ -53,7 +47,7 @@ export async function GET(req: Request) {
     }
 
     try {
-        const response = await fetch(url, { cache: 'force-cache' });
+        const response = await fetch(url, ERGAST_FETCH_OPTIONS);
         if (!response.ok) {
             throw new Error('Network response was not ok');
         }
