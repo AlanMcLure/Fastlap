@@ -30,6 +30,7 @@ Banco de ideas, ordenado por valor frente a esfuerzo. Estado: ⏳ pendiente · �
 
 ## C. Sin código, pero críticas
 
+- ✅ **FAQs reescritas** con lo que la app hace de verdad (antes hablaban de una sección «Resultados» y un botón «Registrarse» que no existen); ahora salen de `src/lib/faqs.ts` y se publican también como datos estructurados. Revisarlas cada vez que cambie una función.
 - **Probar con aficionados reales** (cinco conversaciones valen más que otra funcionalidad): el plan se apoya en hipótesis.
 - **Cerrar lo externo**: correo a Jolpica por la licencia comercial (lo envía el autor), capturar fixtures reales desde una máquina con internet, probar de verdad Google OAuth, UploadThing (v4), Docker y Stripe.
 - **Despliegue**: elegir hosting (el directo y el cron de sincronización piden un proceso de larga vida), base de datos y Redis de producción.

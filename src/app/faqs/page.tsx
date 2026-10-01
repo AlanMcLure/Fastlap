@@ -1,40 +1,28 @@
-// /app/faqs/page.tsx
+import JsonLd from '@/components/JsonLd'
+import { FAQS, faqJsonLd } from '@/lib/faqs'
 
-'use client';
+// Server component with native <details>: indexable, accessible and no JavaScript needed.
+const FAQPage = () => (
+  <div className='mx-auto max-w-3xl space-y-8 py-6'>
+    <JsonLd data={faqJsonLd()} />
+    <header>
+      <p className='label'>AYUDA</p>
+      <h1 className='mt-2 text-3xl font-bold text-display md:text-4xl'>Preguntas frecuentes</h1>
+    </header>
 
-import React from 'react';
-import FAQItem from '@/components/FAQItem';
-
-const faqData = [
-  {
-    question: '¿Cuál es el propósito de este sitio web?',
-    answer: 'Este sitio web está diseñado para proporcionar información sobre las últimas noticias y eventos en el mundo de la Fórmula 1.'
-  },
-  {
-    question: '¿Cómo puedo registrarme en el sitio?',
-    answer: 'Para registrarte, simplemente haz clic en el botón "Registrarse" en la parte superior derecha y sigue las instrucciones.'
-  },
-  {
-    question: '¿Puedo acceder a las estadísticas de carreras pasadas?',
-    answer: 'Sí, puedes acceder a las estadísticas de carreras pasadas a través de la sección "Resultados" en el menú principal.'
-  },
-  {
-    question: '¿Cómo puedo contactar con el soporte?',
-    answer: 'Puedes contactar con el soporte enviando un correo electrónico a fastlapsoporte@gmail.com.'
-  }
-];
-
-const FAQPage = () => {
-  return (
-    <div className="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
-      <h1 className="font-bold text-3xl md:text-4xl mb-4">Preguntas Frecuentes (FAQs)</h1>
-      <div className="space-y-4">
-        {faqData.map((faq, index) => (
-          <FAQItem key={index} question={faq.question} answer={faq.answer} />
-        ))}
-      </div>
+    <div className='divide-y divide-border rounded-xl border border-input bg-card'>
+      {FAQS.map((faq) => (
+        <details key={faq.question} className='group px-5 py-4'>
+          <summary className='flex cursor-pointer list-none items-center justify-between gap-4 text-lg text-display focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring [&::-webkit-details-marker]:hidden'>
+            {faq.question}
+            <span aria-hidden='true' className='font-mono text-muted-foreground group-open:hidden'>+</span>
+            <span aria-hidden='true' className='hidden font-mono text-muted-foreground group-open:inline'>−</span>
+          </summary>
+          <p className='mt-3 leading-7 text-muted-foreground'>{faq.answer}</p>
+        </details>
+      ))}
     </div>
-  );
-};
+  </div>
+)
 
-export default FAQPage;
+export default FAQPage
