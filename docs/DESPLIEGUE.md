@@ -91,11 +91,11 @@ En el entorno de desarrollo (sin acceso a Google, UploadThing, Stripe ni a la AP
 ## 7. Pendiente y riesgos (no es asesoramiento legal)
 
 - **Licencia de los datos:** Jolpica-F1 es CC BY-NC-SA 4.0 (**uso no comercial**, atribución). Si vas a cobrar o poner publicidad, escribe antes a `admin@jolpi.ca`. La copia propia y la API pública son obras derivadas con la misma licencia.
-- **Textos legales:** hay borradores en `docs/legal/` (sin publicar ni revisar). Hace falta política de privacidad (se guardan correo, nombre y foto de Google, y lo que publiquen) y condiciones de uso; las cookies actuales son técnicas (sesión y tema), sin analítica. Revisión profesional recomendada (RGPD si hay usuarios en la UE).
+- **Textos legales:** borradores en `docs/legal/` (sin publicar ni revisar); la lista de lo que falta está en `docs/PENDIENTE.md`. Las cookies actuales son técnicas, sin analítica.
 - **Marcas:** la app avisa de que no está afiliada a la Fórmula 1; no uses logos oficiales.
-- **Content-Security-Policy:** no hay. Se añadieron las demás cabeceras de seguridad, pero una CSP exige permitir el script del tema, los datos estructurados y los incrustados del editor, y probarla con cuidado.
+- **Content-Security-Policy:** no hay. Se añadieron las demás cabeceras de seguridad, pero una CSP exige permitir el script del tema y los datos estructurados, y probarla con cuidado (los incrustados del editor ya no existen).
 - **Seguimiento de errores y métricas:** no hay (Sentry, etc.). Recomendable antes de tener usuarios reales; necesita una cuenta.
 - **Migraciones versionadas:** se usa `db push`. Con datos reales conviene pasar a `prisma migrate` (con una migración inicial de base y `migrate resolve` para la base ya existente).
-- **Moderación:** solo administradores; sin moderadores por comunidad, suspensión de usuarios ni normas escritas de la comunidad.
+- **Moderación:** solo administradores; sin moderadores por comunidad ni suspensión de usuarios; las normas de la comunidad están en borrador (`docs/legal/`).
 - **Correo:** las notificaciones son solo dentro de la app.
 - **UploadThing v4:** migrar a la v7 es un trabajo aparte.
