@@ -57,7 +57,8 @@ The Prisma schema uses real database foreign keys (the former `relationMode = "p
 - Route groups: `(auth)` holds `/sign-in` and `/sign-up`. The `@authModal` parallel route slot ([src/app/@authModal/](src/app/@authModal/)) uses intercepting routes (`(.)sign-in`, `(.)sign-up`) to render auth as a modal over the current page; the root layout renders both `{children}` and `{authModal}` ([src/app/layout.tsx](src/app/layout.tsx)).
 - `/r/[slug]` is a subreddit page; `/r/[slug]/submit` is the post-creation page; `/r/create` creates a subreddit.
 - `/u/[slug]` is a user profile.
-- `/f1-dashboard/` contains `pilotos`, `carreras` (calendar), `noticias` sections (plus `piloto`, `carrera`, `noticia` detail routes) with its own sidebar ([src/app/f1-dashboard/layout.tsx](src/app/f1-dashboard/layout.tsx)).
+- `/f1-dashboard/` contains `clasificacion`, `pilotos`, `carreras` (calendar), `noticias` sections (plus `piloto`, `carrera`, `noticia` detail routes) with its own sidebar ([src/app/f1-dashboard/layout.tsx](src/app/f1-dashboard/layout.tsx)).
+- Vercel deployments are disabled for `claude/**` branches in [vercel.json](vercel.json).
 - Other pages: `/premium`, `/faqs`, `/settings`, `/not-authorized`.
 - **Next 16 async APIs:** `params` in pages and route handlers is a `Promise<{...}>` and must be awaited; `headers()` is async. Follow the existing pages as the pattern.
 
@@ -83,7 +84,7 @@ Typed, validated access to Jolpica-F1 for the rebuilt dashboard (see [docs/PLAN-
 - `schemas.ts`: Zod schemas that also convert Ergast's numeric strings to numbers. A response that does not match throws `F1SchemaError` naming the offending path.
 - `queries.ts`: `getCalendar`, `getNextRace`, `getDriverStandings`, `getConstructorStandings`, `getRaceResults`, `getPitStops`, `getDrivers`, `getDriver`, `getDriverResults`. Path inputs (season, round, ids) are validated before they reach the URL. Closed seasons are cached for a week, the running one for an hour.
 - Tests use **synthetic** fixtures in `__fixtures__/`. Real responses can be captured with `node scripts/capture-f1-fixtures.mjs` (needs internet) into `__fixtures__/real/`; `contract.test.ts` then validates the schemas against them.
-- Migrated to this layer so far: the dashboard home (next race) and `/f1-dashboard/carreras` (season calendar), both server components. Pure calendar helpers (`weekendSessions`, `raceStatus`, `findUpcomingRace`) live in `calendar.ts`, date formatting in `format.ts`. Times are UTC in the API; `LocalTime` shows them in the viewer's time zone and `Countdown` ticks with `useSyncExternalStore` (no effects, no hydration mismatch).
+- Migrated to this layer so far: the dashboard home (next race + top-5 standings), `/f1-dashboard/carreras` (season calendar) and `/f1-dashboard/clasificacion` (drivers/constructors championship per season with an accumulated-points chart), all server components. The chart (`PointsChart`, recharts, monochrome lines) is computed by `pointsProgression` from `getSeasonResults` + `getSeasonSprintResults` (results arrive 100 per page and a race can be split across pages: `mergeRaces` joins them); it can differ from the official table if a penalty was applied later. Pure calendar helpers (`weekendSessions`, `raceStatus`, `findUpcomingRace`) live in `calendar.ts`, date formatting in `format.ts`. Times are UTC in the API; `LocalTime` shows them in the viewer's time zone and `Countdown` ticks with `useSyncExternalStore` (no effects, no hydration mismatch).
 - The remaining `/api/ergast/*` routes still exist until the other dashboard pages are migrated (plan slices 3–5).
 
 ### Design system ("Nothing" language, direction B)

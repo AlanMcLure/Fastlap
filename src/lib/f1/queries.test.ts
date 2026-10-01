@@ -10,6 +10,8 @@ import {
   getNextRace,
   getPitStops,
   getRaceResults,
+  getSeasonResults,
+  getSeasonSprintResults,
   revalidateFor,
 } from './queries'
 
@@ -94,6 +96,22 @@ describe('queries', () => {
     expect(race?.Results).toHaveLength(3)
     fetchMock.mockResolvedValueOnce(ok({ MRData: { total: '0', RaceTable: { Races: [] } } }))
     expect(await getRaceResults(2025, 24)).toBeNull()
+  })
+
+  it('getSeasonResults reads every page and merges a race split across them', async () => {
+    const raceJson = (results: unknown[]) => ({ season: '2025', round: '1', raceName: 'A Grand Prix', Circuit: { circuitId: 'c', circuitName: 'C', Location: { lat: '0', long: '0', locality: 'L', country: 'K' } }, date: '2025-01-01', Results: results })
+    const row = (id: string, pts: string) => ({ position: '1', positionText: '1', points: pts, Driver: { driverId: id, givenName: id, familyName: id, dateOfBirth: '2000-01-01', nationality: 'X' }, Constructor: { constructorId: 't', name: 'T', nationality: 'X' }, grid: '1', laps: '5', status: 'Finished' })
+    fetchMock.mockImplementationOnce(async () => ok({ MRData: { total: '120', RaceTable: { Races: [raceJson(Array.from({ length: 100 }, (_, i) => row('a' + i, '1')))] } } }))
+    fetchMock.mockImplementationOnce(async () => ok({ MRData: { total: '120', RaceTable: { Races: [raceJson(Array.from({ length: 20 }, (_, i) => row('b' + i, '2')))] } } }))
+    const races = await getSeasonResults(2025)
+    expect(races).toHaveLength(1)
+    expect(races[0].Results).toHaveLength(120)
+    expect(requested()).toEqual(['/ergast/f1/2025/results.json?limit=100&offset=0', '/ergast/f1/2025/results.json?limit=100&offset=100'])
+  })
+
+  it('getSeasonSprintResults is empty for a season without sprints', async () => {
+    fetchMock.mockImplementationOnce(async () => ok({ MRData: { total: '0', RaceTable: { Races: [] } } }))
+    expect(await getSeasonSprintResults(2019)).toEqual([])
   })
 
   it('getPitStops flattens the stops', async () => {

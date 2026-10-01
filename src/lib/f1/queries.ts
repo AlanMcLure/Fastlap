@@ -7,12 +7,14 @@ import {
   PitStopsResponseSchema,
   RacesResponseSchema,
   ResultsResponseSchema,
+  SprintResultsResponseSchema,
   type ConstructorStanding,
   type Driver,
   type DriverStanding,
   type PitStop,
   type Race,
   type RaceWithResults,
+  type RaceWithSprintResults,
 } from './schemas'
 
 export type Season = number | 'current'
@@ -51,6 +53,23 @@ function idSegment(id: string) {
 /** Finished seasons never change; the running one is refreshed every hour. */
 export function revalidateFor(season: Season, now = new Date()) {
   return season !== 'current' && season < now.getUTCFullYear() ? 7 * DAY : HOUR
+}
+
+/** Joins the pieces of a race that a page boundary split, keeping rounds in order. */
+export function mergeRaces<K extends 'Results' | 'SprintResults', R extends Race & Record<K, unknown[]>>(
+  races: R[],
+  key: K
+): R[] {
+  const byRound = new Map<number, R>()
+  for (const race of races) {
+    const existing = byRound.get(race.round)
+    if (existing) {
+      byRound.set(race.round, { ...existing, [key]: [...existing[key], ...race[key]] })
+    } else {
+      byRound.set(race.round, race)
+    }
+  }
+  return [...byRound.values()].sort((a, b) => a.round - b.round)
 }
 
 // ---- queries ----------------------------------------------------------------
@@ -112,6 +131,31 @@ export async function getRaceResults(season: Season, round: number): Promise<Rac
     { revalidate: revalidateFor(season), query: { limit: 100 } }
   )
   return data.MRData.RaceTable.Races[0] ?? null
+}
+
+/**
+ * Every race result of a season. Results are read 100 per page, so one race can
+ * arrive split across two pages: the pieces are merged by round.
+ */
+export async function getSeasonResults(season: Season): Promise<RaceWithResults[]> {
+  const pages = await f1Client.getAll(
+    `${seasonSegment(season)}/results.json`,
+    ResultsResponseSchema,
+    (page) => page.MRData.RaceTable.Races,
+    { revalidate: revalidateFor(season) }
+  )
+  return mergeRaces(pages, 'Results')
+}
+
+/** Sprint results of a season (empty before 2021). */
+export async function getSeasonSprintResults(season: Season): Promise<RaceWithSprintResults[]> {
+  const pages = await f1Client.getAll(
+    `${seasonSegment(season)}/sprint.json`,
+    SprintResultsResponseSchema,
+    (page) => page.MRData.RaceTable.Races,
+    { revalidate: revalidateFor(season) }
+  )
+  return mergeRaces(pages, 'SprintResults')
 }
 
 export async function getPitStops(season: Season, round: number): Promise<PitStop[]> {

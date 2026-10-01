@@ -4,6 +4,7 @@ import RaceCard from '@/components/f1-dashboard/RaceCard'
 import SeasonSelect from '@/components/f1-dashboard/SeasonSelect'
 import { findUpcomingRace } from '@/lib/f1/calendar'
 import { getCalendar } from '@/lib/f1/queries'
+import { resolveSeason, seasonOptions } from '@/lib/f1/season'
 import type { Race } from '@/lib/f1/schemas'
 
 // Rendered per request: the status of each race (finished, next...) depends on the current time.
@@ -11,20 +12,13 @@ export const dynamic = 'force-dynamic'
 
 export const metadata = { title: 'Calendario · FastLap' }
 
-const FIRST_SEASON = 1950
-
 interface RacesPageProps {
   searchParams: Promise<{ season?: string }>
 }
 
 const RacesPage = async ({ searchParams }: RacesPageProps) => {
   const now = new Date()
-  const currentYear = now.getUTCFullYear()
-  const requested = Number((await searchParams).season)
-  const season =
-    Number.isInteger(requested) && requested >= FIRST_SEASON && requested <= currentYear + 1 ? requested : currentYear
-  const years = Array.from({ length: currentYear - FIRST_SEASON + 1 }, (_, i) => currentYear - i)
-  if (!years.includes(season)) years.unshift(season)
+  const season = resolveSeason((await searchParams).season, now)
 
   let races: Race[] = []
   let failed = false
@@ -48,7 +42,7 @@ const RacesPage = async ({ searchParams }: RacesPageProps) => {
           </p>
           <h1 className='mt-2 text-3xl font-bold text-display md:text-4xl'>Calendario</h1>
         </div>
-        <SeasonSelect value={season} years={years} />
+        <SeasonSelect value={season} years={seasonOptions(season, now)} basePath='/f1-dashboard/carreras' />
       </div>
 
       {failed ? (

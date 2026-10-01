@@ -3,7 +3,7 @@
 import React from 'react';
 import Sidebar, { SidebarItem } from '@/components/SideBar';
 import Link from 'next/link';
-import { UserCircle, Flag, Book } from 'lucide-react'
+import { UserCircle, Flag, Book, Trophy } from 'lucide-react'
 import { usePathname } from 'next/navigation';
 
 interface LayoutProps {
@@ -19,6 +19,9 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                 <Sidebar>
                     <Link href="/f1-dashboard/pilotos">
                         <SidebarItem icon={<UserCircle />} text="Pilotos" active={pathname.includes('piloto')} alert={false} />
+                    </Link>
+                    <Link href="/f1-dashboard/clasificacion">
+                        <SidebarItem icon={<Trophy />} text="Clasificación" active={pathname.includes('clasificacion')} alert={false} />
                     </Link>
                     <Link href="/f1-dashboard/carreras">
                         <SidebarItem icon={<Flag />} text="Carreras" active={pathname.includes('carrera')} alert={false} />

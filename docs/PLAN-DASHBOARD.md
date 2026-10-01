@@ -73,7 +73,7 @@ Fuentes secundarias (fichas de tiendas, artículos, GitHub); no hay datos de des
 ## 8. Arquitectura
 
 ### 8.1 Principios
-Servidor primero; sin datos inventados; tipado de extremo a extremo (Zod en la frontera); estados de carga/error/vacío completos y en español; una sola librería de gráficos (propuesta `recharts`, se decide en la rebanada 3); sin logos oficiales.
+Servidor primero; sin datos inventados; tipado de extremo a extremo (Zod en la frontera); estados de carga/error/vacío completos y en español; una sola librería de gráficos (`recharts`, elegida en la rebanada 3); sin logos oficiales.
 
 ### 8.2 Capa de datos (`src/lib/f1/`) — hecha
 `client.ts` (reintentos, límite, paginación), `schemas.ts` (Zod), `queries.ts` (calendario, próxima carrera, clasificaciones, resultados, paradas, pilotos), tests con Vitest. Las rutas `/api/ergast/*` desaparecen cuando las páginas migren.
@@ -89,7 +89,7 @@ Servidor primero; sin datos inventados; tipado de extremo a extremo (Zod en la f
 | 1 | Capa de datos | `src/lib/f1/` + tests + captura de fixtures reales | ✅ |
 | V0 | Arreglos visuales rápidos | Textos y fechas en español, plural, barra lateral del dashboard, errores en español | ✅ |
 | 2 | Calendario y próxima carrera | Calendario, cuenta atrás, circuito | ✅ |
-| 3 | Clasificaciones | Pilotos y constructores, selector de temporada, evolución (gráfico) | ⏳ |
+| 3 | Clasificaciones | Pilotos y constructores, selector de temporada, evolución (gráfico) | ✅ |
 | 4 | Detalle de carrera | Resultados, parrilla, vuelta rápida, paradas | ⏳ |
 | 5 | Pilotos | Listado y perfil con estadísticas calculadas de resultados reales | ⏳ |
 | 6 | Copia propia + API propia | Modelos Prisma, sincronización, lectura desde la BD | ⏳ |

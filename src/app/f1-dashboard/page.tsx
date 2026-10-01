@@ -1,7 +1,7 @@
 import Link from 'next/link'
 
 import DataError from '@/components/f1-dashboard/DataError'
-import DriverStandings from '@/components/f1-dashboard/DriverStandings'
+import StandingsPreview from '@/components/f1-dashboard/StandingsPreview'
 import NextRaceCard from '@/components/f1-dashboard/NextRaceCard'
 import { getNextRace } from '@/lib/f1/queries'
 import type { Race } from '@/lib/f1/schemas'
@@ -42,7 +42,7 @@ const DashboardPage = async () => {
         </div>
       )}
 
-      <DriverStandings />
+      <StandingsPreview />
     </div>
   )
 }

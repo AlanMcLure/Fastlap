@@ -84,6 +84,8 @@ export const ResultSchema = z.object({
 
 export const RaceWithResultsSchema = RaceSchema.extend({ Results: z.array(ResultSchema) })
 
+export const RaceWithSprintResultsSchema = RaceSchema.extend({ SprintResults: z.array(ResultSchema) })
+
 export const PitStopSchema = z.object({
   driverId: z.string(),
   stop: num,
@@ -124,6 +126,10 @@ export const ResultsResponseSchema = envelope({
   RaceTable: z.object({ Races: z.array(RaceWithResultsSchema) }),
 })
 
+export const SprintResultsResponseSchema = envelope({
+  RaceTable: z.object({ Races: z.array(RaceWithSprintResultsSchema) }),
+})
+
 export const PitStopsResponseSchema = envelope({
   RaceTable: z.object({ Races: z.array(RaceWithPitStopsSchema) }),
 })
@@ -154,6 +160,7 @@ export type Circuit = z.infer<typeof CircuitSchema>
 export type Race = z.infer<typeof RaceSchema>
 export type Result = z.infer<typeof ResultSchema>
 export type RaceWithResults = z.infer<typeof RaceWithResultsSchema>
+export type RaceWithSprintResults = z.infer<typeof RaceWithSprintResultsSchema>
 export type PitStop = z.infer<typeof PitStopSchema>
 export type DriverStanding = z.infer<typeof DriverStandingSchema>
 export type ConstructorStanding = z.infer<typeof ConstructorStandingSchema>
