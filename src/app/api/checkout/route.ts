@@ -1,8 +1,10 @@
 import { NextResponse } from "next/server";
 import { Stripe } from "stripe";
 import { getAuthSession } from '@/lib/auth';
+import { PREMIUM_ENABLED } from '@/lib/features';
 
 export async function POST(req: Request) {
+  if (!PREMIUM_ENABLED) return new Response('Not found', { status: 404 });
   
   const { priceId } = await req.json();
   const session = await getAuthSession();

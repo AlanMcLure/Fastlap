@@ -1,4 +1,6 @@
-import { redirect } from 'next/navigation'
+import { notFound, redirect } from 'next/navigation'
+
+import { PREMIUM_ENABLED } from '@/lib/features'
 
 import { getAuthSession } from '@/lib/auth'
 import PremiumActivation from '@/components/PremiumActivation'
@@ -9,6 +11,8 @@ export const metadata = {
 }
 
 export default async function PremiumSuccessPage() {
+  if (!PREMIUM_ENABLED) notFound()
+
   const session = await getAuthSession()
 
   if (!session?.user) {

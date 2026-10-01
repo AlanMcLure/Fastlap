@@ -1,4 +1,5 @@
 import PremiumCard from '@/components/PremiumCard'
+import { PREMIUM_ENABLED } from '@/lib/features'
 import CustomFeed from '@/components/homepage/CustomFeed'
 import GeneralFeed from '@/components/homepage/GeneralFeed'
 import { buttonVariants } from '@/components/ui/Button'
@@ -41,7 +42,7 @@ export default async function Home() {
 
           </div>
           {/* Mostrar PremiumCard solo si el usuario es de tipo USER */}
-          {session?.user?.role === 'USER' && <PremiumCard />}
+          {PREMIUM_ENABLED && session?.user?.role === 'USER' && <PremiumCard />}
         </div>
         {/* Feed de posts */}
         <div className='md:col-span-2'>

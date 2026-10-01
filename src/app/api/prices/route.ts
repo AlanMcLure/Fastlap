@@ -1,7 +1,11 @@
 import { NextResponse } from 'next/server'
 import { Stripe } from 'stripe'
 
+import { PREMIUM_ENABLED } from '@/lib/features'
+
 export async function GET() {
+  if (!PREMIUM_ENABLED) return new Response('Not found', { status: 404 })
+
   try {
     // Asegúrate de tener la clave secreta de Stripe en tu archivo .env
     const stripeSecretKey = process.env.STRIPE_SECRET_KEY;

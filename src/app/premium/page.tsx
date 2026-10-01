@@ -1,4 +1,6 @@
-import { redirect } from 'next/navigation'
+import { notFound, redirect } from 'next/navigation'
+
+import { PREMIUM_ENABLED } from '@/lib/features'
 
 import { authOptions, getAuthSession } from '@/lib/auth'
 import BackButton from '@/components/BackButton'
@@ -26,6 +28,8 @@ async function loadPrices() {
   }
 
 export default async function PremiumPage() {
+  if (!PREMIUM_ENABLED) notFound()
+
   const session = await getAuthSession()
 
   if (!session?.user) {

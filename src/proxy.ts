@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 
 import { auth } from '@/lib/auth'
+import { canAccessDashboard } from '@/lib/features'
 
 export default auth((req) => {
   if (!req.auth) {
@@ -10,9 +11,7 @@ export default auth((req) => {
   // Verificar si el usuario tiene acceso a las rutas del F1 Dashboard
   const { pathname } = req.nextUrl
   const isF1DashboardRoute = pathname.startsWith('/f1-dashboard')
-  const role = req.auth.user?.role
-
-  if (isF1DashboardRoute && role !== 'ADMIN' && role !== 'PREMIUM') {
+  if (isF1DashboardRoute && !canAccessDashboard(req.auth.user?.role)) {
     return NextResponse.redirect(new URL('/not-authorized', req.nextUrl))
   }
 })

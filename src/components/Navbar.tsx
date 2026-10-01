@@ -5,6 +5,7 @@ import { buttonVariants } from './ui/Button'
 import { UserAccountNav } from './UserAccountNav'
 import SearchBar from './SearchBar'
 import { LayoutDashboard } from 'lucide-react'
+import { canAccessDashboard } from '@/lib/features'
 
 const Navbar = async () => {
   const session = await getAuthSession()
@@ -17,8 +18,8 @@ const Navbar = async () => {
           <p className='hidden text-zinc-900 text-1xl font-bold md:block'>FastLap</p>
         </Link>
 
-        {/* Conditionally render the F1 Dashboard link for ADMIN and PREMIUM users */}
-        {session?.user && (session.user.role === 'ADMIN' || session.user.role === 'PREMIUM') && (
+        {/* F1 Dashboard link: every signed-in user, or only PREMIUM/ADMIN when Premium is enabled */}
+        {session?.user && canAccessDashboard(session.user.role) && (
           <Link href='/f1-dashboard' className='flex gap-2 items-center'>
             <LayoutDashboard className='h-8 w-8 sm:h-6 sm:w-6' />
             <p className='hidden text-zinc-900 text-1xl font-bold md:block'>F1 Dashboard</p>
