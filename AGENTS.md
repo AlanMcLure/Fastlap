@@ -25,7 +25,7 @@ Linting uses ESLint 9 flat config ([eslint.config.mjs](eslint.config.mjs), `esli
 
 ## Required environment variables
 
-`.env` must define: `DATABASE_URL` (Postgres), `NEXTAUTH_SECRET`, `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, `UPLOADTHING_SECRET`, `UPLOADTHING_APP_ID`, `REDIS_URL`, `REDIS_SECRET` (see `.env.example`). Stripe flows additionally need `STRIPE_SECRET_KEY` and `STRIPE_WEBHOOK_SECRET` (used in [src/app/api/webhook/route.ts](src/app/api/webhook/route.ts); not yet listed in `.env.example`). Never commit real secrets.
+`.env` must define: `DATABASE_URL` (Postgres), `NEXTAUTH_SECRET`, `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, `UPLOADTHING_SECRET`, `UPLOADTHING_APP_ID`, `REDIS_URL`, `REDIS_SECRET` (see `.env.example`). Stripe flows additionally need `STRIPE_SECRET_KEY` and `STRIPE_WEBHOOK_SECRET` (used in [src/app/api/webhook/route.ts](src/app/api/webhook/route.ts)). Never commit real secrets.
 
 ## Architecture
 
