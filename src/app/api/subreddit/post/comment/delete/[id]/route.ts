@@ -22,6 +22,10 @@ export async function DELETE(
       return new Response('Comment not found', { status: 404 })
     }
 
+    if (comment.authorId !== session.user.id && session.user.role !== 'ADMIN') {
+      return new Response('Forbidden', { status: 403 })
+    }
+
     await db.comment.updateMany({
       where: { replyToId: id },
       data: { replyToId: null },
