@@ -15,6 +15,10 @@
 | [CONSULTA-ABOGADO.md](CONSULTA-ABOGADO.md) | Resumen del proyecto y 30 preguntas para llevar a una primera consulta de revisión. |
 | [CAMBIOS-TECNICOS.md](CAMBIOS-TECNICOS.md) | Cambios de código hechos por motivos legales, con cómo estaba antes y cómo revertirlos. |
 
+## Para otros proyectos
+
+El método está extraído como skill reutilizable en `.claude/skills/legal-readiness/` (escáner de señales, plantillas de inventario, lista técnica, esqueletos y consulta con el abogado). Cópiala al otro proyecto; instrucciones en su `README.md`. Esta carpeta es el ejemplo completo.
+
 ## Datos que solo puede poner el titular
 
 Todo lo que dice `[PENDIENTE: …]` es un dato o una decisión que no puedo inventar. Para ver los que quedan: `grep -rn "PENDIENTE" docs/legal`.
