@@ -21,7 +21,7 @@ Documento corto para llevar a una primera consulta de revisión. Acompáñalo de
 | Contenido incrustado de terceros | Retirado (solo imágenes y enlaces) |
 | Tokens de Google | Ya no se guardan |
 | Denuncias | Cualquier usuario denuncia; un administrador revisa, elimina o descarta, avisa al autor y deja registro |
-| Cookies | Solo técnicas (sesión, protección CSRF, aviso breve de consentimiento y preferencia de tema en el navegador) |
+| Cookies | Solo técnicas (sesión, protección CSRF, una cookie de 10 minutos con la declaración de edad al registrarse, y la preferencia de tema en el navegador) |
 
 Detalle y cómo estaba antes: [CAMBIOS-TECNICOS.md](CAMBIOS-TECNICOS.md).
 
