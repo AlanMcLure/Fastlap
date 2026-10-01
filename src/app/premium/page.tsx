@@ -27,11 +27,12 @@ async function loadPrices() {
 
 export default async function PremiumPage() {
   const session = await getAuthSession()
-  const prices = await loadPrices();
 
   if (!session?.user) {
     redirect(authOptions?.pages?.signIn || '/login')
   }
+
+  const prices = await loadPrices();
 
   return (
     <div className='sm:container max-w-7xl mx-auto h-full pt-12'>

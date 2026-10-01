@@ -4,7 +4,7 @@ Guidance for any coding agent or contributor working in this repository.
 
 ## Project overview
 
-FastLap is a Reddit-style social network for Formula 1 fans (Spanish-language UI). It combines forum-style communities ("subreddits") with an F1 data dashboard gated behind a paid Premium tier. Built with Next.js 16 (App Router), React 18, TypeScript (`strict: true`), Tailwind 3 + Shadcn UI ("new-york" style, slate base color), Prisma 4/Postgres (Neon), NextAuth v4, Upstash Redis, UploadThing, and Stripe.
+FastLap is a Reddit-style social network for Formula 1 fans (Spanish-language UI). It combines forum-style communities ("subreddits") with an F1 data dashboard gated behind a paid Premium tier. Built with Next.js 16 (App Router), React 19, TypeScript (`strict: true`), Tailwind 3 + Shadcn UI ("new-york" style, slate base color), Prisma 4/Postgres (Neon), NextAuth v4, Upstash Redis, UploadThing, and Stripe.
 
 ## Common commands
 
@@ -90,6 +90,7 @@ Request bodies are validated with Zod schemas in [src/lib/validators/](src/lib/v
 - Path alias: `@/*` → `src/*` ([tsconfig.json](tsconfig.json)). TypeScript runs with `strict: true`; new and edited code must type-check without `any` shortcuts.
 - User-facing text is in Spanish (toasts, errors, button labels). Keep this consistent in new UI.
 - Shadcn primitives live in [src/components/ui/](src/components/ui/); feature components live alongside the page-level components in [src/components/](src/components/) (with `comments/`, `post-vote/`, `f1-dashboard/`, `homepage/`, `renderers/` subfolders).
+- `uploadthing` / `@uploadthing/react` are still on v4 (peer-dependency warning for React 19; the helpers used are plain hooks). Moving to v7 is a separate migration: it replaces `UPLOADTHING_SECRET`/`UPLOADTHING_APP_ID` with a single `UPLOADTHING_TOKEN` and changes the router and `uploadFiles` APIs.
 - ESLint rule `no-console` is `warn`: only keep `console.error` in legitimate `catch` blocks.
 - Next image config whitelists `uploadthing.com`, `lh3.googleusercontent.com`, `utfs.io` ([next.config.js](next.config.js)) — add new external hosts there before using them.
 - The build target is `output: 'standalone'` for the Docker image; don't switch without updating the Dockerfile.
