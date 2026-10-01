@@ -33,7 +33,7 @@ const RacesPage = async ({ searchParams }: RacesPageProps) => {
 
   return (
     <div className='max-w-7xl'>
-      <BackButton defaultPath='/f1-dashboard' backText='Volver al Dashboard' />
+      <BackButton defaultPath='/f1-dashboard' backText='Volver al Dashboard' className='-ml-5' />
 
       <div className='mb-8 mt-4 flex flex-col justify-between gap-4 sm:flex-row sm:items-end'>
         <div>

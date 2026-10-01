@@ -50,7 +50,7 @@ const RacePage = async ({ params }: RacePageProps) => {
     if (results.status === 'rejected' && calendar.status === 'rejected') {
       return (
         <div className='max-w-5xl space-y-6'>
-          <BackButton defaultPath='/f1-dashboard/carreras' backText='Volver al calendario' />
+          <BackButton defaultPath='/f1-dashboard/carreras' backText='Volver al calendario' className='-ml-5' />
           <DataError refresh />
         </div>
       )
@@ -70,7 +70,7 @@ const RacePage = async ({ params }: RacePageProps) => {
   return (
     <div className='max-w-5xl space-y-8'>
       <div>
-        <BackButton defaultPath='/f1-dashboard/carreras' backText='Volver al calendario' />
+        <BackButton defaultPath='/f1-dashboard/carreras' backText='Volver al calendario' className='-ml-5' />
         <p className='label mt-4'>
           TEMPORADA {season} · RONDA {round} · {formatRaceDate(race.date).toUpperCase()}
         </p>

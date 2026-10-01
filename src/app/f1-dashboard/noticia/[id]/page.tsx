@@ -23,7 +23,7 @@ const NewsDetailPage = () => {
 
     return (
         <div className="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
-            <BackButton defaultPath="/f1-dashboard/noticias" backText="Volver al Dashboard" />
+            <BackButton defaultPath="/f1-dashboard/noticias" backText="Volver al Dashboard" className='-ml-5' />
             <h1 className="font-bold text-3xl md:text-4xl mb-2 mt-4">{newsArticle.title}</h1>
             <div dangerouslySetInnerHTML={{ __html: newsArticle.content }}></div>
         </div>

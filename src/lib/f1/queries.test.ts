@@ -6,6 +6,7 @@ import {
   getConstructorStandings,
   getDriver,
   getDriverResults,
+  getDriverSeasons,
   getDriverStandings,
   getNextRace,
   getPitStops,
@@ -129,6 +130,14 @@ describe('queries', () => {
     const races = await getDriverResults('norris')
     expect(requested()[0]).toBe('/ergast/f1/drivers/norris/results.json?limit=100&offset=0')
     expect(races.map((r) => r.Results[0].position)).toEqual([1, 2])
+  })
+
+  it('getDriverSeasons returns the final position of each season, oldest first', async () => {
+    const list = (season: string, pos: string) => ({ season, round: '20', DriverStandings: [{ position: pos, positionText: pos, points: '100', wins: '3', Driver: { driverId: 'x', givenName: 'X', familyName: 'Y', dateOfBirth: '2000-01-01', nationality: 'Z' }, Constructors: [{ constructorId: 't', name: 'T', nationality: 'Z' }] }] })
+    fetchMock.mockImplementationOnce(async () => ok({ MRData: { total: '2', StandingsTable: { StandingsLists: [list('2021', '1'), list('2020', '3')] } } }))
+    const seasons = await getDriverSeasons('x')
+    expect(requested()[0]).toBe('/ergast/f1/drivers/x/driverStandings.json?limit=100&offset=0')
+    expect(seasons.map((s) => [s.season, s.position])).toEqual([[2020, 3], [2021, 1]])
   })
 
   it('rejects values that could alter the request path, without calling the API', async () => {

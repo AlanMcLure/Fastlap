@@ -1,201 +1,125 @@
-'use client'
+import Link from 'next/link'
 
-import React, { useEffect, useRef, useState } from 'react';
-import PilotCard, { PilotStats } from '@/components/f1-dashboard/PilotoCard';
-import { ChevronLeft, ChevronRight, Trophy, Medal } from 'lucide-react';
-import Link from 'next/link';
-import { Button } from '@/components/ui/Button';
-import BackButton from '@/components/BackButton';
-import DataError from '@/components/f1-dashboard/DataError';
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip"
+import DataError from '@/components/f1-dashboard/DataError'
+import DriverCard from '@/components/f1-dashboard/DriverCard'
+import SeasonSelect from '@/components/f1-dashboard/SeasonSelect'
+import { entriesByDriver, statsOf } from '@/lib/f1/driver'
+import { getDriverStandings, getDrivers, getSeasonResults } from '@/lib/f1/queries'
+import { resolveSeason, seasonOptions } from '@/lib/f1/season'
 
-export default function PilotsPage() {
-  const [pilots, setPilots] = useState<PilotStats[]>([]);
-  const [page, setPage] = useState(0);
-  const [totalPages, setTotalPages] = useState(0);
-  const totalElementsRef = useRef(20);
-  const [hasError, setHasError] = useState(false);
-  const [attempt, setAttempt] = useState(0);
+// Rendered per request: the selected season and filter come from the URL.
+export const dynamic = 'force-dynamic'
 
-  const [season, setSeason] = useState('2024');
-  const [winner, setWinner] = useState(false);
-  const [podium, setPodium] = useState(false);
+export const metadata = { title: 'Pilotos · FastLap' }
 
-  useEffect(() => {
-    const fetchPilots = async () => {
-      let url = `/api/ergast/driver?page=${page}`;
+type Filter = 'todos' | 'ganadores' | 'podio'
 
-      if (season && season !== 'current') {
-        url += `&season=${season}`;
-      }
+const FILTERS: { value: Filter; label: string }[] = [
+  { value: 'todos', label: 'TODOS' },
+  { value: 'ganadores', label: 'GANADORES' },
+  { value: 'podio', label: 'CON PODIO' },
+]
 
-      if (podium) {
-        url += `&podium=true`;
-      }
+interface DriversPageProps {
+  searchParams: Promise<{ season?: string; filtro?: string }>
+}
 
-      if (winner) {
-        url += `&winner=true`;
-      }
+const DriversPage = async ({ searchParams }: DriversPageProps) => {
+  const params = await searchParams
+  const season = resolveSeason(params.season)
+  const filter: Filter = FILTERS.some((f) => f.value === params.filtro) ? (params.filtro as Filter) : 'todos'
 
-      try {
-        const response = await fetch(url);
-        if (!response.ok) {
-          throw new Error('Failed to fetch data');
-        }
-        const data = await response.json();
-        setPilots(data.content);
-        setTotalPages(data.totalPages);
-        totalElementsRef.current = data.totalElements;
-        setHasError(false);
-      } catch (error) {
-        console.error(error);
-        setHasError(true);
-      }
-    };
+  // The list loads first; standings and results only add numbers to the cards.
+  const [drivers, standings, results] = await Promise.allSettled([
+    getDrivers(season),
+    getDriverStandings(season),
+    getSeasonResults(season),
+  ])
+  for (const [name, outcome] of Object.entries({ drivers, standings, results })) {
+    if (outcome.status === 'rejected') console.error(`Could not load ${name} for ${season}`, outcome.reason)
+  }
 
-    fetchPilots();
-  }, [page, season, winner, podium, attempt]);
+  const header = (
+    <div className='flex flex-col justify-between gap-4 sm:flex-row sm:items-end'>
+      <div>
+        <p className='label'>TEMPORADA {season}</p>
+        <h1 className='mt-2 text-3xl font-bold text-display md:text-4xl'>Pilotos</h1>
+      </div>
+      <SeasonSelect
+        value={season}
+        years={seasonOptions(season)}
+        basePath='/f1-dashboard/pilotos'
+        keep={filter === 'todos' ? {} : { filtro: filter }}
+      />
+    </div>
+  )
 
-  const handlePreviousPage = () => {
-    if (page >= 1) {
-      setPage(page - 1);
-    }
-  };
+  if (drivers.status === 'rejected') {
+    return (
+      <div className='max-w-7xl space-y-8'>
+        {header}
+        <DataError refresh />
+      </div>
+    )
+  }
 
-  const handleNextPage = () => {
-    if (page < totalPages) {
-      setPage(page + 1);
-    }
-  };
+  const entries = results.status === 'fulfilled' ? entriesByDriver(results.value) : null
+  const positions = new Map(
+    standings.status === 'fulfilled' && standings.value
+      ? standings.value.standings.map((s) => [s.Driver.driverId, { position: s.position ?? Infinity, team: s.Constructors[0]?.name }])
+      : []
+  )
+
+  const cards = drivers.value
+    .map((driver) => {
+      const driverEntries = entries?.get(driver.driverId) ?? []
+      const stats = entries ? statsOf(driverEntries) : undefined
+      const team = positions.get(driver.driverId)?.team ?? driverEntries[driverEntries.length - 1]?.result.Constructor.name
+      return { driver, stats, team, position: positions.get(driver.driverId)?.position ?? Infinity }
+    })
+    .filter(({ stats }) => (!stats ? true : filter === 'ganadores' ? stats.wins > 0 : filter === 'podio' ? stats.podiums > 0 : true))
+    .sort(
+      (a, b) =>
+        a.position - b.position ||
+        (b.stats?.points ?? 0) - (a.stats?.points ?? 0) ||
+        a.driver.familyName.localeCompare(b.driver.familyName)
+    )
 
   return (
-    <div className='max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8'>
-      <BackButton defaultPath="/f1-dashboard" backText="Volver al Dashboard" />
-      <div className='flex flex-col sm:flex-row justify-between items-center mb-4 mt-4'>
-        <h1 className='font-bold text-3xl md:text-4xl mb-2'>Pilotos</h1>
-        <div className='flex flex-wrap space-x-2 items-center'>
-          <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button onClick={() => {
-                  setWinner(!winner);
-                  setPage(0);
-                }}><Trophy /></Button>
-              </TooltipTrigger>
-              <TooltipContent>
-                <p>Pilotos ganadores</p>
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
-          <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button onClick={() => {
-                  setPodium(!podium);
-                  setPage(0);
-                }}><Medal /></Button>
-              </TooltipTrigger>
-              <TooltipContent>
-                <p>Pilotos con podium</p>
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
-          <div>
-            {/* <label className="mb-2 font-medium text-foreground">Temporada:</label> */}
-            <select
-              value={season}
-              onChange={e => {
-                setSeason(e.target.value);
-                setPage(0);
-              }}
-              className="border border-input rounded p-2"
-            >
-              <option value="current">Todos</option>
-              {Array.from({ length: 75 }, (_, i) => {
-                const year = 2024 - i;
-                return (
-                  <option key={year} value={year}>
-                    {year}
-                  </option>
-                );
-              })}
-            </select>
-          </div>
-        </div>        
-      </div>
-      {hasError ? (
-        <DataError onRetry={() => setAttempt((n) => n + 1)} />
-      ) : (
-      <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 '>
-        {pilots && pilots.length > 0 ? (
-          pilots.map(pilot => (
-            <Link href={`/f1-dashboard/piloto/${pilot.driverId}`} key={pilot.driverId}>
-              <PilotCard key={pilot.driverId} pilot={pilot} />
-            </Link>
-          ))
-        ) : (
-          <p>No se encontraron pilotos que cumplan con el filtro.</p>
-        )}
-      </div>
+    <div className='max-w-7xl space-y-8'>
+      {header}
+
+      <nav aria-label='Filtro de pilotos' className='inline-flex rounded-full border border-input p-0.5'>
+        {FILTERS.map(({ value, label }) => (
+          <Link
+            key={value}
+            href={`/f1-dashboard/pilotos?${new URLSearchParams({ season: String(season), ...(value === 'todos' ? {} : { filtro: value }) })}`}
+            aria-current={filter === value ? 'page' : undefined}
+            className={`label rounded-full px-4 py-2 transition-colors ${filter === value ? 'bg-primary text-primary-foreground' : 'hover:text-display'}`}>
+            {label}
+          </Link>
+        ))}
+      </nav>
+
+      {!entries && filter !== 'todos' && (
+        <p className='text-sm text-muted-foreground'>No se han podido cargar los resultados: el filtro no se ha aplicado.</p>
       )}
-      <div className="flex items-center justify-between border-t border-border px-4 py-3 sm:px-6 mt-2">
-        <div className="flex flex-1 justify-between sm:hidden">
-          <button
-            onClick={handlePreviousPage}
-            disabled={page === 0}
-            className="relative inline-flex items-center rounded-md border border-input bg-card px-4 py-2 text-sm font-medium text-foreground hover:bg-muted"
-          >
-            Anterior
-          </button>
-          <button
-            onClick={handleNextPage}
-            disabled={page === totalPages - 1}
-            className="relative ml-3 inline-flex items-center rounded-md border border-input bg-card px-4 py-2 text-sm font-medium text-foreground hover:bg-muted"
-          >
-            Siguiente
-          </button>
-        </div>
-        <div className="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between">
-          <div>
-            <p className="text-sm text-foreground">
-              Mostrando <span className="font-medium">{(page) * 8 + 1}</span> a <span className="font-medium">{Math.min((page + 1) * 8, totalPages * 8, totalElementsRef.current)}</span> de{' '}
-              <span className="font-medium">{totalElementsRef.current}</span> pilotos
-            </p>
-          </div>
-          <div>
-            <nav className="isolate inline-flex -space-x-px rounded-md" aria-label="Pagination">
-              <button
-                onClick={handlePreviousPage}
-                disabled={page === 0}
-                className="relative inline-flex items-center rounded-l-md px-2 py-2 text-muted-foreground ring-1 ring-inset ring-input hover:bg-muted focus:z-20 focus:outline-offset-0"
-              >
-                <span className="sr-only">Anterior</span>
-                <ChevronLeft className="h-5 w-5" aria-hidden="true" />
-              </button>
-              <div className="flex justify-between">
-                {page !== 0 && <button className="relative inline-flex items-center px-2 py-2 text-muted-foreground ring-1 ring-inset ring-input hover:bg-muted focus:z-20 focus:outline-offset-0" onClick={() => setPage(0)} disabled={page === 0}>1</button>}
-                {page > 0 && page !== 1 && <button className="relative inline-flex items-center px-2 py-2 text-muted-foreground ring-1 ring-inset ring-input hover:bg-muted focus:z-20 focus:outline-offset-0" onClick={() => setPage(page - 1)}>{page}</button>}
-                <button className="relative inline-flex items-center px-2 py-2 bg-primary text-primary-foreground ring-1 ring-inset ring-input focus:z-20 focus:outline-offset-0" disabled>{page + 1}</button>
-                {page < totalPages - 1 && page !== totalPages - 2 && <button className="relative inline-flex items-center px-2 py-2 text-muted-foreground ring-1 ring-inset ring-input hover:bg-muted focus:z-20 focus:outline-offset-0" onClick={() => setPage(page + 1)}>{page + 2}</button>}
-                {page !== totalPages - 1 && <button className="relative inline-flex items-center px-2 py-2 text-muted-foreground ring-1 ring-inset ring-input hover:bg-muted focus:z-20 focus:outline-offset-0" onClick={() => setPage(totalPages - 1)} disabled={page === totalPages - 1}>{totalPages}</button>}
-              </div>
-              <button
-                onClick={handleNextPage}
-                disabled={page === totalPages - 1}
-                className="relative inline-flex items-center rounded-r-md px-2 py-2 text-muted-foreground ring-1 ring-inset ring-input hover:bg-muted focus:z-20 focus:outline-offset-0"
-              >
-                <span className="sr-only">Siguiente</span>
-                <ChevronRight className="h-5 w-5" aria-hidden="true" />
-              </button>
-            </nav>
-          </div>
-        </div>
-      </div>
+
+      {cards.length === 0 ? (
+        <p className='rounded-xl border border-border bg-card p-6 text-muted-foreground'>
+          No hay pilotos que cumplan este filtro en la temporada {season}.
+        </p>
+      ) : (
+        <ul className='grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4'>
+          {cards.map(({ driver, stats, team }) => (
+            <li key={driver.driverId}>
+              <DriverCard driver={driver} team={team} stats={stats} />
+            </li>
+          ))}
+        </ul>
+      )}
     </div>
-  );
+  )
 }
+
+export default DriversPage

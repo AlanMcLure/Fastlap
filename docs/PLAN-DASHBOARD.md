@@ -91,7 +91,7 @@ Servidor primero; sin datos inventados; tipado de extremo a extremo (Zod en la f
 | 2 | Calendario y próxima carrera | Calendario, cuenta atrás, circuito | ✅ |
 | 3 | Clasificaciones | Pilotos y constructores, selector de temporada, evolución (gráfico) | ✅ |
 | 4 | Detalle de carrera | Resultados, parrilla, vuelta rápida, paradas | ✅ |
-| 5 | Pilotos | Listado y perfil con estadísticas calculadas de resultados reales | ⏳ |
+| 5 | Pilotos | Listado y perfil con estadísticas calculadas de resultados reales | ✅ |
 | 6 | Copia propia + API propia | Modelos Prisma, sincronización, lectura desde la BD | ⏳ |
 | V1 | Sistema de diseño | Tokens, tipografía, modo oscuro, componentes (dirección B) | ✅ |
 | 7 | Hub de fin de semana de carrera | Hilo automático por GP con resultados y votación de Piloto del Día | ⏳ |

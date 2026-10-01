@@ -10,9 +10,10 @@ interface BackButtonProps {
   defaultPath?: string;
   backText?: string;
   feedText?: string;
+  className?: string;
 }
 
-const BackButton: React.FC<BackButtonProps> = ({ defaultPath = '/', backText = 'Volver a la Comunidad', feedText = 'Volver a tu feed' }) => {
+const BackButton: React.FC<BackButtonProps> = ({ defaultPath = '/', backText = 'Volver a la Comunidad', feedText = 'Volver a tu feed', className }) => {
   const pathname = usePathname()
   // const router = useRouter()
 
@@ -30,7 +31,7 @@ const BackButton: React.FC<BackButtonProps> = ({ defaultPath = '/', backText = '
   // }
 
   return (
-    <Link href={subredditPath ? subredditPath : ''} className={buttonVariants({ variant: 'ghost' })}>
+    <Link href={subredditPath ? subredditPath : ''} className={buttonVariants({ variant: 'ghost', className })}>
       <ChevronLeft className='h-4 w-4 mr-1' />
       {subredditPath === '/' ? feedText : backText}
     </Link>

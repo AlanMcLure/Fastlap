@@ -61,7 +61,7 @@ const StandingsPage = async ({ searchParams }: StandingsPageProps) => {
   return (
     <div className='max-w-5xl space-y-8'>
       <div>
-        <BackButton defaultPath='/f1-dashboard' backText='Volver al Dashboard' />
+        <BackButton defaultPath='/f1-dashboard' backText='Volver al Dashboard' className='-ml-5' />
         <div className='mt-4 flex flex-col justify-between gap-4 sm:flex-row sm:items-end'>
           <div>
             <p className='label'>

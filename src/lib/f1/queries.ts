@@ -181,6 +181,40 @@ export async function getDriver(driverId: string): Promise<Driver | null> {
   return data.MRData.DriverTable.Drivers[0] ?? null
 }
 
+export interface DriverSeason {
+  season: number
+  /** Last round of the standings (the season's final one for closed seasons). */
+  round: number
+  position?: number
+  positionText: string
+  points: number
+  wins: number
+  teams: string[]
+}
+
+/** A driver's final championship position in every season he took part in, oldest first. */
+export async function getDriverSeasons(driverId: string): Promise<DriverSeason[]> {
+  const lists = await f1Client.getAll(
+    `drivers/${idSegment(driverId)}/driverStandings.json`,
+    DriverStandingsResponseSchema,
+    (page) => page.MRData.StandingsTable.StandingsLists,
+    { revalidate: DAY }
+  )
+  return lists
+    .flatMap((list) =>
+      list.DriverStandings.map((s) => ({
+        season: list.season,
+        round: list.round,
+        position: s.position,
+        positionText: s.positionText,
+        points: s.points,
+        wins: s.wins,
+        teams: s.Constructors.map((c) => c.name),
+      }))
+    )
+    .sort((a, b) => a.season - b.season)
+}
+
 /** Every race result of a driver's career, oldest first. */
 export async function getDriverResults(driverId: string): Promise<RaceWithResults[]> {
   return f1Client.getAll(
