@@ -1,4 +1,5 @@
 import { fastestPitStop, type DriverPitStops } from '@/lib/f1/race'
+import ScrollRegion from '@/components/ScrollRegion'
 
 /** Pit stops of the race per driver, in finishing order, with the quickest stop of the race highlighted. */
 const PitStopsTable = ({ groups }: { groups: DriverPitStops[] }) => {
@@ -11,7 +12,7 @@ const PitStopsTable = ({ groups }: { groups: DriverPitStops[] }) => {
           PARADA MÁS RÁPIDA · <span className='text-display'>{fastest.code}</span> · {fastest.seconds.toFixed(1)} S
         </p>
       )}
-      <div className='overflow-x-auto rounded-2xl border border-input bg-card'>
+      <ScrollRegion label='Tabla de paradas por piloto'>
         <table className='w-full border-collapse text-left tabular-nums'>
           <caption className='sr-only'>Paradas en boxes por piloto</caption>
           <thead>
@@ -42,7 +43,7 @@ const PitStopsTable = ({ groups }: { groups: DriverPitStops[] }) => {
             ))}
           </tbody>
         </table>
-      </div>
+      </ScrollRegion>
     </div>
   )
 }

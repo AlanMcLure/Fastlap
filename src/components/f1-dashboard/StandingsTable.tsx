@@ -1,3 +1,5 @@
+import ScrollRegion from '@/components/ScrollRegion'
+
 export interface StandingRow {
   id: string
   position: string
@@ -21,7 +23,7 @@ const StandingsTable = ({ rows, caption }: StandingsTableProps) => {
   const leader = rows[0]?.points ?? 0
 
   return (
-    <div className='overflow-x-auto rounded-2xl border border-input bg-card'>
+    <ScrollRegion label={caption}>
       <table className='w-full border-collapse text-left tabular-nums'>
         <caption className='sr-only'>{caption}</caption>
         <thead>
@@ -63,7 +65,7 @@ const StandingsTable = ({ rows, caption }: StandingsTableProps) => {
           ))}
         </tbody>
       </table>
-    </div>
+    </ScrollRegion>
   )
 }
 

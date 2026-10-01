@@ -20,6 +20,7 @@ import {
   type PredictionKind,
 } from '@/lib/league'
 import { loadOutcomes } from '@/lib/leagueData'
+import ScrollRegion from '@/components/ScrollRegion'
 
 // Depends on the clock (deadlines) and on the viewer.
 export const dynamic = 'force-dynamic'
@@ -179,7 +180,7 @@ const LeaguePage = async ({ params }: { params: Promise<{ slug: string }> }) => 
         {board.length === 0 ? (
           <p className='text-sm text-muted-foreground'>Todavía no hay pronósticos. ¡Sé el primero!</p>
         ) : (
-          <div className='overflow-x-auto rounded-2xl border border-input bg-card'>
+          <ScrollRegion label={'Clasificación de la liga de pronósticos'}>
             <table className='w-full border-collapse text-left tabular-nums'>
               <caption className='sr-only'>Clasificación de la liga de pronósticos</caption>
               <thead>
@@ -206,7 +207,7 @@ const LeaguePage = async ({ params }: { params: Promise<{ slug: string }> }) => 
                 ))}
               </tbody>
             </table>
-          </div>
+          </ScrollRegion>
         )}
         {board.length > LEADERBOARD_SIZE && (
           <p className='label'>MOSTRANDO LOS {LEADERBOARD_SIZE} PRIMEROS DE {board.length}</p>

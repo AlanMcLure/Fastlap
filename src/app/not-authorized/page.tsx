@@ -8,7 +8,7 @@ export const metadata: Metadata = { title: 'Acceso no autorizado', robots: { ind
 export default function NotAuthorized() {
     return (
         <>
-            <main className="grid min-h-full place-items-center px-6 py-24 sm:py-32 lg:px-8">
+            <div className="grid min-h-full place-items-center px-6 py-24 sm:py-32 lg:px-8">
                 <div className="text-center">
                     <p className="text-base font-semibold text-signal">403</p>
                     <h1 className="mt-4 text-3xl font-bold tracking-tight text-foreground sm:text-5xl">Acceso no autorizado</h1>
@@ -26,7 +26,7 @@ export default function NotAuthorized() {
                         </Link>
                     </div>
                 </div>
-            </main>
+            </div>
         </>
     )
 }

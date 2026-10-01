@@ -13,6 +13,7 @@ import {
 } from '@/components/ui/DropdownMenu'
 import { UserAvatar } from '@/components/UserAvatar'
 import { UserRole } from '@prisma/client'
+import { canAccessDashboard } from '@/lib/features'
 
 interface User extends NextAuthUser {
   username: string,
@@ -56,6 +57,12 @@ export function UserAccountNav({ user }: UserAccountNavProps) {
         <DropdownMenuItem asChild>
           <Link href='/pronosticos'>Pronósticos</Link>
         </DropdownMenuItem>
+
+        {canAccessDashboard(user.role) && (
+          <DropdownMenuItem asChild>
+            <Link href='/f1-dashboard'>Datos de F1</Link>
+          </DropdownMenuItem>
+        )}
 
         <DropdownMenuItem asChild>
           <Link href={`/u/${user.username}`}>Perfil</Link>

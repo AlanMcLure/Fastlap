@@ -117,3 +117,27 @@ Pantallas: inicio de sesión, registro, modal de acceso (ruta interceptada), aju
 Corregido: textos ("¡Bienvenido!", "¿Nuevo en FastLap?", "Tu" en vez de "Tú", tuteo coherente en los avisos, "Comunidad" en minúscula); páginas de acceso en tarjeta centrada con el mismo lenguaje visual (el botón "Inicio" flotaba suelto); modal con `role="dialog"`, cierre con Escape y botón de cierre de 40 px con `aria-label` en español; ajustes: el selector de imagen era solo visible al pasar el ratón (inútil en móvil) y "Cambiar imagen" estaba activo sin imagen y devolvía un error: ahora el botón "+" siempre se ve, "Guardar imagen" se desactiva sin archivo y un fallo de subida muestra aviso (antes era silencioso); crear comunidad: formulario real (Enter envía), placeholder, filtro de caracteres y validación de servidor (`/r/<nombre>` solo admite letras, números y `_`; antes aceptaba espacios), y en móvil la tarjeta se estrechaba y los botones se salían.
 
 No probado: inicio de sesión real con Google (sin credenciales) y subida de imagen real (UploadThing sigue en v4 y sin acceso a la red).
+
+## 8. Auditoría de accesibilidad (A9)
+
+**Método.** axe-core 4 (reglas WCAG 2.0/2.1/2.2 A y AA y buenas prácticas) sobre 20 pantallas × 4 configuraciones (escritorio y 390 px, tema oscuro y claro) = 80 combinaciones, con sesión de usuario, de administrador y sin sesión; más los estados abiertos (buscador, menú de publicación, diálogo de denuncia, menú de cuenta, modal de acceso), recorrido con teclado (orden de tabulación, indicador de foco, enlace de salto) y reflujo a 320 px. **Qué no cubre:** lector de pantalla real, ampliación de texto al 200 %, ni valoración de la calidad de los textos alternativos; axe detecta como mucho un tercio de los problemas posibles.
+
+**Encontrado y corregido**
+
+| Problema | Dónde | Arreglo |
+|---|---|---|
+| Sin `<main>` ni `<header>`, contenido fuera de puntos de referencia (544 nodos) y sin forma de saltar la cabecera | todo el sitio | `<header>`, `<main id="contenido">` y enlace «Saltar al contenido» visible al enfocar; se quitaron los `<main>` anidados |
+| `aria-controls` del buscador apuntaba a una lista que no existía (crítico, en todas las páginas) | buscador | la lista siempre está en el DOM, oculta si no hay texto |
+| Contraste: rojo de marca sobre negro 3,6:1; verde sobre blanco 3,3:1; gris «faint» (3,3:1 y 2,8:1) usado como texto | tarjetas de carrera, resultados, botones destructivos, ventaja de posiciones | rojo más claro en oscuro (5,8:1) con texto negro al pasar el ratón; verde más oscuro en claro (5,1:1); el gris decorativo ya no se usa para texto |
+| Saltos de nivel de título (h1 → h3) | ajustes, calendario, pilotos | `CardTitle`, tarjetas de carrera y de piloto pasan a `h2` |
+| `<ul>` con hijos que no son `<li>` | perfil | `div` |
+| Tablas con desplazamiento lateral inalcanzables con teclado | 7 tablas | `ScrollRegion`: región enfocable, con nombre y anillo de foco |
+| Dos regiones con el mismo nombre | detalle de carrera | nombre distinto |
+| Buscador sin indicador de foco | cabecera | anillo y borde al enfocar |
+| La cabecera se salía por la derecha a 320 px (avatar fuera de pantalla) | cabecera | «F1» se oculta por debajo de 360 px (está en el menú de cuenta), buscador más estrecho |
+
+**Resultado.** 0 violaciones en las 80 combinaciones y en los 9 estados abiertos, salvo dos avisos que dejo como falsos positivos: la región «sin punto de referencia» del contenedor que Radix crea para los menús desplegables, y `aria-hidden-focus` mientras un menú modal está abierto (Radix oculta el resto y atrapa el foco). Sin desbordamiento horizontal a 320 px.
+
+**Ya estaba bien:** `lang="es"`, `prefers-reduced-motion`, objetivos táctiles (regla `target-size` de WCAG 2.2 sin avisos), indicador de foco en todos los controles recorridos, títulos de página únicos, etiquetas en los botones de icono.
+
+**Pendiente (necesita personas):** prueba con lector de pantalla (NVDA/VoiceOver) en los flujos de pronóstico y denuncia, ampliación al 200 % y modo de contraste forzado, y revisar con usuarios reales los textos que leen las ayudas técnicas.

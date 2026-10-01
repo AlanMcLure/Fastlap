@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from 'react'
 
 import type { LiveState } from '@/lib/live/types'
 import { cn } from '@/lib/utils'
+import ScrollRegion from '@/components/ScrollRegion'
 
 type Connection = 'connecting' | 'live' | 'reconnecting'
 
@@ -51,7 +52,7 @@ const LiveTower = () => {
         </p>
       </div>
 
-      <div className='overflow-x-auto rounded-2xl border border-input bg-card'>
+      <ScrollRegion label={'Torre de tiempos en directo'}>
         <table className='w-full border-collapse text-left tabular-nums'>
           <caption className='sr-only'>Torre de tiempos en directo</caption>
           <thead>
@@ -77,7 +78,7 @@ const LiveTower = () => {
             ))}
           </tbody>
         </table>
-      </div>
+      </ScrollRegion>
 
       <section aria-labelledby='rc-title' className='space-y-3'>
         <h2 id='rc-title' className='label'>DIRECCIÓN DE CARRERA</h2>

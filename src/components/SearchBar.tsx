@@ -69,7 +69,7 @@ const SearchBar: FC = () => {
     <Command
       ref={commandRef}
       shouldFilter={false}
-      className='relative z-50 mx-auto h-10 w-full min-w-[7rem] max-w-lg flex-1 overflow-visible rounded-full border border-input bg-card [&_[cmdk-input-wrapper]]:border-0 [&_[cmdk-input-wrapper]]:h-full'
+      className='relative z-50 mx-auto h-10 w-full min-w-[5rem] max-w-lg flex-1 overflow-visible rounded-full border border-input bg-card focus-within:border-display focus-within:ring-2 focus-within:ring-ring [&_[cmdk-input-wrapper]]:border-0 [&_[cmdk-input-wrapper]]:h-full'
       aria-label='Buscar en FastLap'
       role='search'
       onKeyDown={(event) => {
@@ -95,8 +95,8 @@ const SearchBar: FC = () => {
         </kbd>
       )}
 
-      {input.length > 0 && (
-        <CommandList className='fixed inset-x-4 top-16 max-h-[70vh] rounded-xl border border-border bg-popover sm:absolute sm:inset-x-0 sm:top-full sm:mt-2'>
+      {/* always in the DOM: the input's aria-controls points at it; hidden while there is nothing to show */}
+      <CommandList hidden={input.length === 0} className='fixed inset-x-4 top-16 max-h-[70vh] rounded-xl border border-border bg-popover sm:absolute sm:inset-x-0 sm:top-full sm:mt-2'>
           {!typed && <p className='px-4 py-3 text-sm text-muted-foreground'>Escribe al menos {MIN_QUERY} letras.</p>}
           {isError && <p className='px-4 py-3 text-sm text-signal'>No se ha podido buscar. Inténtalo de nuevo.</p>}
           {typed && settled && !isError && count === 0 && <CommandEmpty>Sin resultados para «{normalizeQuery(input)}».</CommandEmpty>}
@@ -144,7 +144,6 @@ const SearchBar: FC = () => {
             </CommandGroup>
           )}
         </CommandList>
-      )}
     </Command>
   )
 }

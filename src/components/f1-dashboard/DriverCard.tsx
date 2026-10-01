@@ -22,7 +22,7 @@ const DriverCard = ({ driver, team, stats }: DriverCardProps) => (
         <span className='font-mono text-sm font-bold tracking-wide text-display'>{driverCode(driver)}</span>
       </div>
       <p className='mt-4 text-sm text-muted-foreground'>{driver.givenName}</p>
-      <h3 className='text-xl leading-tight text-display'>{driver.familyName}</h3>
+      <h2 className='text-xl leading-tight text-display'>{driver.familyName}</h2>
       <p className='label mt-3'>{[driver.nationality, team].filter(Boolean).join(' · ')}</p>
     </div>
 

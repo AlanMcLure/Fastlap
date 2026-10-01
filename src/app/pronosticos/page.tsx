@@ -7,6 +7,7 @@ import { getAuthSession } from '@/lib/auth'
 import { resolveSeason } from '@/lib/f1/season'
 import { GLOBAL_RULES } from '@/lib/profileStats'
 import { leagueSeasons, loadGlobalBoard } from '@/lib/predictionData'
+import ScrollRegion from '@/components/ScrollRegion'
 
 export const dynamic = 'force-dynamic'
 
@@ -58,7 +59,7 @@ const GlobalPredictionsPage = async ({ searchParams }: { searchParams: Promise<{
               Todavía no hay pronósticos esta temporada. Entra en una comunidad con liga y ¡sé el primero!
             </p>
           ) : (
-            <div className='overflow-x-auto rounded-2xl border border-input bg-card'>
+            <ScrollRegion label={`Clasificación global de pronósticos de la temporada ${season}`}>
               <table className='w-full border-collapse text-left tabular-nums'>
                 <caption className='sr-only'>Clasificación global de pronósticos de la temporada {season}</caption>
                 <thead>
@@ -90,7 +91,7 @@ const GlobalPredictionsPage = async ({ searchParams }: { searchParams: Promise<{
                   })}
                 </tbody>
               </table>
-            </div>
+            </ScrollRegion>
           )}
           {data.board.length > SIZE && <p className='label'>MOSTRANDO LOS {SIZE} PRIMEROS DE {data.board.length}</p>}
 

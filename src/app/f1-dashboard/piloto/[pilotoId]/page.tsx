@@ -7,6 +7,7 @@ import StatTile from '@/components/f1-dashboard/StatTile'
 import { championshipYears, entriesByDriver, seasonLines, statsOf, teamHistory } from '@/lib/f1/driver'
 import { driverCode, formatRaceDate } from '@/lib/f1/format'
 import { getDriver, getDriverResults, getDriverSeasons } from '@/lib/f1/queries'
+import ScrollRegion from '@/components/ScrollRegion'
 
 // Career numbers change after every race.
 export const dynamic = 'force-dynamic'
@@ -117,7 +118,7 @@ const DriverPage = async ({ params }: DriverPageProps) => {
 
           <section aria-labelledby='seasons-title' className='space-y-4'>
             <h2 id='seasons-title' className='label'>TEMPORADA A TEMPORADA</h2>
-            <div className='overflow-x-auto rounded-2xl border border-input bg-card'>
+            <ScrollRegion label={`Resultados de ${driver.givenName} ${driver.familyName} por temporada`}>
               <table className='w-full border-collapse text-left tabular-nums'>
                 <caption className='sr-only'>Resultados de {driver.givenName} {driver.familyName} por temporada</caption>
                 <thead>
@@ -151,7 +152,7 @@ const DriverPage = async ({ params }: DriverPageProps) => {
                   ))}
                 </tbody>
               </table>
-            </div>
+            </ScrollRegion>
             <p className='text-xs text-muted-foreground'>
               Las cifras de carrera se calculan con los resultados de cada Gran Premio y no incluyen puntos de sprint. Los títulos y
               la posición final salen de la clasificación de cada temporada; la temporada en curso no cuenta como título.

@@ -1,12 +1,13 @@
 import { driverCode } from '@/lib/f1/format'
 import { placesGained } from '@/lib/f1/race'
 import type { Result } from '@/lib/f1/schemas'
+import ScrollRegion from '@/components/ScrollRegion'
 
 const formatPoints = (points: number) => (Number.isInteger(points) ? String(points) : points.toFixed(1))
 
 const Gain = ({ result }: { result: Result }) => {
   const gained = placesGained(result)
-  if (gained === null) return <span className='text-faint'>–</span>
+  if (gained === null) return <span className='text-muted-foreground'>–</span>
   if (gained === 0) return <span className='text-muted-foreground'>=</span>
   return (
     <span className={gained > 0 ? 'text-success' : 'text-muted-foreground'}>
@@ -18,7 +19,7 @@ const Gain = ({ result }: { result: Result }) => {
 
 /** Race classification: finishing order, grid, places gained, time or reason for retiring, fastest lap and points. */
 const ResultsTable = ({ results, caption }: { results: Result[]; caption: string }) => (
-  <div className='overflow-x-auto rounded-2xl border border-input bg-card'>
+  <ScrollRegion label={caption}>
     <table className='w-full border-collapse text-left tabular-nums'>
       <caption className='sr-only'>{caption}</caption>
       <thead>
@@ -38,7 +39,7 @@ const ResultsTable = ({ results, caption }: { results: Result[]; caption: string
           const fastest = result.FastestLap?.rank === 1
           return (
             <tr key={result.Driver.driverId} className='border-b border-border last:border-0'>
-              <td className={`px-3 py-3 font-mono sm:px-4 ${finished ? 'text-muted-foreground' : 'text-faint'}`}>
+              <td className={`px-3 py-3 font-mono sm:px-4 ${finished ? 'text-muted-foreground' : 'italic text-muted-foreground'}`}>
                 {result.positionText}
               </td>
               <td className='px-2 py-3'>
@@ -70,7 +71,7 @@ const ResultsTable = ({ results, caption }: { results: Result[]; caption: string
         })}
       </tbody>
     </table>
-  </div>
+  </ScrollRegion>
 )
 
 export default ResultsTable

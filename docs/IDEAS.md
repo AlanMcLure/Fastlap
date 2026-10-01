@@ -14,7 +14,7 @@ Banco de ideas, ordenado por valor frente a esfuerzo. Estado: ⏳ pendiente · �
 | A6 | **Comparador de pilotos** cara a cara con las estadísticas ya calculadas y gráfico monocromo. | Contenido compartible. | ⏳ |
 | A7 | **Búsqueda mejor**: publicaciones, usuarios y pilotos, con atajo de teclado. | Hoy solo busca comunidades. | ✅ comunidades, usuarios, títulos de publicaciones y pilotos, atajo `/`, teclado; ⏳ buscar dentro del texto de las publicaciones, página de resultados completa, búsqueda por similitud |
 | A8 | **Imágenes para compartir**: resumen visual de un GP o de tu posición en la liga. | Tráfico externo. | 🚧 hechas las tarjetas de post, comunidad y GP; ⏳ resumen del resultado de un GP y de tu posición en la liga |
-| A9 | **Accesibilidad, rendimiento y PWA**: contraste, teclado, Lighthouse, instalable en el móvil. | Calidad general. | ⏳ |
+| A9 | **Accesibilidad, rendimiento y PWA**: contraste, teclado, Lighthouse, instalable en el móvil. | Calidad general. | ✅ accesibilidad (axe, teclado, contraste, reflujo a 320 px; ver AUDITORIA-VISUAL §8); ⏳ rendimiento (Lighthouse) y PWA instalable, prueba con lector de pantalla |
 
 ## B. Más grandes, con decisión previa
 

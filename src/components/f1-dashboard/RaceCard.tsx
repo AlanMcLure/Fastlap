@@ -31,12 +31,12 @@ const RaceCard = ({ race, isNext = false, now = new Date() }: RaceCardProps) => 
       <div>
         <div className='flex items-center justify-between gap-2'>
           <span className='label'>RONDA {String(race.round).padStart(2, '0')}</span>
-          <span className={`label ${status === 'in-progress' ? 'text-signal' : isNext ? 'text-display' : 'text-faint'}`}>
+          <span className={`label ${status === 'in-progress' ? 'text-signal' : isNext ? 'text-display' : 'text-muted-foreground'}`}>
             {status === 'in-progress' ? '● ' : ''}
             {isNext && status === 'upcoming' ? 'PRÓXIMA' : STATUS_LABEL[status]}
           </span>
         </div>
-        <h3 className='mt-4 text-xl leading-snug text-display'>{race.raceName}</h3>
+        <h2 className='mt-4 text-xl leading-snug text-display'>{race.raceName}</h2>
         <p className='mt-1 text-sm text-muted-foreground'>
           {locality}, {country}
         </p>

@@ -34,9 +34,10 @@
     --accent: 34 34 34;
     --accent-foreground: 255 255 255;
 
-    --signal: 215 25 33; /* red: live, errors, alerts — not a decoration */
-    --destructive: 215 25 33;
-    --destructive-foreground: 255 255 255;
+    /* red: live, errors, alerts — not a decoration. Lighter than the brand red (#d71921, 3.6:1 on the card) so red TEXT reaches AA on dark surfaces; the hover fill of destructive buttons then takes black text. */
+    --signal: 255 77 85;
+    --destructive: 255 77 85;
+    --destructive-foreground: 0 0 0;
     --success: 74 158 92;
     --warning: 212 168 67;
 
@@ -68,6 +69,12 @@
     --secondary-foreground: 26 26 26;
     --accent: 232 232 232;
     --accent-foreground: 0 0 0;
+
+    /* brand red and a darker green: both AA as text on white and on the page background */
+    --signal: 215 25 33;
+    --destructive: 215 25 33;
+    --destructive-foreground: 255 255 255;
+    --success: 47 125 65;
 
     color-scheme: light;
   }

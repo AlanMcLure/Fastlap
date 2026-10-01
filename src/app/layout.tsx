@@ -44,12 +44,17 @@ export default function RootLayout({
       </head>
       <body className='min-h-screen pt-12 bg-background text-foreground antialiased'>
         <Providers>
+          <a
+            href='#contenido'
+            className='sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-2 focus:z-[60] focus:rounded-full focus:bg-primary focus:px-4 focus:py-2 focus:text-sm focus:text-primary-foreground'>
+            Saltar al contenido
+          </a>
           <Navbar />
           {authModal}
 
-          <div className='container max-w-7xl mx-auto h-full pt-12'>
+          <main id='contenido' tabIndex={-1} className='container max-w-7xl mx-auto h-full pt-12 focus:outline-none'>
             {children}
-          </div>
+          </main>
         </Providers>
         <Toaster />
       </body>
