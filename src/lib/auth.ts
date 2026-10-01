@@ -1,11 +1,11 @@
 import { db } from '@/lib/db'
-import { PrismaAdapter } from '@next-auth/prisma-adapter'
+import { PrismaAdapter } from '@auth/prisma-adapter'
 import { UserRole } from '@prisma/client'
 import { nanoid } from 'nanoid'
-import { NextAuthOptions, getServerSession } from 'next-auth'
+import NextAuth, { type NextAuthConfig } from 'next-auth'
 import GoogleProvider from 'next-auth/providers/google'
 
-export const authOptions: NextAuthOptions = {
+export const authOptions: NextAuthConfig = {
   adapter: PrismaAdapter(db),
   session: {
     strategy: 'jwt',
@@ -24,7 +24,7 @@ export const authOptions: NextAuthOptions = {
       if (token) {
         session.user.id = token.id
         session.user.name = token.name
-        session.user.email = token.email
+        session.user.email = token.email ?? ''
         session.user.image = token.picture
         session.user.username = token.username
         session.user.role = token.role as UserRole
@@ -50,6 +50,12 @@ export const authOptions: NextAuthOptions = {
       // user is only present on sign-in — rehydrate from DB then, not on every request
       if (!user) return token
 
+      // never query without an email: an undefined filter would match any user
+      if (!token.email) {
+        token.id = user.id as string
+        return token
+      }
+
       const dbUser = await db.user.findFirst({
         where: {
           email: token.email,
@@ -57,7 +63,7 @@ export const authOptions: NextAuthOptions = {
       })
 
       if (!dbUser) {
-        token.id = user.id
+        token.id = user.id as string
         return token
       }
 
@@ -87,4 +93,6 @@ export const authOptions: NextAuthOptions = {
   },
 }
 
-export const getAuthSession = () => getServerSession(authOptions)
+export const { handlers, auth, signIn, signOut } = NextAuth(authOptions)
+
+export const getAuthSession = () => auth()

@@ -1,5 +1,4 @@
-import { authOptions } from '@/lib/auth'
-import { getServerSession } from 'next-auth'
+import { getAuthSession } from '@/lib/auth'
 import Link from 'next/link'
 import { Icons } from './Icons'
 import { buttonVariants } from './ui/Button'
@@ -8,7 +7,7 @@ import SearchBar from './SearchBar'
 import { LayoutDashboard } from 'lucide-react'
 
 const Navbar = async () => {
-  const session = await getServerSession(authOptions)
+  const session = await getAuthSession()
   return (
     <div className='fixed top-0 inset-x-0 h-fit bg-red-500 border-b border-red-700 z-[10] py-2'>
       <div className='container max-w-7xl h-full mx-auto flex items-center justify-between gap-2'>

@@ -4,7 +4,7 @@ Guidance for any coding agent or contributor working in this repository.
 
 ## Project overview
 
-FastLap is a Reddit-style social network for Formula 1 fans (Spanish-language UI). It combines forum-style communities ("subreddits") with an F1 data dashboard gated behind a paid Premium tier. Built with Next.js 16 (App Router), React 19, TypeScript (`strict: true`), Tailwind 3 + Shadcn UI ("new-york" style, slate base color), Prisma 6/Postgres (Neon), NextAuth v4, Upstash Redis, UploadThing, and Stripe.
+FastLap is a Reddit-style social network for Formula 1 fans (Spanish-language UI). It combines forum-style communities ("subreddits") with an F1 data dashboard gated behind a paid Premium tier. Built with Next.js 16 (App Router), React 19, TypeScript (`strict: true`), Tailwind 3 + Shadcn UI ("new-york" style, slate base color), Prisma 6/Postgres (Neon), Auth.js v5 (`next-auth@beta`), Upstash Redis, UploadThing, and Stripe.
 
 ## Common commands
 
@@ -25,15 +25,15 @@ Linting uses ESLint 9 flat config ([eslint.config.mjs](eslint.config.mjs), `esli
 
 ## Required environment variables
 
-`.env` must define: `DATABASE_URL` (Postgres), `NEXTAUTH_SECRET`, `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, `UPLOADTHING_SECRET`, `UPLOADTHING_APP_ID`, `REDIS_URL`, `REDIS_SECRET` (see `.env.example`). Stripe flows additionally need `STRIPE_SECRET_KEY` and `STRIPE_WEBHOOK_SECRET` (used in [src/app/api/webhook/route.ts](src/app/api/webhook/route.ts)). Never commit real secrets.
+`.env` must define: `DATABASE_URL` (Postgres), `NEXTAUTH_SECRET` (Auth.js v5 also accepts `AUTH_SECRET`), `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, `UPLOADTHING_SECRET`, `UPLOADTHING_APP_ID`, `REDIS_URL`, `REDIS_SECRET` (see `.env.example`). Stripe flows additionally need `STRIPE_SECRET_KEY` and `STRIPE_WEBHOOK_SECRET` (used in [src/app/api/webhook/route.ts](src/app/api/webhook/route.ts)). Self-hosted deployments (Docker, not Vercel) must also set `AUTH_TRUST_HOST=true` and `AUTH_URL` (replacing v4's `NEXTAUTH_URL`). Never commit real secrets.
 
 ## Architecture
 
 ### Auth and roles
 
-- NextAuth with Google provider, JWT session strategy, Prisma adapter ([src/lib/auth.ts](src/lib/auth.ts)). On first sign-in, users without a username get one auto-generated via `nanoid(10)`. Use `getAuthSession()` from this file in server components and route handlers.
-- `UserRole` enum: `USER | ADMIN | PREMIUM` ([prisma/schema.prisma](prisma/schema.prisma)). Role is mirrored onto the session token via the `session` and `jwt` callbacks. The `jwt` callback only hits the DB at sign-in (when `user` is present), not on every request — so a role change is picked up only when the client calls `update()` from `useSession` (the `trigger === 'update'` branch re-reads role/username from the DB). After a Stripe checkout, `success_url` is `/premium/success`, where `PremiumActivation` polls `update()` until the webhook has promoted the user.
-- [src/proxy.ts](src/proxy.ts) (the Next 16 name for `middleware`) gates `/r/*/submit`, `/r/create`, `/settings`, and `/f1-dashboard/*` behind auth. `/f1-dashboard/*` additionally requires `ADMIN` or `PREMIUM`; non-eligible users are redirected to `/not-authorized`.
+- Auth.js v5 with Google provider, JWT session strategy, `@auth/prisma-adapter` ([src/lib/auth.ts](src/lib/auth.ts)). The file exports `handlers`, `auth`, `signIn`, `signOut`; `getAuthSession()` is `auth()` — use it in server components and route handlers. Auth.js v5 is still published only under the `beta` tag. The session cookie is `authjs.session-token` (`__Secure-` prefixed over HTTPS). On first sign-in, users without a username get one auto-generated via `nanoid(10)`.
+- `UserRole` enum: `USER | ADMIN | PREMIUM` ([prisma/schema.prisma](prisma/schema.prisma)). Role is mirrored onto the session token via the `session` and `jwt` callbacks. The `jwt` callback only hits the DB at sign-in (when `user` is present), not on every request — so a role change is picked up only when the client calls `update()` from `useSession` (the `trigger === 'update'` branch re-reads role/username from the DB; note that `update()` with no argument only re-reads the cookie, so pass any payload, e.g. `update({ refresh: true })`, to run the callback). After a Stripe checkout, `success_url` is `/premium/success`, where `PremiumActivation` polls `update()` until the webhook has promoted the user.
+- [src/proxy.ts](src/proxy.ts) (the Next 16 name for `middleware`, wrapped with Auth.js's `auth`) gates `/r/*/submit`, `/r/create`, `/settings`, and `/f1-dashboard/*` behind auth. `/f1-dashboard/*` additionally requires `ADMIN` or `PREMIUM`; non-eligible users are redirected to `/not-authorized`.
 - Stripe `checkout.session.completed` webhook ([src/app/api/webhook/route.ts](src/app/api/webhook/route.ts)) is the only path that promotes a `USER` to `PREMIUM` — there is no manual upgrade endpoint.
 
 ### Data model

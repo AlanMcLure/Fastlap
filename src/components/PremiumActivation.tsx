@@ -17,12 +17,14 @@ const PremiumActivation = () => {
   const [attempts, setAttempts] = useState(0)
   const active = isActive(session?.user?.role)
 
+  // `update()` without data only re-reads the cookie; passing data makes the server
+  // run the jwt callback with trigger "update" (the payload itself is ignored).
   // The Stripe webhook may land after the user returns from checkout, so ask the
   // server to refresh the session token until the new role shows up.
   useEffect(() => {
     if (active || attempts >= MAX_ATTEMPTS) return
     const timer = setTimeout(async () => {
-      await update()
+      await update({ refresh: true })
       setAttempts((n) => n + 1)
     }, attempts === 0 ? 0 : RETRY_MS)
     return () => clearTimeout(timer)
