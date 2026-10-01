@@ -11,6 +11,7 @@ FastLap is a Reddit-style social network for Formula 1 fans (Spanish-language UI
 ```bash
 yarn dev               # start Next.js dev server
 yarn lint              # eslint . (flat config)
+yarn test              # vitest run
 yarn build             # production build (also required before `start`)
 yarn start             # run production build
 npx tsc --noEmit       # type check (strict)
@@ -19,7 +20,7 @@ npx prisma migrate dev # apply schema migrations locally (the production DB was 
 docker-compose up      # run the containerized app (standalone Next.js output, port 3000)
 ```
 
-Yarn is the package manager (`yarn.lock`). No test runner is configured.
+Yarn is the package manager (`yarn.lock`). Tests use Vitest (`yarn test`, `yarn test:watch`; config in `vitest.config.mts`, files `src/**/*.test.ts`); so far they cover only the F1 data layer in `src/lib/f1/`.
 
 Linting uses ESLint 9 flat config ([eslint.config.mjs](eslint.config.mjs), `eslint-config-next` core-web-vitals + typescript) via `yarn lint` (`eslint .`). Errors fail the command; the new React Compiler rules (`react-hooks/set-state-in-effect`, `react-hooks/refs`) and `no-explicit-any` are set to warnings until the existing components are refactored. The Docker image builds on `node:22-alpine` (Next 16 needs Node 20.9+).
 
@@ -73,6 +74,16 @@ Under [src/app/api/](src/app/api/):
 - `ergast/{calendar,driver,laps,race-results,standings}` — server-side proxies to the F1 data API. `ergast.com` was shut down after the 2024 season, so they call its drop-in successor [Jolpica-F1](https://github.com/jolpica/jolpica-f1) (`https://api.jolpi.ca/ergast/f1`, overridable with `ERGAST_BASE_URL`) through [src/lib/ergast.ts](src/lib/ergast.ts). Jolpica limits `limit` to 100 (use `fetchAllDrivers` for big lists) and the IP to 4 req/s and 500 req/h, so every `fetch` revalidates hourly (`ERGAST_FETCH_OPTIONS`) instead of the old `force-cache`, which never refreshed `season=current`. Calendar and driver endpoints paginate in-memory before returning. `driver?driverId=` mixes API data with hard-coded stats per driver (and random numbers for unknown ones) — treat those numbers as placeholders.
 
 Request bodies are validated with Zod schemas in [src/lib/validators/](src/lib/validators/) (`post.ts`, `comment.ts`, `subreddit.ts`, `username.ts`, `vote.ts`, `piloto.ts`).
+
+### F1 data layer (`src/lib/f1/`)
+
+Typed, validated access to Jolpica-F1 for the rebuilt dashboard (see [docs/PLAN-DASHBOARD.md](docs/PLAN-DASHBOARD.md)). Server-side only; pages should call `queries.ts`, never the API directly.
+
+- `client.ts`: `createF1Client()` — timeout, retries with backoff on 429/5xx/network errors (honours `Retry-After`), request spacing under the 4 req/s limit, `getAll` pagination (100 per page), Next.js `revalidate`.
+- `schemas.ts`: Zod schemas that also convert Ergast's numeric strings to numbers. A response that does not match throws `F1SchemaError` naming the offending path.
+- `queries.ts`: `getCalendar`, `getNextRace`, `getDriverStandings`, `getConstructorStandings`, `getRaceResults`, `getPitStops`, `getDrivers`, `getDriver`, `getDriverResults`. Path inputs (season, round, ids) are validated before they reach the URL. Closed seasons are cached for a week, the running one for an hour.
+- Tests use **synthetic** fixtures in `__fixtures__/`. Real responses can be captured with `node scripts/capture-f1-fixtures.mjs` (needs internet) into `__fixtures__/real/`; `contract.test.ts` then validates the schemas against them.
+- The old `/api/ergast/*` routes still exist until the dashboard pages are migrated to this layer (plan slices 2–5).
 
 ### Client state and data fetching
 

@@ -1,0 +1,5 @@
+{"MRData":{"limit":"100","offset":"0","total":"3","StandingsTable":{"season":"2025","StandingsLists":[{"season":"2025","round":"3","DriverStandings":[
+{"position":"1","positionText":"1","points":"62","wins":"1","Driver":{"driverId":"norris","permanentNumber":"4","code":"NOR","url":"https://en.wikipedia.org/wiki/Lando_Norris","givenName":"Lando","familyName":"Norris","dateOfBirth":"1999-11-13","nationality":"British"},"Constructors":[{"constructorId":"mclaren","url":"https://en.wikipedia.org/wiki/McLaren","name":"McLaren","nationality":"British"}]},
+{"position":"2","positionText":"2","points":"61.5","wins":"1","Driver":{"driverId":"max_verstappen","permanentNumber":"1","code":"VER","givenName":"Max","familyName":"Verstappen","dateOfBirth":"1997-09-30","nationality":"Dutch"},"Constructors":[{"constructorId":"red_bull","name":"Red Bull","nationality":"Austrian"}]},
+{"positionText":"3","points":"48","wins":"0","Driver":{"driverId":"piastri","permanentNumber":"81","code":"PIA","givenName":"Oscar","familyName":"Piastri","dateOfBirth":"2001-04-06","nationality":"Australian"},"Constructors":[{"constructorId":"mclaren","name":"McLaren","nationality":"British"}]}
+]}]}}}

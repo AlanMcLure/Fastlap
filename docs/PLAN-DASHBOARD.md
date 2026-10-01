@@ -1,6 +1,6 @@
 # Plan: rehacer el F1 Dashboard
 
-Estado: **borrador para revisión**. Nada de esto está implementado todavía.
+Estado: **en curso**. Hechas la rebanada 0 (limpieza, salvo las noticias, pendientes de D4) y la 1 (capa de datos, con fixtures sintéticos hasta capturar respuestas reales). Pendientes D1–D4 y el riesgo de licencia (R1).
 Alcance: solo `/f1-dashboard/*` y `/api/ergast/*`. La parte social (comunidades, posts, votos, comentarios, auth, Stripe) no se toca.
 
 ## 1. Por qué rehacerlo
