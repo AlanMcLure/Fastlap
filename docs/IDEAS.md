@@ -30,6 +30,7 @@ Banco de ideas, ordenado por valor frente a esfuerzo. Estado: ⏳ pendiente · �
 
 ## C. Sin código, pero críticas
 
+- ✅ **Despliegue preparado** (imagen Docker verificada, comprobación de salud, validación del entorno, CI, guía en `DESPLIEGUE.md`). Falta desplegar de verdad: elegir hosting y crear las cuentas (base de datos, Upstash, Google, UploadThing).
 - ✅ **FAQs reescritas** con lo que la app hace de verdad (antes hablaban de una sección «Resultados» y un botón «Registrarse» que no existen); ahora salen de `src/lib/faqs.ts` y se publican también como datos estructurados. Revisarlas cada vez que cambie una función.
 - **Probar con aficionados reales** (cinco conversaciones valen más que otra funcionalidad): el plan se apoya en hipótesis.
 - **Cerrar lo externo**: correo a Jolpica por la licencia comercial (lo envía el autor), capturar fixtures reales desde una máquina con internet, probar de verdad Google OAuth, UploadThing (v4), Docker y Stripe.

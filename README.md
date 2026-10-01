@@ -37,4 +37,6 @@ REDIS_URL=
 REDIS_SECRET=
 ```
 
-En el archivo .env.example tienes los datos de ejemplo de uso
+En el archivo .env.example tienes los datos de ejemplo de uso.
+
+Para desplegar (Docker, variables, base de datos, tarea programada, copias de seguridad y lista de comprobación) lee [docs/DESPLIEGUE.md](docs/DESPLIEGUE.md); `yarn check-env` valida el entorno.

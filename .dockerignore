@@ -1,7 +1,14 @@
-Dockerfile
-.dockerignore
 node_modules
 npm-debug.log
 README.md
 .next
 .git
+.github
+# secrets must never end up in an image layer (Next.js reads .env files at build time)
+.env
+.env.*
+!.env.example
+docs
+coverage
+tsconfig.tsbuildinfo
+*.log

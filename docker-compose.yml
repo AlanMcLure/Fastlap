@@ -1,9 +1,42 @@
-version: '3.9'
-
+# Run FastLap in Docker.
+#   cp .env.example .env   (fill it in; check it with: node scripts/check-env.mjs)
+#   docker compose up -d --build                 the app on http://localhost:3000
+#   docker compose --profile tools run --rm migrate   apply the database schema (first deploy and after schema changes)
+#   docker compose --profile local up -d db      optional PostgreSQL for local trials (production: a managed one such as Neon)
+# Redis must be an Upstash-compatible REST endpoint (REDIS_URL/REDIS_SECRET): use Upstash's free tier.
+# NEXT_PUBLIC_* values are baked in at build time: change them in .env and rebuild.
 services:
   fastlap:
     container_name: fastlap
     image: alanmclure/fastlap
-    build: .
+    build:
+      context: .
+      args:
+        NEXT_PUBLIC_SITE_URL: ${NEXT_PUBLIC_SITE_URL:-}
+        NEXT_PUBLIC_PREMIUM_ENABLED: ${NEXT_PUBLIC_PREMIUM_ENABLED:-false}
+    env_file: .env
     ports:
       - "3000:3000"
+    restart: unless-stopped
+
+  migrate:
+    profiles: ["tools"]
+    build:
+      context: .
+      target: migrate
+    env_file: .env
+
+  db:
+    profiles: ["local"]
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: fastlap
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD}
+      POSTGRES_DB: fastlap
+    volumes:
+      - fastlap-db:/var/lib/postgresql/data
+    ports:
+      - "127.0.0.1:5432:5432"
+
+volumes:
+  fastlap-db:
