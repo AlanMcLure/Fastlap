@@ -56,3 +56,40 @@ Feed y tarjeta de post (vista previa, acciones en menú), comunidad, y la pantal
 2. **Referencias**: ¿hay webs o apps que te gusten visualmente (de F1 o no)? Con dos o tres referencias acierto mucho más rápido que con adjetivos.
 3. **Marca**: ¿se mantiene el nombre "FastLap" y el rojo, o también se replantea?
 4. **Prioridad**: ¿V0 ahora y V1 después de la rebanada 3, o el rediseño antes que las páginas de datos? Recomiendo V0 ya; V1 antes de construir las pantallas nuevas de datos, para no rehacerlas dos veces.
+
+## 4. Exploración de estilos (respuesta a D5)
+
+Se maquetaron tres direcciones con los mismos datos de ejemplo (`docs/diseno/`): **A** Nothing puro, **B** Nothing con tablas de telemetría y **C** editorial claro como contraste. Las fuentes (Space Grotesk, Space Mono, Doto) y los tokens son los del proyecto `hub`; los datos son de ejemplo. Son maquetas estáticas, no código de la app.
+
+### Qué hacen otros (fuentes secundarias; no he visto esas webs renderizadas)
+- **F1 oficial:** vídeo primero, personalización por piloto/equipo, modo claro y oscuro y tamaños de letra adaptables ([F1](https://www.formula1.com/en/latest/article/formula-1-launches-new-website-and-personalised-mobile-app.1knZbPSCZ2tS2z6ADRn2Gs)).
+- **Paneles de tiempos y telemetría** ([f1-dash](https://github.com/r4ai/f1-dash), [f1-telemetry](https://github.com/matteocelani/f1-telemetry)): fondo oscuro, torre de tiempos con posición, color de equipo, huecos y neumáticos, cifras tabulares y acentos de color neón.
+- **Foros deportivos y plantillas modernas** (p. ej. [BigSoccer](https://www.themehouse.com/portfolio/bigsoccer-community), [Discusli](https://www.producthunt.com/products/discusli-community-forum-template)): lo que se persigue es evitar la fatiga de texto denso, con jerarquía tipográfica, respuestas anidadas legibles y modo oscuro/claro.
+- **Nothing:** negro y blanco puros, un gris para lo secundario, tipografía de puntos solo para titulares, mono en mayúsculas para etiquetas ([análisis](https://www.shadcn.io/design/nothing)).
+
+### ¿Pega Nothing con FastLap?
+**En lo esencial, sí; para todo, no.**
+
+- **Encaja muy bien en los datos:** una torre de tiempos F1 *ya es* mono + cifras tabulares + fondo oscuro + un acento. La clasificación en estilo Nothing (B) se ve natural. Rojo `#d71921` ≈ rojo F1.
+- **Encaja con matices en el social:** el contenido de un foro es texto largo escrito por usuarios. El texto en mayúsculas con espaciado y la tipografía de puntos fatigan si se usan fuera de etiquetas y titulares. Los posts con vista previa o imagen piden tarjeta, no fila.
+- **Regla de Nothing que habría que adaptar:** "rojo solo como interrupción". En FastLap el rojo funcionaría como señal de directo/alerta, no como color de botón; el botón principal sería blanco sobre negro (píldora). Y el color de equipo en la torre (pequeñas marcas) rompe el "un solo acento" de Nothing: es opcional y solo en vistas de datos, sin logos (R2 del plan).
+
+### Las tres direcciones
+| | Qué es | A favor | En contra |
+|---|---|---|---|
+| **A** Nothing puro | Filas con separadores, titular Doto enorme, todo monocromo | Identidad muy fuerte y coherente con tus otros proyectos; ligero | Un foro en filas oculta vistas previas e imágenes; el titular grande ocupa mucha pantalla en móvil |
+| **B** Nothing + telemetría | Tarjetas para posts, módulo "próximo GP" con cuenta atrás en Doto, clasificación como torre de tiempos | Lo mejor de A con legibilidad de foro; la sección F1 gana mucho; el módulo "próximo GP" conecta con el hub de carrera y los pronósticos | Más componentes que mantener; los colores de equipo son decisión aparte |
+| **C** Editorial claro | Fondo cálido, titulares grandes, tarjetas blancas, botón rojo | Muy legible, parece medio deportivo | Sin identidad propia; se parece a cualquier web de noticias; sin relación con tus otros proyectos |
+
+### Recomendación
+**B**, con estas reglas:
+1. **Oscuro por defecto con selector claro/oscuro** (los tokens de `hub` ya definen ambos).
+2. **Nothing en el marco y en los datos** (barra superior, etiquetas, controles segmentados, torre de tiempos, cifras); **lectura cómoda en el contenido** (Space Grotesk 16 px con interlineado 1,6, sin mayúsculas en texto de usuarios, tarjetas con vista previa).
+3. **Doto una vez por pantalla** y solo en titulares o cifras grandes (cuenta atrás).
+4. **Rojo solo como señal** (directo, error, aviso); botón principal blanco.
+5. Contraste AA: el gris `#666` de Nothing no llega como texto; solo para elementos decorativos o desactivados.
+6. Fuentes con `next/font/google` (hoy el proyecto usa Poppins, Gabarito e Inter, que se retirarían).
+
+### Lo que falta
+- Que elijas A, B o C (o una mezcla) y digas si el color de equipo en la torre te gusta.
+- Si tienes **dos o tres webs concretas** que te gusten, pásamelas: lo que he podido consultar son descripciones, no páginas renderizadas, y con una captura tuya afino más.
