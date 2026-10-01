@@ -22,7 +22,7 @@ Inventario de mejoras detectadas tras revisar el código. Agrupadas por impacto 
 - **Acción**: ~~fijar `apiVersion` explícitamente~~. **Hecho** — `apiVersion: '2024-04-10'` + `typescript: true` en las 3 instancias (checkout, webhook, premium), coincidiendo con la que ya tenía `prices/route.ts`.
 
 ### ✅ 4. Página `/not-authorized` referenciada pero inexistente
-- **Archivo**: [src/middleware.ts:17](src/middleware.ts#L17)
+- **Archivo**: [src/proxy.ts](src/proxy.ts) (antes `middleware.ts`)
 - **Problema**: el middleware redirige a `/not-authorized` cuando un `USER` intenta acceder a `/f1-dashboard/*`, pero la página no existe en `src/app/`. El usuario acaba en un 404.
 - **Acción**: ~~crear `src/app/not-authorized/page.tsx`~~. **Hecho** — página 403 con CTA a `/premium`.
 

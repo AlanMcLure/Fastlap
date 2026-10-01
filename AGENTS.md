@@ -33,7 +33,7 @@ Linting uses ESLint 9 flat config ([eslint.config.mjs](eslint.config.mjs), `esli
 
 - NextAuth with Google provider, JWT session strategy, Prisma adapter ([src/lib/auth.ts](src/lib/auth.ts)). On first sign-in, users without a username get one auto-generated via `nanoid(10)`. Use `getAuthSession()` from this file in server components and route handlers.
 - `UserRole` enum: `USER | ADMIN | PREMIUM` ([prisma/schema.prisma](prisma/schema.prisma)). Role is mirrored onto the session token via the `session` and `jwt` callbacks. The `jwt` callback only hits the DB at sign-in (when `user` is present), not on every request — so a role change (e.g. after a Stripe upgrade) shows up in the token only after the user signs in again.
-- [src/middleware.ts](src/middleware.ts) gates `/r/*/submit`, `/r/create`, `/settings`, and `/f1-dashboard/*` behind auth. `/f1-dashboard/*` additionally requires `ADMIN` or `PREMIUM`; non-eligible users are redirected to `/not-authorized`. (Next 16 renames the `middleware` file convention to `proxy`; the current file still works but is deprecated.)
+- [src/proxy.ts](src/proxy.ts) (the Next 16 name for `middleware`) gates `/r/*/submit`, `/r/create`, `/settings`, and `/f1-dashboard/*` behind auth. `/f1-dashboard/*` additionally requires `ADMIN` or `PREMIUM`; non-eligible users are redirected to `/not-authorized`.
 - Stripe `checkout.session.completed` webhook ([src/app/api/webhook/route.ts](src/app/api/webhook/route.ts)) is the only path that promotes a `USER` to `PREMIUM` — there is no manual upgrade endpoint.
 
 ### Data model
