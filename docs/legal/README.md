@@ -12,6 +12,7 @@
 | [POLITICA-COOKIES.md](POLITICA-COOKIES.md) | Cookies y almacenamiento local que usa la web (hoy solo técnicos). |
 | [CONDICIONES-DE-USO.md](CONDICIONES-DE-USO.md) | Reglas del servicio, contenido de los usuarios, moderación, responsabilidad. |
 | [NORMAS-DE-LA-COMUNIDAD.md](NORMAS-DE-LA-COMUNIDAD.md) | Normas de convivencia en lenguaje claro, alineadas con los motivos de denuncia de la app. |
+| [CONSULTA-ABOGADO.md](CONSULTA-ABOGADO.md) | Resumen del proyecto y 30 preguntas para llevar a una primera consulta de revisión. |
 | [CAMBIOS-TECNICOS.md](CAMBIOS-TECNICOS.md) | Cambios de código hechos por motivos legales, con cómo estaba antes y cómo revertirlos. |
 
 ## Datos que solo puede poner el titular
