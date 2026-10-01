@@ -34,7 +34,7 @@ export function ProfileImageForm({ user, className, ...props }: ProfileImageForm
     const [previewImage, setPreviewImage] = useState<string | null>(null);
     const router = useRouter()
 
-    const { mutate: updateProfileImage, isLoading } = useMutation({
+    const { mutate: updateProfileImage, isPending: isLoading } = useMutation({
         mutationFn: async () => {
             // const formData = new FormData();
 

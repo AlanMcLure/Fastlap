@@ -76,7 +76,7 @@ Request bodies are validated with Zod schemas in [src/lib/validators/](src/lib/v
 
 ### Client state and data fetching
 
-- Global providers in [src/components/Providers.tsx](src/components/Providers.tsx): `SessionProvider` (NextAuth) wrapped in a `QueryClientProvider` (TanStack Query v4, `staleTime` 60s, `cacheTime` 300s). Client components that mutate server state should use `useMutation` with optimistic updates — see [Editor.tsx](src/components/Editor.tsx) and the post-vote components in [src/components/post-vote/](src/components/post-vote/) for the established pattern.
+- Global providers in [src/components/Providers.tsx](src/components/Providers.tsx): `SessionProvider` (NextAuth) wrapped in a `QueryClientProvider` (TanStack Query v5, `staleTime` 60s, `gcTime` 300s). Client components that mutate server state should use `useMutation` with optimistic updates — see [Editor.tsx](src/components/Editor.tsx) and the post-vote components in [src/components/post-vote/](src/components/post-vote/) for the established pattern.
 - Pagination constant: `PAGINATION_RESULTS = 6` in [src/config.ts](src/config.ts).
 - Date formatting: [src/lib/utils.ts](src/lib/utils.ts) exports `formatTimeToNow` with a custom Spanish locale (`hace 5m`, `justo ahora`, etc.) — use this instead of raw `date-fns` calls so wording stays consistent.
 - `cn(...)` (clsx + tailwind-merge) is also in `utils.ts`.

@@ -46,7 +46,7 @@ const DeleteButton: FC<DeleteButtonProps> = ({ id, seccion, onSuccess, onError, 
             onError()
         },
         onSuccess: () => {
-            queryClient.invalidateQueries([seccion]) // Invalida todas las consultas con la clave del endpoint
+            queryClient.invalidateQueries({ queryKey: [seccion] }) // Invalida todas las consultas con la clave del endpoint
 
             onSuccess()
         },

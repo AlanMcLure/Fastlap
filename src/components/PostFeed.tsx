@@ -35,9 +35,9 @@ const PostFeed: FC<PostFeedProps> = ({ initialPosts, subredditName, username }) 
   // const [posts, setPosts] = useState(initialPosts);
   const queryClient = useQueryClient();
 
-  const { data: postsData, isLoading, isError } = useQuery(
-    ['posts', { subredditName, username, limit }],
-    async () => {
+  const { data: postsData, isLoading, isError } = useQuery({
+    queryKey: ['posts', { subredditName, username, limit }],
+    queryFn: async () => {
       let query = `/api/posts?limit=${limit}&page=1`;
 
       if (username) {
@@ -50,8 +50,8 @@ const PostFeed: FC<PostFeedProps> = ({ initialPosts, subredditName, username }) 
 
       const { data } = await axios.get(query);
       return data;
-    }
-  );
+    },
+  });
 
   const posts = useMemo(() => {
     if (!postsData) return initialPosts;
@@ -68,7 +68,7 @@ const PostFeed: FC<PostFeedProps> = ({ initialPosts, subredditName, username }) 
 
     try {
       // Invalidar la caché de la consulta existente
-      await queryClient.invalidateQueries(['posts']);
+      await queryClient.invalidateQueries({ queryKey: ['posts'] });
     } catch (error) {
       console.error('Error reloading posts:', error);
     } finally {
@@ -82,7 +82,7 @@ const PostFeed: FC<PostFeedProps> = ({ initialPosts, subredditName, username }) 
     try {
       setLimit((prevLimit) => prevLimit + PAGINATION_RESULTS);
       // Invalidar la caché de la consulta existente
-      await queryClient.invalidateQueries(['posts']);
+      await queryClient.invalidateQueries({ queryKey: ['posts'] });
     } catch (error) {
       console.error('Error reloading posts:', error);
     } finally {

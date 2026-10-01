@@ -45,7 +45,7 @@ const PostComment: FC<PostCommentProps> = ({
     setIsReplying(false)
   })
 
-  const { mutate: postComment, isLoading } = useMutation({
+  const { mutate: postComment, isPending: isLoading } = useMutation({
     mutationFn: async ({ postId, text, replyToId }: CommentRequest) => {
       const payload: CommentRequest = { postId, text, replyToId }
 
