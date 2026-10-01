@@ -83,13 +83,13 @@ En el entorno de desarrollo (sin acceso a Google, UploadThing, Stripe ni a la AP
 - [ ] Instalar como app en un móvil real; página sin conexión.
 - [ ] Copia de seguridad hecha **y restaurada** en una base de prueba.
 - [ ] Administrador creado; `CRON_SECRET` y tarea programada funcionando; copia de datos de F1 hecha.
-- [ ] Textos legales (sección 7) publicados.
+- [ ] Textos legales revisados por un profesional y publicados (borradores en `docs/legal/`; ver su README con los huecos técnicos).
 - [ ] Prueba con un lector de pantalla y con algunos aficionados reales.
 
 ## 7. Pendiente y riesgos (no es asesoramiento legal)
 
 - **Licencia de los datos:** Jolpica-F1 es CC BY-NC-SA 4.0 (**uso no comercial**, atribución). Si vas a cobrar o poner publicidad, escribe antes a `admin@jolpi.ca`. La copia propia y la API pública son obras derivadas con la misma licencia.
-- **Textos legales:** hace falta política de privacidad (se guardan correo, nombre y foto de Google, y lo que publiquen) y condiciones de uso; las cookies actuales son técnicas (sesión y tema), sin analítica. Revisión profesional recomendada (RGPD si hay usuarios en la UE).
+- **Textos legales:** hay borradores en `docs/legal/` (sin publicar ni revisar). Hace falta política de privacidad (se guardan correo, nombre y foto de Google, y lo que publiquen) y condiciones de uso; las cookies actuales son técnicas (sesión y tema), sin analítica. Revisión profesional recomendada (RGPD si hay usuarios en la UE).
 - **Marcas:** la app avisa de que no está afiliada a la Fórmula 1; no uses logos oficiales.
 - **Content-Security-Policy:** no hay. Se añadieron las demás cabeceras de seguridad, pero una CSP exige permitir el script del tema, los datos estructurados y los incrustados del editor, y probarla con cuidado.
 - **Seguimiento de errores y métricas:** no hay (Sentry, etc.). Recomendable antes de tener usuarios reales; necesita una cuenta.
