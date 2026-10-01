@@ -78,6 +78,11 @@ const RacePage = async ({ params }: RacePageProps) => {
         <p className='mt-2 text-muted-foreground'>
           {race.Circuit.circuitName} · {locality}, {country}
         </p>
+        <Link
+          href={`/gp/${season}/${round}`}
+          className='label mt-4 inline-block rounded-full border border-input px-4 py-2.5 text-display transition-colors hover:border-display'>
+          HILO Y PILOTO DEL DÍA
+        </Link>
       </div>
 
       {hasResults ? (

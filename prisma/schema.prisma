@@ -71,6 +71,7 @@ model User {
   Post        Post[]
   Comment     Comment[]
   CommentVote CommentVote[]
+  dotdVotes   DriverOfDayVote[]
 }
 
 model Subreddit {
@@ -109,6 +110,7 @@ model Post {
   subredditId String
   comments    Comment[]
   votes       Vote[]
+  raceWeekend RaceWeekend?
 
   @@index([authorId])
   @@index([subredditId])
@@ -161,4 +163,30 @@ model F1Snapshot {
   key       String   @id
   payload   Json
   updatedAt DateTime @updatedAt
+}
+
+/// Automatic discussion thread of a race weekend (see src/lib/raceThread.ts).
+/// The thread is an ordinary Post, so comments and votes work as everywhere else.
+model RaceWeekend {
+  id        String   @id @default(cuid())
+  season    Int
+  round     Int
+  post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+  postId    String   @unique
+  createdAt DateTime @default(now())
+
+  @@unique([season, round])
+}
+
+/// One "Driver of the Day" vote per user and race; changing it overwrites the row.
+model DriverOfDayVote {
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    String
+  season    Int
+  round     Int
+  driverId  String
+  createdAt DateTime @default(now())
+
+  @@id([userId, season, round])
+  @@index([season, round])
 }

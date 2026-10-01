@@ -41,13 +41,20 @@ const NextRaceModule = async ({ showDashboardLink }: { showDashboardLink: boolea
         <div className='mt-5'>
           <Countdown startIso={start.toISOString()} endIso={end.toISOString()} />
         </div>
-        {showDashboardLink && (
+        <div className='mt-5 flex flex-wrap gap-2'>
           <Link
-            href={`/f1-dashboard/carrera/${race.season}/${race.round}`}
-            className='label mt-5 inline-block rounded-full border border-input px-4 py-2.5 text-display transition-colors hover:border-display'>
-            VER EN F1
+            href={`/gp/${race.season}/${race.round}`}
+            className='label rounded-full border border-input px-4 py-2.5 text-display transition-colors hover:border-display'>
+            HILO Y VOTACIÓN
           </Link>
-        )}
+          {showDashboardLink && (
+            <Link
+              href={`/f1-dashboard/carrera/${race.season}/${race.round}`}
+              className='label rounded-full border border-input px-4 py-2.5 text-display transition-colors hover:border-display'>
+              VER EN F1
+            </Link>
+          )}
+        </div>
       </div>
     </section>
   )

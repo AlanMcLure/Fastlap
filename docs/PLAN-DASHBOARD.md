@@ -94,7 +94,7 @@ Servidor primero; sin datos inventados; tipado de extremo a extremo (Zod en la f
 | 5 | Pilotos | Listado y perfil con estadísticas calculadas de resultados reales | ✅ |
 | 6 | Copia propia + API propia | Tabla `F1Snapshot`, lectura a través de la BD, sincronización, API de lectura | ✅ (ver nota) |
 | V1 | Sistema de diseño | Tokens, tipografía, modo oscuro, componentes (dirección B) | ✅ |
-| 7 | Hub de fin de semana de carrera | Hilo automático por GP con resultados y votación de Piloto del Día | ⏳ |
+| 7 | Hub de fin de semana de carrera | Hilo automático por GP con resultados y votación de Piloto del Día | ✅ |
 | 8 | Ligas de pronósticos en las comunidades | Pronóstico de clasificación/sprint/carrera, puntuación automática, reglas configurables | ⏳ |
 | V2 | Rediseño de pantallas clave | Feed, tarjeta de post, comunidad, comentarios, logotipo (el hub de carrera va en la rebanada 7) | ✅ |
 | 9 | Datos en vivo (opcional) | Prototipo medido antes de comprometerse (§6) | ⏳ |
@@ -123,3 +123,10 @@ Antes de encender Premium: resolver R1.
 - **API de lectura** pública, solo temporadas cerradas, con atribución CC BY-NC-SA.
 - **Licencia:** copiar y servir los datos sigue sujeto a CC BY-NC-SA 4.0 (uso no comercial). Antes de monetizar hay que acordar licencia con Jolpica. Los datos reales aún no se han probado (sandbox sin acceso).
 - No cubre todavía los datos por piloto (`getDriverResults`, `getDriverSeasons`): son carreras de toda su carrera y cambian durante la temporada en curso.
+
+## Rebanada 7: hub de fin de semana (decisiones)
+
+- **Página pública `/gp/<temporada>/<ronda>`** (no depende del dashboard, que será Premium): hilo, diez primeros y Piloto del Día. El dashboard y el módulo "Próximo GP" enlazan a ella.
+- **El hilo es un post normal** creado de forma perezosa por un usuario de sistema en la comunidad `formula1` (se crea si no existe), desde la primera sesión del fin de semana. Así comentarios, votos, feed y borrado funcionan sin código nuevo. Si un admin borra el hilo, se recrea en la siguiente visita.
+- **Piloto del Día:** abre cuando termina la carrera y hay resultados, cierra a las 48 h; un voto por usuario y carrera, modificable mientras esté abierta; el servidor comprueba que el piloto corrió esa carrera y aplica el límite de votos. Solo se muestran los 5 más votados.
+- **Pendiente / límites:** el hilo no se crea para carreras históricas hasta que alguien visita su página (se crea con la fecha de visita); no hay moderación específica ni votos por sesión (sprint); el texto del hilo es fijo. Los comentarios en directo dependen de la rebanada 9.
