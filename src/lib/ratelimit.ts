@@ -38,3 +38,10 @@ export const accountDeleteRatelimit = new Ratelimit({
   limiter: Ratelimit.slidingWindow(3, '1 h'),
   prefix: 'rl:account-delete',
 })
+
+/** Data export reads many tables: a few downloads per hour is plenty. */
+export const accountExportRatelimit = new Ratelimit({
+  redis,
+  limiter: Ratelimit.slidingWindow(3, '1 h'),
+  prefix: 'rl:account-export',
+})

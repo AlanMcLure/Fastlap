@@ -51,6 +51,11 @@ export const FAQS: Faq[] = [
       'Con la sesión iniciada, en la sección «F1»: calendario, clasificaciones de pilotos y constructores, pilotos con sus estadísticas y detalle de cada carrera, también de temporadas pasadas. Los resultados pueden tardar un poco en aparecer tras terminar una carrera. Los datos proceden de Jolpica-F1 y se usan bajo licencia CC BY-NC-SA 4.0.',
   },
   {
+    question: '¿Puedo descargar mis datos?',
+    answer:
+      'Sí, en «Ajustes»: «Descargar mis datos». Recibes un archivo JSON con tu perfil, publicaciones, comentarios, votos, suscripciones, pronósticos, notificaciones y denuncias. No incluye cookies de sesión. Descárgalo antes de eliminar tu cuenta, porque después ya no hay nada que bajar.',
+  },
+  {
     question: '¿Puedo eliminar mi cuenta?',
     answer:
       'Sí, en «Ajustes», al final de la página: «Eliminar mi cuenta». Se borran tu perfil, votos, suscripciones, pronósticos y notificaciones. Tus publicaciones y comentarios no se borran: quedan como «Usuario eliminado», así que si quieres quitarlos, bórralos antes. No se puede deshacer.',

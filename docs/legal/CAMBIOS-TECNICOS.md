@@ -2,6 +2,27 @@
 
 Registro de lo que se cambió en el código a raíz de los «huecos técnicos» del [README](README.md), con **cómo estaba antes** para poder revertirlo o explicárselo al abogado. Más reciente primero.
 
+## 3. Exportación de datos (hueco 2, segunda parte)
+
+**Antes**
+- No había exportación ni descarga de ningún tipo: los derechos de acceso y portabilidad solo se podían atender a mano, consultando la base de datos.
+
+**Ahora**
+- **Ajustes → «Descargar mis datos»** (`src/components/ExportDataForm.tsx`) baja un archivo `fastlap-datos-<usuario>-<fecha>.json`.
+- **`GET /api/account/export`** (`src/app/api/account/export/route.ts`): exige sesión, limita a 3 descargas por hora (`accountExportRatelimit`), responde con `Cache-Control: no-store` y solo devuelve los datos de quien lo pide.
+- **`collectUserData`** (`src/lib/accountExport.ts`) reúne: perfil (id, nombre, correo, usuario, foto, rol, fechas), métodos de acceso (proveedor e identificador, sin tokens), comunidades que sigue y que creó, sus publicaciones y comentarios completos, sus votos, votos de Piloto del Día, pronósticos, notificaciones, denuncias que hizo y las decisiones de moderación sobre su contenido (acción, extracto y fecha).
+- **No incluye:** cookies o tokens de sesión (son secretos, no datos de la persona), los votos y comentarios de otras personas sobre sus publicaciones, ni datos de terceros. Los textos de las publicaciones propias salen tal cual (el JSON de EditorJS).
+- Formato JSON legible por máquina y por personas (portabilidad, art. 20 RGPD); lleva `exportVersion` por si el formato cambia.
+- **Tests:** `src/lib/accountExport.test.ts` (nombre de archivo, y contra Postgres real: reúne lo propio y no filtra datos ajenos ni credenciales). La config de Vitest ejecuta los archivos en serie (`fileParallelism: false`) porque las pruebas con base de datos comparten una y la vacían.
+
+**Límites conocidos (para el abogado)**
+- Es una descarga inmediata, sin verificación extra: quien tenga la sesión abierta puede bajarse los datos (igual que puede ver su perfil y cambiar su nombre). No pide reautenticación.
+- Para quien ya borró la cuenta no hay nada que exportar: exporta antes de eliminar.
+- Los logs del servidor y del proveedor de alojamiento (IP, peticiones) no están en el archivo.
+- No hay exportación de imágenes: el JSON contiene las URL de las que subió.
+
+**Para revertir:** quitar `ExportDataForm` de `settings/page.tsx` y la carpeta `src/app/api/account/export`; `accountExport.ts` es código aislado. Sin cambios de esquema.
+
 ## 2. Borrado de cuenta (hueco 2, primera parte)
 
 **Antes**
@@ -24,7 +45,7 @@ Registro de lo que se cambió en el código a raíz de los «huecos técnicos» 
 **Límites conocidos (para el abogado)**
 - Las imágenes que la persona subió a UploadThing (foto de perfil o dentro de sus posts) **no se borran** de UploadThing (la integración está en v4 y no se ha automatizado). La foto de perfil de Google es solo una URL de Google.
 - Quien tenga la sesión abierta en **otro dispositivo** conserva su cookie (JWT) hasta que caduque; no puede escribir nada (la base lo rechaza) pero no se cierra sola. Mitigación pendiente: comprobar que el usuario existe al leer la sesión.
-- **No hay exportación de datos** (portabilidad): sigue siendo un hueco.
+- **Exporta antes de borrar:** tras la baja ya no hay nada que descargar (ver el apartado 3).
 - Los votos que dio se borran, así que las puntuaciones de publicaciones ajenas bajan.
 - El texto de sus publicaciones y comentarios puede contener datos personales que ella misma escribió; se conserva (interés en la continuidad de las conversaciones), salvo que lo borre antes o lo pida por correo.
 

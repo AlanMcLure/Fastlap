@@ -5,6 +5,7 @@ import { authOptions, getAuthSession } from '@/lib/auth'
 import BackButton from '@/components/BackButton'
 import { ProfileImageForm } from '@/components/ProfileImageForm'
 import { DeleteAccountForm } from '@/components/DeleteAccountForm'
+import { ExportDataForm } from '@/components/ExportDataForm'
 
 export const metadata = {
   title: 'Ajustes',
@@ -40,6 +41,8 @@ export default async function SettingsPage() {
             }}
           />
         </div>
+
+        <ExportDataForm />
 
         <DeleteAccountForm username={session.user.username || ''} isAdmin={session.user.role === 'ADMIN'} />
       </div>

@@ -56,7 +56,7 @@ No vendemos tus datos. Las consultas de datos de Fórmula 1 se hacen desde nuest
 
 Puedes ejercer los derechos de **acceso, rectificación, supresión, oposición, limitación del tratamiento y portabilidad** escribiendo a [PENDIENTE: correo], indicando tu nombre de usuario y el derecho que ejerces. Respondemos en el plazo de un mes (ampliable en casos complejos). Es posible que te pidamos que acredites tu identidad.
 
-- Puedes **cambiar tu nombre de usuario y tu imagen** en Ajustes, **borrar tus publicaciones y comentarios** tú mismo y **eliminar tu cuenta** desde Ajustes.
+- Puedes **cambiar tu nombre de usuario y tu imagen** en Ajustes, **borrar tus publicaciones y comentarios** tú mismo **descargar una copia de tus datos** y **eliminar tu cuenta** desde Ajustes.
 - Si consideras que no tratamos tus datos conforme a la normativa, puedes **reclamar ante la Agencia Española de Protección de Datos** (www.aepd.es).
 
 ## 7. Menores

@@ -7,6 +7,8 @@ export default defineConfig({
   },
   test: {
     environment: 'node',
+    // the Postgres integration tests share one database and truncate it
+    fileParallelism: false,
     include: ['src/**/*.test.ts'],
   },
 })

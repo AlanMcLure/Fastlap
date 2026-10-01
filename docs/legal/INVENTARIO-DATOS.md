@@ -46,9 +46,9 @@ No se usa **analítica**, **publicidad**, **seguimiento** ni perfilado. No hay c
 
 | Derecho | Estado |
 |---|---|
-| Acceso, rectificación | El usuario puede cambiar su nombre de usuario y su imagen en Ajustes. El resto, por correo |
+| Acceso, rectificación | El usuario puede descargar sus datos y cambiar su nombre de usuario y su imagen en Ajustes. El resto, por correo |
 | Supresión | **Botón «Eliminar mi cuenta» en Ajustes.** Borra el perfil, votos, suscripciones, pronósticos y notificaciones; publicaciones y comentarios quedan como «Usuario eliminado». No borra las imágenes de UploadThing (ver [CAMBIOS-TECNICOS.md](CAMBIOS-TECNICOS.md)) |
-| Portabilidad | **No hay exportación**; solo a mano |
+| Portabilidad | **Botón «Descargar mis datos» en Ajustes** (JSON con perfil, publicaciones, comentarios, votos, pronósticos, notificaciones y denuncias; sin credenciales). Ver [CAMBIOS-TECNICOS.md](CAMBIOS-TECNICOS.md) |
 | Oposición / limitación | Por correo |
 | Retirar contenido propio | El autor puede borrar sus publicaciones y comentarios |
 | Reclamación | Agencia Española de Protección de Datos (aepd.es) |
