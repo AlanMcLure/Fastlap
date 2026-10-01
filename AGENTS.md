@@ -4,7 +4,7 @@ Guidance for any coding agent or contributor working in this repository.
 
 ## Project overview
 
-FastLap is a Reddit-style social network for Formula 1 fans (Spanish-language UI). It combines forum-style communities ("subreddits") with an F1 data dashboard gated behind a paid Premium tier. Built with Next.js 16 (App Router), React 19, TypeScript (`strict: true`), Tailwind 3 + Shadcn UI ("new-york" style, slate base color), Prisma 4/Postgres (Neon), NextAuth v4, Upstash Redis, UploadThing, and Stripe.
+FastLap is a Reddit-style social network for Formula 1 fans (Spanish-language UI). It combines forum-style communities ("subreddits") with an F1 data dashboard gated behind a paid Premium tier. Built with Next.js 16 (App Router), React 19, TypeScript (`strict: true`), Tailwind 3 + Shadcn UI ("new-york" style, slate base color), Prisma 6/Postgres (Neon), NextAuth v4, Upstash Redis, UploadThing, and Stripe.
 
 ## Common commands
 

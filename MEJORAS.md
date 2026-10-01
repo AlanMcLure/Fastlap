@@ -61,7 +61,7 @@ Inventario de mejoras detectadas tras revisar el código. Agrupadas por impacto 
 | Dep | Tienes | Actual (may 2026) | Notas |
 |---|---|---|---|
 | Next.js | 14.0.4 | 15.x | Migración no trivial pero soportada |
-| Prisma + @prisma/client | 4.14 | 6.x | Cambios en API, vale la pena |
+| Prisma + @prisma/client | 6.19 ✅ | 6.x | Migrado |
 | NextAuth | v4 | Auth.js v5 | Simplifica mucho `authOptions` |
 | @tanstack/react-query | v5 ✅ | v5 | Migrado |
 | TypeScript | 5.0.4 | 5.x más reciente | Sencillo |
