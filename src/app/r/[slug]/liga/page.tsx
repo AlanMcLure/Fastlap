@@ -3,6 +3,8 @@ import Link from 'next/link'
 import { notFound } from 'next/navigation'
 
 import DataError from '@/components/f1-dashboard/DataError'
+import ShareActions from '@/components/ShareActions'
+import { cardFileName } from '@/lib/shareCards'
 import LeagueCreateForm from '@/components/league/LeagueCreateForm'
 import PredictionForm, { type DriverOption } from '@/components/league/PredictionForm'
 import { getAuthSession } from '@/lib/auth'
@@ -143,6 +145,14 @@ const LeaguePage = async ({ params }: { params: Promise<{ slug: string }> }) => 
           {rules.sprintEnabled && '. Las carreras sprint puntúan igual (sin vuelta rápida)'}. Participa cualquier usuario con
           sesión; la puntuación es automática con los resultados oficiales.
         </p>
+        <div className='mt-4'>
+          <ShareActions
+            title={`Liga de pronósticos de r/${slug} en FastLap`}
+            path={`/r/${slug}/liga`}
+            imageHref={`/r/${slug}/liga/opengraph-image`}
+            fileName={cardFileName('liga', slug, league.season)}
+          />
+        </div>
       </div>
 
       {calendarResult.status === 'rejected' || driversResult.status === 'rejected' ? (

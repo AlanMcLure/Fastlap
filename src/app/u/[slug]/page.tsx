@@ -59,7 +59,7 @@ const page = async ({ params }: PageProps) => {
       <h1 className='font-bold text-3xl md:text-4xl h-14'>
         u/{user.username}
       </h1>
-      {predictions && <ProfilePredictions data={predictions} />}
+      {predictions && <ProfilePredictions data={predictions} username={user.username ?? slug} />}
       <PostFeed initialPosts={posts} username={user.username || undefined} />
     </>
   )

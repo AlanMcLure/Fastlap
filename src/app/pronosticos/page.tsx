@@ -2,6 +2,8 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 
 import DataError from '@/components/f1-dashboard/DataError'
+import ShareActions from '@/components/ShareActions'
+import { cardFileName } from '@/lib/shareCards'
 import SeasonSelect from '@/components/f1-dashboard/SeasonSelect'
 import { getAuthSession } from '@/lib/auth'
 import { resolveSeason } from '@/lib/f1/season'
@@ -48,6 +50,12 @@ const GlobalPredictionsPage = async ({ searchParams }: { searchParams: Promise<{
           pronóstico que enviaste. Desempata el número de puestos exactos.
         </p>
         <SeasonSelect value={season} years={years} basePath='/pronosticos' />
+        <ShareActions
+          title='Clasificación global de pronósticos de FastLap'
+          path='/pronosticos'
+          imageHref='/pronosticos/opengraph-image'
+          fileName={cardFileName('clasificacion global', new Date().getUTCFullYear())}
+        />
       </header>
 
       {!data ? (

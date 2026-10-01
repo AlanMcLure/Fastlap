@@ -1,8 +1,10 @@
 import StatTile from '@/components/f1-dashboard/StatTile'
+import ShareActions from '@/components/ShareActions'
+import { cardFileName } from '@/lib/shareCards'
 import type { ProfilePredictions as Data } from '@/lib/predictionData'
 
 /** Prediction stats and badges on a user profile. Server component. */
-const ProfilePredictions = ({ data }: { data: Data }) => {
+const ProfilePredictions = ({ data, username }: { data: Data; username: string }) => {
   const { stats, season, total, badges } = data
   const best = stats.bestRace
 
@@ -14,6 +16,13 @@ const ProfilePredictions = ({ data }: { data: Data }) => {
           {total.points} {total.points === 1 ? 'PUNTO' : 'PUNTOS'} EN TOTAL · {total.scored} PUNTUADOS
         </p>
       </div>
+
+      <ShareActions
+        title={`Pronósticos de u/${username} en FastLap`}
+        path={`/u/${username}`}
+        imageHref={`/u/${username}/opengraph-image`}
+        fileName={cardFileName('pronosticos', username)}
+      />
 
       {badges.length > 0 && (
         <ul className='flex flex-wrap gap-2' aria-label='Insignias'>

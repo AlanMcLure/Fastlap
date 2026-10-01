@@ -10,6 +10,8 @@ import { getAuthSession } from '@/lib/auth'
 import { db } from '@/lib/db'
 import { dotdTally } from '@/lib/dotd'
 import JsonLd from '@/components/JsonLd'
+import ShareActions from '@/components/ShareActions'
+import { cardFileName } from '@/lib/shareCards'
 import { absoluteUrl } from '@/lib/seo'
 import { raceStatus, sessionStart } from '@/lib/f1/calendar'
 import { formatRaceDate } from '@/lib/f1/format'
@@ -144,6 +146,14 @@ const RaceHubPage = async ({ params }: Props) => {
         <p className='mt-2 text-muted-foreground'>
           {race.Circuit.circuitName} · {locality}, {country}
         </p>
+        <div className='mt-4'>
+          <ShareActions
+            title={`${race.raceName} ${season} en FastLap`}
+            path={`/gp/${season}/${round}`}
+            imageHref={`/gp/${season}/${round}/opengraph-image`}
+            fileName={cardFileName(race.raceName, season, hasResults ? 'resultado' : '')}
+          />
+        </div>
       </header>
 
       <section aria-labelledby='thread-title' className='space-y-3'>
