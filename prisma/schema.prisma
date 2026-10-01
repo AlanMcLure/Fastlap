@@ -72,6 +72,7 @@ model User {
   Comment     Comment[]
   CommentVote CommentVote[]
   dotdVotes   DriverOfDayVote[]
+  predictions Prediction[]
 }
 
 model Subreddit {
@@ -82,8 +83,9 @@ model Subreddit {
   posts     Post[]
 
   creatorId   String?
-  Creator     User?          @relation("CreatedBy", fields: [creatorId], references: [id])
+  Creator     User?              @relation("CreatedBy", fields: [creatorId], references: [id])
   subscribers Subscription[]
+  leagues     PredictionLeague[]
 
   @@index([name])
   @@index([creatorId])
@@ -99,14 +101,14 @@ model Subscription {
 }
 
 model Post {
-  id          String    @id @default(cuid())
+  id          String       @id @default(cuid())
   title       String
   content     Json?
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
-  author      User      @relation(fields: [authorId], references: [id])
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  author      User         @relation(fields: [authorId], references: [id])
   authorId    String
-  subreddit   Subreddit @relation(fields: [subredditId], references: [id])
+  subreddit   Subreddit    @relation(fields: [subredditId], references: [id])
   subredditId String
   comments    Comment[]
   votes       Vote[]
@@ -189,4 +191,47 @@ model DriverOfDayVote {
 
   @@id([userId, season, round])
   @@index([season, round])
+}
+
+enum PredictionKind {
+  RACE
+  SPRINT
+}
+
+/// Prediction league of a community for one season (see src/lib/league.ts).
+/// Points are not stored: they are computed from the official results on read.
+model PredictionLeague {
+  id               String       @id @default(cuid())
+  subreddit        Subreddit    @relation(fields: [subredditId], references: [id], onDelete: Cascade)
+  subredditId      String
+  season           Int
+  /// Points for each podium position guessed exactly.
+  exactPoints      Int          @default(5)
+  /// Points for a driver who finishes on the podium but in another place.
+  presentPoints    Int          @default(2)
+  fastestLapPoints Int          @default(3)
+  sprintEnabled    Boolean      @default(true)
+  createdAt        DateTime     @default(now())
+  predictions      Prediction[]
+
+  @@unique([subredditId, season])
+}
+
+/// Podium (and, for races, fastest lap) guess of one user for one race or sprint.
+model Prediction {
+  user       User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId     String
+  league     PredictionLeague @relation(fields: [leagueId], references: [id], onDelete: Cascade)
+  leagueId   String
+  round      Int
+  kind       PredictionKind
+  p1         String
+  p2         String
+  p3         String
+  fastestLap String?
+  createdAt  DateTime         @default(now())
+  updatedAt  DateTime         @updatedAt
+
+  @@id([userId, leagueId, round, kind])
+  @@index([leagueId, round])
 }

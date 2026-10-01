@@ -107,6 +107,11 @@ const Layout = async ({
             href={`/r/${slug}/submit`}>
             Crear publicación
           </Link>
+          <Link
+            className={buttonVariants({ variant: 'outline', className: 'w-full' })}
+            href={`/r/${slug}/liga`}>
+            Liga de pronósticos
+          </Link>
         </aside>
       </div>
     </div>

@@ -95,7 +95,7 @@ Servidor primero; sin datos inventados; tipado de extremo a extremo (Zod en la f
 | 6 | Copia propia + API propia | Tabla `F1Snapshot`, lectura a través de la BD, sincronización, API de lectura | ✅ (ver nota) |
 | V1 | Sistema de diseño | Tokens, tipografía, modo oscuro, componentes (dirección B) | ✅ |
 | 7 | Hub de fin de semana de carrera | Hilo automático por GP con resultados y votación de Piloto del Día | ✅ |
-| 8 | Ligas de pronósticos en las comunidades | Pronóstico de clasificación/sprint/carrera, puntuación automática, reglas configurables | ⏳ |
+| 8 | Ligas de pronósticos en las comunidades | Pronóstico de podio y vuelta rápida (carrera y sprint), puntuación automática, reglas configurables | ✅ (ver nota) |
 | V2 | Rediseño de pantallas clave | Feed, tarjeta de post, comunidad, comentarios, logotipo (el hub de carrera va en la rebanada 7) | ✅ |
 | 9 | Datos en vivo (opcional) | Prototipo medido antes de comprometerse (§6) | ⏳ |
 
@@ -130,3 +130,12 @@ Antes de encender Premium: resolver R1.
 - **El hilo es un post normal** creado de forma perezosa por un usuario de sistema en la comunidad `formula1` (se crea si no existe), desde la primera sesión del fin de semana. Así comentarios, votos, feed y borrado funcionan sin código nuevo. Si un admin borra el hilo, se recrea en la siguiente visita.
 - **Piloto del Día:** abre cuando termina la carrera y hay resultados, cierra a las 48 h; un voto por usuario y carrera, modificable mientras esté abierta; el servidor comprueba que el piloto corrió esa carrera y aplica el límite de votos. Solo se muestran los 5 más votados.
 - **Pendiente / límites:** el hilo no se crea para carreras históricas hasta que alguien visita su página (se crea con la fecha de visita); no hay moderación específica ni votos por sesión (sprint); el texto del hilo es fijo. Los comentarios en directo dependen de la rebanada 9.
+
+## Rebanada 8: ligas de pronósticos (decisiones)
+
+- **Una liga por comunidad y temporada**, abierta por el creador (o un admin) con sus reglas: puntos por puesto exacto (5), por piloto en el podio en otro puesto (2), por vuelta rápida (3) y si entran los sprints. Pueden pronosticar todos los usuarios con sesión (no hace falta ser miembro).
+- **Qué se pronostica:** podio de la carrera (y del sprint) y, en carrera, la vuelta rápida. **No se pronostica la pole** porque la capa de datos aún no lee la clasificación (la parrilla incluye sanciones); se puede añadir un `getQualifying` más adelante.
+- **Cierre:** al empezar la clasificación (clasificación del sprint para el sprint); sin ese dato, al empezar la sesión. Se puede cambiar el pronóstico hasta entonces.
+- **Los puntos no se guardan:** se calculan al leer con los resultados oficiales, así que una corrección de resultados reescribe la tabla y no hay tarea de puntuación que mantener. Coste: cada visita a la liga lee los resultados de la temporada (con caché de Next y, para temporadas cerradas, la copia propia). Si hubiese mucha carga se guardaría una caché por carrera.
+- **Empates:** desempata el número de puestos exactos; si siguen iguales comparten posición (1, 1, 3).
+- **Pendiente:** ligas con invitación o privadas, histórico entre temporadas, notificaciones de cierre, pronóstico de la pole y de abandonos. La vuelta rápida depende de que Jolpica la incluya en los resultados de la temporada (si falta, ese acierto no puntúa); no verificado con datos reales.
