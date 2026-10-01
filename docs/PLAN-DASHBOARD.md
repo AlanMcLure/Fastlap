@@ -1,105 +1,115 @@
-# Plan: rehacer el F1 Dashboard
+# Plan: F1 Dashboard y siguientes pasos de FastLap
 
-Estado: **en curso**. Hechas la rebanada 0 (limpieza, salvo las noticias, pendientes de D4) y la 1 (capa de datos, con fixtures sintéticos hasta capturar respuestas reales). Pendientes D1–D4 y el riesgo de licencia (R1).
-Alcance: solo `/f1-dashboard/*` y `/api/ergast/*`. La parte social (comunidades, posts, votos, comentarios, auth, Stripe) no se toca.
+Estado: **en curso**. Hechas la rebanada 0 (limpieza, salvo las noticias) y la 1 (capa de datos, con fixtures sintéticos hasta capturar respuestas reales). Premium/Stripe está **oculto tras un flag** hasta que el proyecto se publique. La parte social (comunidades, posts, votos, comentarios, auth) no se rehace.
 
-## 1. Por qué rehacerlo
+Documentos relacionados: [AUDITORIA-VISUAL.md](AUDITORIA-VISUAL.md) (estado visual actual y propuesta de rediseño).
 
-Lo que hay hoy (≈2.200 líneas) tiene problemas de fondo, no de detalle:
+## 1. Por qué rehacer el dashboard
 
-| Problema | Dónde | Consecuencia |
+| Problema | Dónde | Estado |
 |---|---|---|
-| Estadísticas escritas a mano y **números aleatorios** para pilotos desconocidos | `api/ergast/driver/route.ts` | Se muestran datos falsos como si fueran reales |
-| Noticias escritas a mano en el código | `lib/newsData.ts` | No hay fuente de contenido real |
-| Botones de crear/editar/borrar que llaman a un backend en `http://localhost:8083` (resto de otro proyecto) | `components/f1-dashboard/*Button.tsx`, `authenticated()` en `lib/utils.ts` | No funcionan en este repo; el uso que queda está comentado |
-| 18 `useEffect` que piden datos desde el navegador | `app/f1-dashboard/**`, `components/f1-dashboard/**` | Más lento, sin caché compartida, sin SEO, estados de carga/error repetidos |
-| Respuestas de la API tipadas con `any` | rutas y componentes | Un cambio de la API rompe en silencio |
-| Sin copia propia de los datos | todo | Todos los usuarios comparten el límite de Jolpica (≈500 peticiones/hora, a verificar) |
-| Código muerto | `ergast/laps`, `ergast/driver/laps`, `LapTimesChart`, `GraficoPuntos` | Ruido |
-| Dos librerías de gráficos (`chart.js` y `recharts`) que solo aparecen en componentes sin uso (`GraficoPuntos`, que además llama a `localhost:8083`, y `LapTimesChart`) | `package.json` | Peso en el bundle y dependencias sin función |
+| Estadísticas escritas a mano y números aleatorios en el perfil de piloto | `api/ergast/driver` | ✅ eliminado (rebanada 0) |
+| Botones de crear/editar/borrar contra un backend en `localhost:8083` (resto de otro proyecto) | `components/f1-dashboard/*Button.tsx` | ✅ eliminado |
+| Endpoints y componentes sin uso, dos librerías de gráficos sin uso | varios | ✅ eliminado (`chart.js`); `recharts` se queda para la rebanada 3 |
+| Noticias escritas a mano en el código | `lib/newsData.ts` | ⏳ pendiente de D4 |
+| 18 `useEffect` que piden datos desde el navegador | `app/f1-dashboard/**` | ⏳ rebanadas 2–5 |
+| Respuestas de la API con `any` | rutas y componentes | ✅ capa `src/lib/f1/` con Zod; falta migrar las páginas |
+| Sin copia propia de los datos | todo | ⏳ rebanada 6 |
+| Errores en inglés y redirección a un 404 si falla la API; la barra lateral tapa el contenido | `pilotos`, layout del dashboard | ⏳ ver auditoría visual |
 
-## 2. Decisiones pendientes (hay que cerrarlas antes de construir)
+## 2. Hallazgos de la investigación (mercado y licencia)
 
-### D1. Qué justifica pagar Premium
-Hoy el dashboard enseña datos de F1 que se encuentran gratis en muchos sitios. Opciones, no excluyentes:
+Fuentes secundarias (fichas de tiendas, artículos, GitHub); no hay datos de descargas ni retención. Para validar de verdad hace falta hablar con aficionados.
 
-- **A. Análisis propio:** comparador de pilotos, evolución de la clasificación jornada a jornada, ritmo por vuelta, estrategias de paradas.
-- **B. Pronósticos con la comunidad:** cada usuario predice podio/pole de cada GP y hay ranking de aciertos. Une dashboard y red social, que es lo que nadie más ofrece.
-- **C. Hilo automático por GP:** al terminar cada carrera se crea un debate en la comunidad con los datos de la carrera.
+- **Licencia de los datos (el hallazgo más importante).** Jolpica-F1 publica sus datos con **CC BY-NC-SA 4.0**: uso no comercial, con atribución y compartiendo lo derivado bajo la misma licencia. El uso comercial requiere pedir permiso a `admin@jolpi.ca` ([TERMS.md](https://github.com/jolpica/jolpica-f1/blob/main/TERMS.md)). Los datos originales de Ergast tampoco permitían cobrar por una app ni por datos de la API. El proyecto es voluntario y no garantiza disponibilidad.
+- **App oficial de F1:** F1 Fantasy, F1 Predict, personalización por piloto/equipo y ligas con amigos ([F1](https://www.formula1.com/en/latest/article/formula-1-launches-new-website-and-personalised-mobile-app.1knZbPSCZ2tS2z6ADRn2Gs)).
+- **Juegos de pronósticos:** muchísimos y casi idénticos ([BERACE](https://apps.apple.com/app/id6447265815), [MyGrid](https://apps.apple.com/cd/app/mygrid/id6739147623), [Superbru](https://www.superbru.com/f1), [Podium Prophets](https://alternativeto.net/software/podium-prophets/about)): ligas privadas con código de invitación, puntuación automática, reglas configurables, clasificación + sprint + carrera. Son apps aparte, sin comunidad.
+- **Datos en vivo:** ya existen proyectos gratuitos y abiertos ([f1-dash](https://github.com/r4ai/f1-dash), [f1-telemetry](https://github.com/matteocelani/f1-telemetry)) que leen el feed de *F1 Live Timing* (SignalR), que no es una API oficial documentada.
+- **Comunidad:** r/formula1 vive de los hilos de carrera en directo y debates; el voto de Piloto del Día se hace en apps oficiales; hay quejas de falta de datos en segunda pantalla ([TechRadar](https://techradar.com/pro/i-want-racemate-to-be-the-second-screen-infobip-is-helping-tgr-haas-to-fund-formula-1-car-development-through-an-entirely-new-kind-of-fan-engagement)).
+- **Precios de referencia:** F1 TV Pro ≈ [$85/año en EE. UU.](https://www.thepricer.org/how-much-does-f1-tv-cost/) y ≈ 65 €/año en España según un artículo; hay quejas por el precio.
+- **Hueco posible (hipótesis, no dato):** unir comunidad + pronósticos en español: ligas de pronósticos dentro de cada comunidad y un hilo automático por Gran Premio con resultados y votación de Piloto del Día.
 
-Recomendación provisional: **B como pilar y A como complemento**; C es barato y refuerza ambas. *Decisión del autor.*
+## 3. Decisiones
 
-### D2. ¿Dashboard todo de pago o parte pública?
-Un tramo gratuito (calendario, clasificación, resultados) atrae tráfico y registros; lo de pago serían A/B. Hoy `proxy.ts` bloquea todo `/f1-dashboard` a quien no sea `PREMIUM`/`ADMIN`. Recomendación: **parte pública + funciones Premium**, comprobando el rol en el servidor por funcionalidad (`requirePremium()`), no solo con el `matcher`. *Decisión del autor.*
+| | Decisión | Estado |
+|---|---|---|
+| D1 | Qué justifica pagar Premium | **Aplazada.** Con CC BY-NC-SA no se puede cobrar por los datos. Premium solo podría vender cosas propias (ligas privadas con reglas personalizadas, sin publicidad, estadísticas propias) y, aun así, lo derivado de los datos necesita permiso. Primero licencia (R1). |
+| D2 | ¿Dashboard de pago o público? | **Público para usuarios con sesión mientras Premium esté apagado** (flag `NEXT_PUBLIC_PREMIUM_ENABLED`, apagado por defecto). Abrirlo también a visitantes sin sesión queda por decidir (ayuda al SEO y a captar registros). |
+| D3 | Fuente de datos | Jolpica-F1 para históricos. Datos en vivo: ver §6. |
+| D4 | Noticias | **Pendiente.** Propuesta: eliminar hasta tener una fuente real de contenido. |
+| D5 | Rumbo visual | **Pendiente**, ver [AUDITORIA-VISUAL.md](AUDITORIA-VISUAL.md). |
 
-### D3. Fuente de datos
-Jolpica-F1 (sucesor de Ergast, compatible) es la única fuente abierta razonable para resultados y vueltas. Se mantiene salvo que haya otra preferencia.
+## 4. Riesgos
 
-### D4. Noticias
-Mientras no exista una fuente real de contenido (RSS con permiso, redacción propia), **eliminar la sección** en vez de mantener artículos de ejemplo. *Decisión del autor.*
+1. **R1 · Licencia.** Mientras el proyecto sea gratuito y no comercial, con atribución visible a Jolpica/Ergast, el uso encaja. Antes de cobrar (Premium) o de monetizar con publicidad hay que pedir licencia comercial a Jolpica o cambiar de fuente. La copia propia en base de datos (§5) y cualquier API pública que expongamos son obras derivadas: deben publicarse con la misma licencia. No es asesoramiento legal.
+2. **R2 · Marcas de F1.** Nombres y logotipos de F1 y equipos están registrados: no usar logos oficiales y añadir aviso de "proyecto no afiliado".
+3. **R3 · Disponibilidad y límites de Jolpica** (≈4 peticiones/s, 500/h por IP; sin garantía de servicio). Mitigación: copia propia y caché.
+4. **R4 · Feed en vivo no oficial.** Sin documentación ni garantías; puede cambiar o bloquearse; no he verificado sus condiciones de uso.
 
-## 3. Riesgos a comprobar antes de monetizar
+## 5. Datos históricos y API propia
 
-1. **Licencia de los datos.** Los datos de Ergast se publicaron con licencia de uso *no comercial* y Jolpica los hereda; cobrar una suscripción sobre ellos puede no estar permitido. Hay que leer los términos de Jolpica y, si hace falta, pedirles confirmación o cambiar de fuente. **Es el punto que más puede cambiar el plan.**
-2. **Marcas de F1.** Nombres y logotipos de F1/equipos son marcas registradas; no usar logos oficiales y añadir aviso de "no afiliado".
-3. **Disponibilidad y límites de Jolpica.** Mitigación: copia propia (sección 4.3) y caché.
-4. **Datos en tiempo real.** Jolpica no es una fuente live; la promesa del producto debe ser "resultados y análisis", no "directo".
+**Sí, tiene sentido** para todo lo que ya terminó (un Gran Premio pasa a la historia y no cambia):
 
-## 4. Arquitectura propuesta
+- **Copia en nuestra base de datos** (Prisma): `Driver`, `Constructor`, `Race`, `RaceResult`, `StandingSnapshot`, `SyncRun`. Temporadas cerradas: una sola sincronización. Temporada en curso: tarea programada tras cada sesión (`POST /api/cron/f1-sync` con secreto, idempotente).
+- **Qué gana FastLap:** independencia del límite y las caídas de Jolpica, páginas más rápidas, consultas propias (estadísticas por piloto, comparativas) y base para pronósticos y debates.
+- **API propia de solo lectura** (`/api/v1/...`) sobre esa copia: útil para nuestras páginas y apps futuras. Si se hace pública hay que ofrecerla bajo CC BY-NC-SA con atribución (R1).
+- **Lo que no resuelve:** la licencia. Una copia local de datos CC BY-NC-SA sigue siendo CC BY-NC-SA. Para que los datos sean realmente nuestros hace falta licencia comercial o otra fuente con derechos claros.
+- Las páginas solo conocen `src/lib/f1/queries.ts`, de modo que pasar de Jolpica a la base de datos no cambia la UI.
 
-### 4.1 Principios
-- **Servidor primero:** páginas como componentes de servidor; cliente solo para gráficos e interacción.
-- **Sin datos inventados:** si un dato no existe, no se muestra.
-- **Tipado de extremo a extremo:** respuestas validadas con Zod en la frontera.
-- **Estados completos:** `loading.tsx` / `error.tsx` por sección y mensajes en español.
-- **Una sola librería de gráficos.** Hoy ninguna se usa de verdad; se elige en la rebanada 3, que es la primera con gráficos (propuesta: `recharts`), y se desinstala la otra en la rebanada 0.
+## 6. Datos en vivo (fase posterior, opcional)
 
-### 4.2 Capa de datos (`src/lib/f1/`)
-- `client.ts`: cliente de Jolpica (URL base, reintentos con backoff, respeto del límite, `revalidate` por tipo de dato).
-- `schemas.ts`: esquemas Zod de `Race`, `Result`, `Driver`, `Constructor`, `Standing`, `Lap`.
-- `queries.ts`: funciones `getCalendar(season)`, `getStandings(season, round?)`, `getRaceResults(season, round)`, `getDriver(id)`, … que devuelven tipos del dominio, no el JSON crudo.
-- Las rutas `/api/ergast/*` actuales desaparecen: las páginas llaman directamente a `queries.ts` desde el servidor.
+**¿Se puede replicar y mejorar algo como f1-dash?** Técnicamente sí; conviene decidirlo con los ojos abiertos:
 
-### 4.3 Copia propia en base de datos
-Para que el límite de Jolpica deje de depender del tráfico:
-- Tablas Prisma: `Driver`, `Constructor`, `Race`, `RaceResult`, `StandingSnapshot` (por temporada y ronda), `SyncRun` (registro de sincronizaciones).
-- **Temporadas cerradas:** se sincronizan una vez y no cambian.
-- **Temporada en curso:** `POST /api/cron/f1-sync`, protegido con un secreto, ejecutado por un planificador externo (GitHub Actions programado o cron del hosting) tras cada sesión; idempotente.
-- Las páginas leen de la base de datos; Jolpica solo lo toca la sincronización.
+- **Cómo funcionan:** leen el feed de F1 Live Timing (SignalR). Necesitan un proceso **siempre encendido** (no sirve una función serverless): un servicio aparte que se conecta al feed, guarda el estado en Redis y lo reparte a los navegadores por SSE/WebSocket. El despliegue en Docker lo permite.
+- **Coste:** es la parte más cara de mantener (el formato del feed cambia sin aviso), y compite con herramientas gratuitas ya maduras.
+- **Dónde podríamos diferenciarnos (sin competir en telemetría):** interfaz en español y móvil primero; torre de tiempos + mensajes de dirección de carrera sencillos; **enlazado con la comunidad** (hilo de carrera, votación de Piloto del Día, pronósticos que se puntúan en directo).
+- **Condiciones:** solo no comercial, comprobando antes los términos del feed (R4), y **después** de las rebanadas 2–7. Entonces se hace un prototipo de una sesión (p. ej. una clasificación) para medir el esfuerzo real antes de comprometerse.
 
-### 4.4 Control de acceso
-- `requirePremium()` en `src/lib/auth.ts` (redirige a `/premium` o `/sign-in` según el caso), usado por las páginas/acciones de pago.
-- `proxy.ts` pasa a proteger solo lo estrictamente privado (según D2).
-- Recordar que el rol del token se refresca con `update()`; las funciones de pago deben comprobar el rol en la **base de datos** cuando el coste de un error sea alto.
+## 7. Premium y Stripe
 
-## 5. Secciones y orden de trabajo (rebanadas verticales)
+- Apagado con `NEXT_PUBLIC_PREMIUM_ENABLED=false` (por defecto, en tiempo de compilación): no se muestran la tarjeta Premium, `/premium` ni `/premium/success`; `/api/checkout` y `/api/prices` responden 404; cualquier usuario con sesión entra al dashboard. El webhook sigue activo.
+- Se vuelve a encender cuando el proyecto esté publicado **y** la licencia (R1) esté resuelta.
 
-Cada rebanada se entrega completa (datos + UI + estados + pruebas) y se puede revisar sola.
+## 8. Arquitectura
 
-| # | Rebanada | Contenido | Depende de |
+### 8.1 Principios
+Servidor primero; sin datos inventados; tipado de extremo a extremo (Zod en la frontera); estados de carga/error/vacío completos y en español; una sola librería de gráficos (propuesta `recharts`, se decide en la rebanada 3); sin logos oficiales.
+
+### 8.2 Capa de datos (`src/lib/f1/`) — hecha
+`client.ts` (reintentos, límite, paginación), `schemas.ts` (Zod), `queries.ts` (calendario, próxima carrera, clasificaciones, resultados, paradas, pilotos), tests con Vitest. Las rutas `/api/ergast/*` desaparecen cuando las páginas migren.
+
+### 8.3 Control de acceso
+`canAccessDashboard(role)` en `src/lib/features.ts`; cuando Premium vuelva, `requirePremium()` por funcionalidad en el servidor, no solo en `proxy.ts`.
+
+## 9. Orden de trabajo
+
+| # | Rebanada | Contenido | Estado |
 |---|---|---|---|
-| 0 | **Limpieza** | Borrar código muerto, datos inventados, botones de CRUD del backend ajeno y noticias de ejemplo (según D4) | — |
-| 1 | **Capa de datos** | `src/lib/f1/` con Zod + tests de contrato con respuestas reales guardadas como fixtures | licencia (R1) |
-| 2 | **Calendario y próxima carrera** | Calendario, cuenta atrás, detalle de circuito | 1 |
-| 3 | **Clasificaciones** | Pilotos y constructores, selector de temporada, evolución por jornada (gráfico) | 1 |
-| 4 | **Detalle de carrera** | Resultados, parrilla, vuelta rápida, paradas | 1 |
-| 5 | **Pilotos** | Listado y perfil con estadísticas **calculadas** a partir de resultados reales | 1, 4 |
-| 6 | **Copia propia + sincronización** | Modelos Prisma, tarea de sincronización, lectura desde la BD | 1–5 |
-| 7 | **Funciones Premium** | Según D1 (pronósticos y/o análisis) | 6, D1, D2 |
+| 0 | Limpieza | Código muerto, datos inventados, CRUD ajeno | ✅ (noticias pendientes de D4) |
+| 1 | Capa de datos | `src/lib/f1/` + tests + captura de fixtures reales | ✅ |
+| V0 | Arreglos visuales rápidos | Textos y fechas en español, plural, barra lateral del dashboard, errores en español | ⏳ siguiente (no depende de decisiones) |
+| 2 | Calendario y próxima carrera | Calendario, cuenta atrás, circuito | ⏳ |
+| 3 | Clasificaciones | Pilotos y constructores, selector de temporada, evolución (gráfico) | ⏳ |
+| 4 | Detalle de carrera | Resultados, parrilla, vuelta rápida, paradas | ⏳ |
+| 5 | Pilotos | Listado y perfil con estadísticas calculadas de resultados reales | ⏳ |
+| 6 | Copia propia + API propia | Modelos Prisma, sincronización, lectura desde la BD | ⏳ |
+| V1 | Sistema de diseño | Tokens, tipografía, modo oscuro, componentes (según D5) | ⏳ |
+| 7 | Hub de fin de semana de carrera | Hilo automático por GP con resultados y votación de Piloto del Día | ⏳ |
+| 8 | Ligas de pronósticos en las comunidades | Pronóstico de clasificación/sprint/carrera, puntuación automática, reglas configurables | ⏳ |
+| V2 | Rediseño de pantallas clave | Feed, tarjeta de post, comunidad, hub de carrera | ⏳ |
+| 9 | Datos en vivo (opcional) | Prototipo medido antes de comprometerse (§6) | ⏳ |
 
-Las rebanadas 2–5 pueden empezar leyendo directamente de Jolpica (con caché) y pasar a la base de datos en la 6 sin cambiar la UI, porque las páginas solo conocen `queries.ts`.
+Antes de encender Premium: resolver R1.
 
-## 6. Calidad y pruebas
+## 10. Calidad
 
-- Introducir **Vitest** (hoy no hay runner) solo para la capa de datos y la lógica de pronósticos/puntuación.
-- Tests de contrato: fixtures con respuestas reales de Jolpica; si cambia el formato, el test falla.
-- Comprobación manual en navegador al final de cada rebanada (como se ha hecho en las migraciones) y revisión de accesibilidad básica (contraste, foco, `aria-label` en gráficos).
-- `yarn lint`, `npx tsc --noEmit` y `yarn build` limpios antes de cada commit.
+- Vitest para la capa de datos y la puntuación de pronósticos; fixtures reales capturados con `node scripts/capture-f1-fixtures.mjs`.
+- Comprobación manual en navegador al terminar cada rebanada, en escritorio y en 390 px de ancho.
+- `yarn lint`, `npx tsc --noEmit`, `yarn test` y `yarn build` limpios antes de cada commit.
 
-## 7. Fuera de alcance
+## 11. Próximos pasos
 
-Datos en directo/telemetría, aplicación móvil, traducciones a otros idiomas, y cualquier cambio en la parte social salvo el enlace con el dashboard (pronósticos, hilos de GP) si D1 lo decide.
-
-## 8. Siguiente paso
-
-Cerrar D1–D4 y comprobar el riesgo de licencia (R1). Con eso, empezar por la rebanada 0 (limpieza) y la 1 (capa de datos), que son necesarias decida lo que se decida.
+1. Decidir D4 (noticias) y D5 (rumbo visual).
+2. Escribir a Jolpica sobre uso comercial (lo envía el autor del proyecto).
+3. Capturar fixtures reales desde una máquina con internet.
+4. Empezar por V0 y la rebanada 2.
