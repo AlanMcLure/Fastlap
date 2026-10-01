@@ -5,14 +5,15 @@ import RaceCard, { RaceStats } from '@/components/f1-dashboard/RaceCard';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import Link from 'next/link';
 import BackButton from '@/components/BackButton';
-import { useRouter } from 'next/navigation';
+import DataError from '@/components/f1-dashboard/DataError';
 
 export default function RacesPage() {
   const [races, setRaces] = useState<RaceStats[]>([]);
   const [page, setPage] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
   const totalElementsRef = useRef(20);
-  const router = useRouter();
+  const [hasError, setHasError] = useState(false);
+  const [attempt, setAttempt] = useState(0);
 
   const [season, setSeason] = useState(new Date().getFullYear().toString());
 
@@ -29,14 +30,15 @@ export default function RacesPage() {
         setRaces(data.content);
         setTotalPages(data.totalPages);
         totalElementsRef.current = data.totalElements;
+        setHasError(false);
       } catch (error) {
         console.error(error);
-        router.push('/notfound');
+        setHasError(true);
       }
     };
 
     fetchRaces();
-  }, [page, season]);
+  }, [page, season, attempt]);
 
   const handlePreviousPage = () => {
     if (page >= 1) {
@@ -78,6 +80,9 @@ export default function RacesPage() {
           </div>
         </div>
       </div>
+      {hasError ? (
+        <DataError onRetry={() => setAttempt((n) => n + 1)} />
+      ) : (
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
         {races && races.length > 0 ? (
           races.map(race => (
@@ -89,6 +94,7 @@ export default function RacesPage() {
           <p>No se encontraron carreras que cumplan con el filtro.</p>
         )}
       </div>
+      )}
       <div className="flex items-center justify-between border-t border-gray-200 px-4 py-3 sm:px-6 mt-2">
         <div className="flex flex-1 justify-between sm:hidden">
           <button

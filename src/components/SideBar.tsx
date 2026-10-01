@@ -1,7 +1,7 @@
 'use client'
 
 import { ChevronLast, ChevronFirst } from "lucide-react"
-import { useContext, createContext, useState, ReactNode } from "react"
+import { useContext, createContext, useEffect, useState, ReactNode } from "react"
 import { Icons } from "@/components/Icons"
 
 interface SidebarContextType {
@@ -17,13 +17,20 @@ interface SidebarProps {
 export default function Sidebar({ children }: SidebarProps) {
     const [expanded, setExpanded] = useState(true)
 
+    // On small screens start collapsed so the menu does not cover the content.
+    useEffect(() => {
+        if (window.matchMedia('(max-width: 767px)').matches) setExpanded(false)
+    }, [])
+
     return (
-        <aside className="h-screen">
+        <aside className="h-full">
             <nav className="h-full flex flex-col bg-white border-r shadow-sm">
                 <div className="p-4 pb-2 flex justify-between items-center">
                     <Icons.logo className={`h-8 w-8 ${expanded ? "" : "hidden"}`} />
                     <button
                         onClick={() => setExpanded((curr) => !curr)}
+                        aria-label={expanded ? "Contraer menú" : "Expandir menú"}
+                        aria-expanded={expanded}
                         className="p-1.5 rounded-lg bg-gray-50 hover:bg-gray-100"
                     >
                         {expanded ? <ChevronFirst /> : <ChevronLast />}

@@ -20,7 +20,7 @@ const Navbar = async () => {
 
         {/* F1 Dashboard link: every signed-in user, or only PREMIUM/ADMIN when Premium is enabled */}
         {session?.user && canAccessDashboard(session.user.role) && (
-          <Link href='/f1-dashboard' className='flex gap-2 items-center'>
+          <Link href='/f1-dashboard' aria-label='F1 Dashboard' className='flex gap-2 items-center'>
             <LayoutDashboard className='h-8 w-8 sm:h-6 sm:w-6' />
             <p className='hidden text-zinc-900 text-1xl font-bold md:block'>F1 Dashboard</p>
           </Link>

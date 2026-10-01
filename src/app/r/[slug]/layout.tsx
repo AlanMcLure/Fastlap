@@ -4,6 +4,7 @@ import { buttonVariants } from '@/components/ui/Button'
 import { getAuthSession } from '@/lib/auth'
 import { db } from '@/lib/db'
 import { format } from 'date-fns'
+import { es } from 'date-fns/locale'
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
@@ -72,14 +73,14 @@ const Layout = async ({
           {/* info sidebar */}
           <div className='overflow-hidden h-fit rounded-lg border border-gray-200 order-first md:order-last'>
             <div className='bg-red-200 px-6 py-4'>
-              <p className='font-semibold py-3'>About r/{subreddit.name}</p>
+              <p className='font-semibold py-3'>Sobre r/{subreddit.name}</p>
             </div>
             <dl className='divide-y divide-gray-100 px-6 py-4 text-sm leading-6 bg-white'>
               <div className='flex justify-between gap-x-4 py-3'>
                 <dt className='text-gray-500'>Creado</dt>
                 <dd className='text-gray-700'>
                   <time dateTime={subreddit.createdAt.toDateString()}>
-                    {format(subreddit.createdAt, 'MMMM d, yyyy')}
+                    {format(subreddit.createdAt, "d 'de' MMMM 'de' yyyy", { locale: es })}
                   </time>
                 </dd>
               </div>

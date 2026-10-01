@@ -1,6 +1,6 @@
 # Plan: F1 Dashboard y siguientes pasos de FastLap
 
-Estado: **en curso**. Hechas la rebanada 0 (limpieza, salvo las noticias) y la 1 (capa de datos, con fixtures sintéticos hasta capturar respuestas reales). Premium/Stripe está **oculto tras un flag** hasta que el proyecto se publique. La parte social (comunidades, posts, votos, comentarios, auth) no se rehace.
+Estado: **en curso**. Hechas la rebanada 0 (limpieza, salvo las noticias), la 1 (capa de datos, con fixtures sintéticos hasta capturar respuestas reales) y V0 (arreglos visuales). Premium/Stripe está **oculto tras un flag** hasta que el proyecto se publique. La parte social (comunidades, posts, votos, comentarios, auth) no se rehace.
 
 Documentos relacionados: [AUDITORIA-VISUAL.md](AUDITORIA-VISUAL.md) (estado visual actual y propuesta de rediseño).
 
@@ -15,7 +15,7 @@ Documentos relacionados: [AUDITORIA-VISUAL.md](AUDITORIA-VISUAL.md) (estado visu
 | 18 `useEffect` que piden datos desde el navegador | `app/f1-dashboard/**` | ⏳ rebanadas 2–5 |
 | Respuestas de la API con `any` | rutas y componentes | ✅ capa `src/lib/f1/` con Zod; falta migrar las páginas |
 | Sin copia propia de los datos | todo | ⏳ rebanada 6 |
-| Errores en inglés y redirección a un 404 si falla la API; la barra lateral tapa el contenido | `pilotos`, layout del dashboard | ⏳ ver auditoría visual |
+| Errores en inglés y redirección a un 404 si falla la API; la barra lateral tapa el contenido | `pilotos`, layout del dashboard | ✅ V0 |
 
 ## 2. Hallazgos de la investigación (mercado y licencia)
 
@@ -87,7 +87,7 @@ Servidor primero; sin datos inventados; tipado de extremo a extremo (Zod en la f
 |---|---|---|---|
 | 0 | Limpieza | Código muerto, datos inventados, CRUD ajeno | ✅ (noticias pendientes de D4) |
 | 1 | Capa de datos | `src/lib/f1/` + tests + captura de fixtures reales | ✅ |
-| V0 | Arreglos visuales rápidos | Textos y fechas en español, plural, barra lateral del dashboard, errores en español | ⏳ siguiente (no depende de decisiones) |
+| V0 | Arreglos visuales rápidos | Textos y fechas en español, plural, barra lateral del dashboard, errores en español | ✅ |
 | 2 | Calendario y próxima carrera | Calendario, cuenta atrás, circuito | ⏳ |
 | 3 | Clasificaciones | Pilotos y constructores, selector de temporada, evolución (gráfico) | ⏳ |
 | 4 | Detalle de carrera | Resultados, parrilla, vuelta rápida, paradas | ⏳ |
@@ -112,4 +112,4 @@ Antes de encender Premium: resolver R1.
 1. Decidir D4 (noticias) y D5 (rumbo visual).
 2. Escribir a Jolpica sobre uso comercial (lo envía el autor del proyecto).
 3. Capturar fixtures reales desde una máquina con internet.
-4. Empezar por V0 y la rebanada 2.
+4. Empezar por la rebanada 2 (V0 ya está hecho).

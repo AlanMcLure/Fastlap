@@ -15,7 +15,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
 
     return (
         <div className="flex">
-            <div className='fixed h-auto left-0 top-16 overflow-auto z-10'>
+            <div className='sticky top-14 z-10 h-[calc(100vh-3.5rem)] shrink-0 self-start'>
                 <Sidebar>
                     <Link href="/f1-dashboard/pilotos">
                         <SidebarItem icon={<UserCircle />} text="Pilotos" active={pathname.includes('piloto')} alert={false} />
@@ -29,7 +29,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                     {/* Próximamente más */}
                 </Sidebar>
             </div>
-            <main className="flex-grow ml-20 sm:ml-40">
+            <main className="min-w-0 flex-1">
                 {children}
             </main>
         </div>

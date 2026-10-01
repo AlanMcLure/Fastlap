@@ -5,8 +5,8 @@ import PilotCard, { PilotStats } from '@/components/f1-dashboard/PilotoCard';
 import { ChevronLeft, ChevronRight, Trophy, Medal } from 'lucide-react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/Button';
-import { useRouter } from 'next/navigation';
 import BackButton from '@/components/BackButton';
+import DataError from '@/components/f1-dashboard/DataError';
 import {
   Tooltip,
   TooltipContent,
@@ -19,7 +19,8 @@ export default function PilotsPage() {
   const [page, setPage] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
   const totalElementsRef = useRef(20);
-  const router = useRouter();
+  const [hasError, setHasError] = useState(false);
+  const [attempt, setAttempt] = useState(0);
 
   const [season, setSeason] = useState('2024');
   const [winner, setWinner] = useState(false);
@@ -50,14 +51,15 @@ export default function PilotsPage() {
         setPilots(data.content);
         setTotalPages(data.totalPages);
         totalElementsRef.current = data.totalElements;
+        setHasError(false);
       } catch (error) {
         console.error(error);
-        router.push('/notfound'); // Redirige al usuario a la página de "no encontrado"
+        setHasError(true);
       }
     };
 
     fetchPilots();
-  }, [page, season, winner, podium]);
+  }, [page, season, winner, podium, attempt]);
 
   const handlePreviousPage = () => {
     if (page >= 1) {
@@ -126,6 +128,9 @@ export default function PilotsPage() {
           </div>
         </div>        
       </div>
+      {hasError ? (
+        <DataError onRetry={() => setAttempt((n) => n + 1)} />
+      ) : (
       <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 '>
         {pilots && pilots.length > 0 ? (
           pilots.map(pilot => (
@@ -137,6 +142,7 @@ export default function PilotsPage() {
           <p>No se encontraron pilotos que cumplan con el filtro.</p>
         )}
       </div>
+      )}
       <div className="flex items-center justify-between border-t border-gray-200 px-4 py-3 sm:px-6 mt-2">
         <div className="flex flex-1 justify-between sm:hidden">
           <button

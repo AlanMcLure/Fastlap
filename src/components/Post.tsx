@@ -89,7 +89,7 @@ const Post: FC<PostProps> = ({
         <Link
           href={`/r/${subredditName}/post/${post.id}`}
           className='w-fit flex items-center gap-2'>
-          <MessageSquare className='h-4 w-4' /> {commentAmt} comentarios
+          <MessageSquare className='h-4 w-4' /> {commentAmt} {commentAmt === 1 ? 'comentario' : 'comentarios'}
         </Link>
         <DeletePostButton postId={post.id} authorId={post.authorId} invalidatePostsCache={invalidatePostsCache} />
       </div>

@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react';
 import RaceResults from '@/components/f1-dashboard/RaceResults';
 import { useParams } from 'next/navigation';
 import BackButton from '@/components/BackButton';
+import DataError from '@/components/f1-dashboard/DataError';
 import DriverStandings from '@/components/f1-dashboard/DriverStandings';
 
 const RaceResultsPage = () => {
@@ -13,11 +14,13 @@ const RaceResultsPage = () => {
   const [raceData, setRaceData] = useState<any[] | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [attempt, setAttempt] = useState(0);
 
   useEffect(() => {
     if (season && carreraId) {
       const fetchRaceData = async () => {
         setLoading(true); // Ensure loading is true at the start
+        setError(null);
         try {
           const response = await fetch(`/api/ergast/race-results?season=${season}&round=${carreraId}`);
           if (!response.ok) {
@@ -36,11 +39,15 @@ const RaceResultsPage = () => {
     } else {
       setLoading(false); // Stop loading if no season or carreraId
     }
-  }, [season, carreraId]);
+  }, [season, carreraId, attempt]);
 
   if (loading) return <div className='loader'></div>;
-  if (error) return <><div className='w-full mb-2'><BackButton defaultPath="/f1-dashboard/carreras" backText="Volver al Dashboard" />
-</div><p>La carrera aún no ha ocurrido</p></>;
+  if (error) return (
+    <div className="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
+      <div className='w-full mb-2'><BackButton defaultPath="/f1-dashboard/carreras" backText="Volver al Dashboard" /></div>
+      <DataError message='No hay resultados disponibles para esta carrera: puede que aún no se haya disputado o que no se hayan podido cargar los datos.' onRetry={() => setAttempt((n) => n + 1)} />
+    </div>
+  );
   return (
     <div className="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
       <div className='w-full mb-2'>

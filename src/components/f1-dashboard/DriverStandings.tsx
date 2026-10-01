@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import DataError from '@/components/f1-dashboard/DataError';
 
 type DriverStandingRow = {
   pos: string
@@ -28,10 +29,12 @@ const DriverStandings = ({ round }: DriverStandingsProps) => {
   const [error, setError] = useState<Error | null>(null);
   const [season, setSeason] = useState('current');
   const [classificationType, setClassificationType] = useState('driver');
+  const [attempt, setAttempt] = useState(0);
 
   useEffect(() => {
     const fetchStandings = async () => {
       setIsLoading(true);
+      setError(null);
       try {
         const response = await axios.get(`/api/ergast/standings?season=${season}&classificationType=${classificationType}${round ? `&round=${round}` : ''}`);
         const standingsList = response.data.MRData.StandingsTable.StandingsLists[0];
@@ -68,7 +71,7 @@ const DriverStandings = ({ round }: DriverStandingsProps) => {
     };
 
     fetchStandings();
-  }, [season, classificationType, round]);
+  }, [season, classificationType, round, attempt]);
 
   return (
     <div className="container mx-auto p-4">
@@ -105,7 +108,7 @@ const DriverStandings = ({ round }: DriverStandingsProps) => {
       {isLoading ? (
         <div className="loader"></div>
       ) : error ? (
-        <div>Error loading data: {error.message}</div>
+        <DataError onRetry={() => setAttempt((n) => n + 1)} />
       ) : (
         <div className="overflow-auto">
           <table className="min-w-full bg-white table-auto overflow-scroll">

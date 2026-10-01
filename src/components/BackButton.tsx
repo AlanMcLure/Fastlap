@@ -12,7 +12,7 @@ interface BackButtonProps {
   feedText?: string;
 }
 
-const BackButton: React.FC<BackButtonProps> = ({ defaultPath = '/', backText = 'Volver a la Comunidad', feedText = 'Volver a tú Feed' }) => {
+const BackButton: React.FC<BackButtonProps> = ({ defaultPath = '/', backText = 'Volver a la Comunidad', feedText = 'Volver a tu feed' }) => {
   const pathname = usePathname()
   // const router = useRouter()
 

@@ -38,8 +38,8 @@ Pantallas revisadas: inicio (con y sin sesión), inicio de sesión, comunidad, p
 
 ## 2. Propuesta
 
-### V0 · Arreglos rápidos (sin decisiones de diseño)
-E1, E2, T1–T5 y D6. Es corrección, no rediseño: textos y fechas en español (`date-fns/locale/es`), plural correcto, `aria-label` en español, barra lateral del dashboard que no tape el contenido (colapsada por defecto en móvil), mensajes de error en español con botón "Reintentar" en vez de redirigir al 404.
+### V0 · Arreglos rápidos (sin decisiones de diseño) — ✅ hecho
+E1, E2, T1–T5 y D6. Resuelve E1, E2, E3, T1–T5 y D6 (este último solo con `aria-label`; el icono sigue sin texto visible en móvil, decisión de V1). Es corrección, no rediseño: textos y fechas en español (`date-fns/locale/es`), plural correcto, `aria-label` en español, barra lateral del dashboard que no tape el contenido (colapsada por defecto en móvil), mensajes de error en español con botón "Reintentar" en vez de redirigir al 404.
 
 ### V1 · Sistema de diseño (necesita decisión D5)
 - **Tokens** (colores, tipografía, espaciado, radios) en variables CSS de Tailwind/Shadcn, con **modo claro y oscuro** y selector de tema.
