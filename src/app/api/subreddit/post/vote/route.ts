@@ -1,6 +1,6 @@
 import { getAuthSession } from '@/lib/auth'
 import { db } from '@/lib/db'
-import { redis } from '@/lib/redis'
+import { invalidatePostCache, postCacheKey, redis } from '@/lib/redis'
 import { voteRatelimit } from '@/lib/ratelimit'
 import { PostVoteValidator } from '@/lib/validators/vote'
 import { CachedPost } from '@/types/redis'
@@ -25,7 +25,10 @@ async function recountAndCachePost(
     return acc
   }, 0)
 
-  if (votesAmt < CACHE_AFTER_UPVOTES) return
+  if (votesAmt < CACHE_AFTER_UPVOTES) {
+    await invalidatePostCache(postId)
+    return
+  }
 
   const cachePayload: CachedPost = {
     authorUsername: post.author.username ?? '',
@@ -35,7 +38,7 @@ async function recountAndCachePost(
     currentVote,
     createdAt: post.createdAt,
   }
-  await redis.hset(`post:${postId}`, cachePayload)
+  await redis.hset(postCacheKey(postId), cachePayload)
 }
 
 export async function PATCH(req: Request) {

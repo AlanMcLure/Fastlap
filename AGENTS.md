@@ -32,7 +32,7 @@ Linting uses ESLint 9 flat config ([eslint.config.mjs](eslint.config.mjs), `esli
 ### Auth and roles
 
 - NextAuth with Google provider, JWT session strategy, Prisma adapter ([src/lib/auth.ts](src/lib/auth.ts)). On first sign-in, users without a username get one auto-generated via `nanoid(10)`. Use `getAuthSession()` from this file in server components and route handlers.
-- `UserRole` enum: `USER | ADMIN | PREMIUM` ([prisma/schema.prisma](prisma/schema.prisma)). Role is mirrored onto the session token via the `session` and `jwt` callbacks. The `jwt` callback only hits the DB at sign-in (when `user` is present), not on every request — so a role change (e.g. after a Stripe upgrade) shows up in the token only after the user signs in again.
+- `UserRole` enum: `USER | ADMIN | PREMIUM` ([prisma/schema.prisma](prisma/schema.prisma)). Role is mirrored onto the session token via the `session` and `jwt` callbacks. The `jwt` callback only hits the DB at sign-in (when `user` is present), not on every request — so a role change is picked up only when the client calls `update()` from `useSession` (the `trigger === 'update'` branch re-reads role/username from the DB). After a Stripe checkout, `success_url` is `/premium/success`, where `PremiumActivation` polls `update()` until the webhook has promoted the user.
 - [src/proxy.ts](src/proxy.ts) (the Next 16 name for `middleware`) gates `/r/*/submit`, `/r/create`, `/settings`, and `/f1-dashboard/*` behind auth. `/f1-dashboard/*` additionally requires `ADMIN` or `PREMIUM`; non-eligible users are redirected to `/not-authorized`.
 - Stripe `checkout.session.completed` webhook ([src/app/api/webhook/route.ts](src/app/api/webhook/route.ts)) is the only path that promotes a `USER` to `PREMIUM` — there is no manual upgrade endpoint.
 
@@ -48,7 +48,7 @@ The Prisma schema uses real database foreign keys (the former `relationMode = "p
 
 ### Redis: hot-post cache and rate limiting
 
-- [src/app/api/subreddit/post/vote/route.ts](src/app/api/subreddit/post/vote/route.ts) caches a post into Upstash Redis as a `post:${postId}` hash once its net vote count reaches `CACHE_AFTER_UPVOTES` (currently `1`). The count is recomputed from fresh DB data after each mutation (`recountAndCachePost`). The `CachedPost` shape lives in [src/types/redis.d.ts](src/types/redis.d.ts); any read path that consumes cached posts must be compatible with it.
+- [src/app/api/subreddit/post/vote/route.ts](src/app/api/subreddit/post/vote/route.ts) caches a post into Upstash Redis as a `post:${postId}` hash once its net vote count reaches `CACHE_AFTER_UPVOTES` (currently `1`). The count is recomputed from fresh DB data after each mutation (`recountAndCachePost`); if it falls below the threshold the entry is dropped. Use `postCacheKey` / `invalidatePostCache` from [src/lib/redis.ts](src/lib/redis.ts) — the post delete endpoint invalidates too, so a deleted post can't be served from cache. The `CachedPost` shape lives in [src/types/redis.d.ts](src/types/redis.d.ts); any read path that consumes cached posts must be compatible with it.
 - [src/lib/ratelimit.ts](src/lib/ratelimit.ts) defines `@upstash/ratelimit` sliding-window limiters: votes (10/10s), posts (5/min), comments (10/min). Apply them in any new mutation endpoint of the same kind.
 
 ### App Router layout

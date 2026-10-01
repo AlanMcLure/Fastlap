@@ -107,7 +107,7 @@ Inventario de mejoras detectadas tras revisar el código. Agrupadas por impacto 
 - **Problema**: la lógica de recuento + caché de Redis se repite 3 veces (delete, update, create).
 - **Acción**: ~~extraer función `recountAndCache(post)`~~. **Hecho** — 156 → 95 líneas, helper `recountAndCachePost`, tipo `PostForCache` derivado con `Pick<>`, limpiado `(error)` huérfano del catch y `votes: true` redundante del include inicial.
 
-> **Edge case detectado al refactorizar**: si los votos bajan por debajo de `CACHE_AFTER_UPVOTES` tras un toggle/downvote, el caché en Redis queda *stale* (nunca se invalida). Comportamiento heredado del código original. Mejora pendiente: invalidar `post:${postId}` cuando `votesAmt < CACHE_AFTER_UPVOTES`.
+> **Edge case detectado al refactorizar**: si los votos bajan por debajo de `CACHE_AFTER_UPVOTES` tras un toggle/downvote, el caché en Redis queda *stale* (nunca se invalida). Comportamiento heredado del código original. **Resuelto**: se invalida `post:${postId}` cuando `votesAmt < CACHE_AFTER_UPVOTES` y al borrar el post (antes un post borrado seguía sirviéndose desde Redis).
 
 ### ✅ 15. Comentarios explicativos innecesarios en handlers
 - **Archivo**: [src/app/api/posts/route.ts](src/app/api/posts/route.ts)

@@ -3,7 +3,7 @@ import EditorOutput from '@/components/EditorOutput'
 import PostVoteServer from '@/components/post-vote/PostVoteServer'
 import { buttonVariants } from '@/components/ui/Button'
 import { db } from '@/lib/db'
-import { redis } from '@/lib/redis'
+import { postCacheKey, redis } from '@/lib/redis'
 import { formatTimeToNow } from '@/lib/utils'
 import { CachedPost } from '@/types/redis'
 import { Post, User, Vote } from '@prisma/client'
@@ -20,7 +20,7 @@ const SubRedditPostPage = async ({ params }: SubRedditPostPageProps) => {
   const { postId } = await params
 
   const cachedPost = (await redis.hgetall(
-    `post:${postId}`
+    postCacheKey(postId)
   )) as CachedPost
 
   let post: (Post & { votes: Vote[]; author: User }) | null = null

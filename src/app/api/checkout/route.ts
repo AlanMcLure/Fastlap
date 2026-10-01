@@ -28,7 +28,7 @@ export async function POST(req: Request) {
         quantity: 1,
       },
     ],
-    success_url: `${origin}/home`,
+    success_url: `${origin}/premium/success`,
     cancel_url: `${origin}/premium`,
   });
 

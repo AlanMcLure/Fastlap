@@ -1,5 +1,6 @@
 import { getAuthSession } from '@/lib/auth'
 import { db } from '@/lib/db'
+import { invalidatePostCache } from '@/lib/redis'
 import { z } from 'zod';
 
 export async function DELETE(
@@ -34,6 +35,7 @@ export async function DELETE(
     await db.post.delete({
       where: { id },
     })
+    await invalidatePostCache(id)
 
     return new Response('OK')
   } catch (error) {
