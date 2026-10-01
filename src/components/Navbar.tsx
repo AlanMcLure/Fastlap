@@ -5,6 +5,7 @@ import { UserAccountNav } from './UserAccountNav'
 import SearchBar from './SearchBar'
 import ThemeToggle from './ThemeToggle'
 import { Icons } from './Icons'
+import NotificationBell from './NotificationBell'
 import { canAccessDashboard } from '@/lib/features'
 
 const navLink = 'label transition-colors hover:text-display'
@@ -35,6 +36,7 @@ const Navbar = async () => {
         {/* actions */}
         <div className='flex shrink-0 items-center gap-1'>
           <ThemeToggle />
+          {session?.user && <NotificationBell />}
           {session?.user ? (
             <UserAccountNav user={{ ...session.user, username: session.user.username || '' }} />
           ) : (

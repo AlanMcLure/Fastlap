@@ -65,14 +65,15 @@ model User {
 
   username String? @unique
 
-  image       String?
-  accounts    Account[]
-  sessions    Session[]
-  Post        Post[]
-  Comment     Comment[]
-  CommentVote CommentVote[]
-  dotdVotes   DriverOfDayVote[]
-  predictions Prediction[]
+  image         String?
+  accounts      Account[]
+  sessions      Session[]
+  Post          Post[]
+  Comment       Comment[]
+  CommentVote   CommentVote[]
+  dotdVotes     DriverOfDayVote[]
+  predictions   Prediction[]
+  notifications Notification[]
 }
 
 model Subreddit {
@@ -234,4 +235,28 @@ model Prediction {
 
   @@id([userId, leagueId, round, kind])
   @@index([leagueId, round])
+}
+
+enum NotificationType {
+  POST_COMMENT
+  COMMENT_REPLY
+  PREDICTION_CLOSING
+  PREDICTION_SCORED
+}
+
+/// In-app notification (see src/lib/notifications.ts). `dedupeKey` makes generated
+/// ones (reminders, scores) idempotent: the same event never notifies a user twice.
+model Notification {
+  id        String           @id @default(cuid())
+  user      User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    String
+  type      NotificationType
+  body      String
+  href      String
+  dedupeKey String?
+  readAt    DateTime?
+  createdAt DateTime         @default(now())
+
+  @@unique([userId, dedupeKey])
+  @@index([userId, readAt, createdAt])
 }
