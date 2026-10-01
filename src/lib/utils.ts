@@ -2,8 +2,6 @@ import { ClassValue, clsx } from 'clsx'
 import { twMerge } from 'tailwind-merge'
 import { formatDistanceToNowStrict } from 'date-fns'
 import { enUS as locale } from 'date-fns/locale'
-import { Session } from 'next-auth'
-import axios, { AxiosRequestConfig } from 'axios'
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
@@ -55,13 +53,4 @@ export function formatTimeToNow(date: Date): string {
       formatDistance,
     },
   })
-}
-
-export async function authenticated(url: string, session: Session | null, options?: AxiosRequestConfig) {
-  if (!session?.user) {
-    throw new Error('Usuario no autenticado');
-  }
-
-  const response = await axios(url, options);
-  return response.data;
 }

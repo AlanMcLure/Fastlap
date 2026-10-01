@@ -4,8 +4,6 @@ import React, { useEffect, useRef, useState } from 'react';
 import PilotCard, { PilotStats } from '@/components/f1-dashboard/PilotoCard';
 import { ChevronLeft, ChevronRight, Trophy, Medal } from 'lucide-react';
 import Link from 'next/link';
-import CreateButton from '@/components/f1-dashboard/CreateButton';
-import { useSession } from 'next-auth/react';
 import { Button } from '@/components/ui/Button';
 import { useRouter } from 'next/navigation';
 import BackButton from '@/components/BackButton';
@@ -22,7 +20,6 @@ export default function PilotsPage() {
   const [totalPages, setTotalPages] = useState(0);
   const totalElementsRef = useRef(20);
   const router = useRouter();
-  const { data: session } = useSession();
 
   const [season, setSeason] = useState('2024');
   const [winner, setWinner] = useState(false);
@@ -106,7 +103,6 @@ export default function PilotsPage() {
               </TooltipContent>
             </Tooltip>
           </TooltipProvider>
-          {/* {session?.user.role === 'ADMIN' && <CreateButton seccion="piloto" />} */}
           <div>
             {/* <label className="mb-2 font-medium text-gray-700">Temporada:</label> */}
             <select

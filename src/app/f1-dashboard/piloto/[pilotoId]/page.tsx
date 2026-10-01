@@ -6,22 +6,15 @@ import axios from 'axios';
 import { useParams } from 'next/navigation';
 
 interface PilotStats {
-    driverId: number;
+    driverId: string;
     givenName: string | null;
     familyName: string | null;
     dateOfBirth: string | null;
     nationality: string | null;
     permanentNumber: string | null;
+    code: string | null;
+    url: string | null;
     img: string | null;
-    team: string | null;
-    country: string | null;
-    podiums: number | null;
-    points: number | null;
-    grandsPrixEntered: number | null;
-    worldChampionships: number | null;
-    highestRaceFinish: string | null;
-    highestGridPosition: string | null;
-    placeOfBirth: string | null;
 }
 
 const PilotoPage: React.FC = () => {
@@ -88,32 +81,20 @@ const PilotoPage: React.FC = () => {
                                 <strong>Fecha de nacimiento:</strong> {pilotoFechaNac}
                             </div>
                             <div className="text-lg mb-4">
-                                <strong>Equipo:</strong> {pilot.team || 'Equipo desconocido'}
+                                <strong>Nacionalidad:</strong> {pilotoNacionalidad}
                             </div>
-                            <div className="text-lg mb-4">
-                                <strong>País:</strong> {pilot.nationality || 'País desconocido'}
-                            </div>
-                            <div className="text-lg mb-4">
-                                <strong>Podios:</strong> {pilot.podiums ?? 'Desconocido'}
-                            </div>
-                            <div className="text-lg mb-4">
-                                <strong>Puntos:</strong> {pilot.points ?? 'Desconocido'}
-                            </div>
-                            <div className="text-lg mb-4">
-                                <strong>Grandes Premios:</strong> {pilot.grandsPrixEntered ?? 'Desconocido'}
-                            </div>
-                            <div className="text-lg mb-4">
-                                <strong>Campeonatos Mundiales:</strong> {pilot.worldChampionships ?? 'Desconocido'}
-                            </div>
-                            <div className="text-lg mb-4">
-                                <strong>Mejor posición en carrera:</strong> {pilot.highestRaceFinish ?? 'Desconocido'}
-                            </div>
-                            <div className="text-lg mb-4">
-                                <strong>Mejor posición en parrilla:</strong> {pilot.highestGridPosition ?? 'Desconocido'}
-                            </div>
-                            <div className="text-lg mb-4">
-                                <strong>Lugar de nacimiento:</strong> {pilot.placeOfBirth ?? 'Desconocido'}
-                            </div>
+                            {pilot.code && (
+                                <div className="text-lg mb-4">
+                                    <strong>Código:</strong> {pilot.code}
+                                </div>
+                            )}
+                            {pilot.url && (
+                                <div className="text-lg mb-4">
+                                    <a href={pilot.url} target="_blank" rel="noopener noreferrer" className="underline">
+                                        Más información en Wikipedia
+                                    </a>
+                                </div>
+                            )}
                         </div>
                     </div>
                 </div>
