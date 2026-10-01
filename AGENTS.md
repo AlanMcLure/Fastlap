@@ -10,6 +10,7 @@ FastLap is a Reddit-style social network for Formula 1 fans (Spanish-language UI
 
 ```bash
 yarn dev               # start Next.js dev server
+yarn lint              # eslint . (flat config)
 yarn build             # production build (also required before `start`)
 yarn start             # run production build
 npx tsc --noEmit       # type check (strict)
@@ -20,10 +21,7 @@ docker-compose up      # run the containerized app (standalone Next.js output, p
 
 Yarn is the package manager (`yarn.lock`). No test runner is configured.
 
-Known tooling drift to be aware of:
-
-- `yarn lint` runs `next lint`, which no longer exists in Next 16, and `.eslintrc.json` uses the legacy config format. Don't assume lint works; use `npx tsc --noEmit` for checks, and fix the lint setup deliberately if asked.
-- The `Dockerfile` uses `node:18-alpine`, but Next 16 requires Node 20.9+. Bump it before relying on the Docker build.
+Linting uses ESLint 9 flat config ([eslint.config.mjs](eslint.config.mjs), `eslint-config-next` core-web-vitals + typescript) via `yarn lint` (`eslint .`). Errors fail the command; the new React Compiler rules (`react-hooks/set-state-in-effect`, `react-hooks/refs`) and `no-explicit-any` are set to warnings until the existing components are refactored. The Docker image builds on `node:22-alpine` (Next 16 needs Node 20.9+).
 
 ## Required environment variables
 

@@ -18,7 +18,7 @@ export default function RacesPage() {
 
   useEffect(() => {
     const fetchRaces = async () => {
-      let url = `/api/ergast/calendar?page=${page}&limit=8&season=${season}`;
+      const url = `/api/ergast/calendar?page=${page}&limit=8&season=${season}`;
 
       try {
         const response = await fetch(url);

@@ -13,7 +13,7 @@ const RaceCalendar = () => {
 
   useEffect(() => {
     const fetchCalendar = async () => {
-      let url = `/api/ergast/calendar?season=${season}`;
+      const url = `/api/ergast/calendar?season=${season}`;
 
       try {
         const response = await fetch(url);
