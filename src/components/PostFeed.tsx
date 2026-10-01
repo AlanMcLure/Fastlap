@@ -8,6 +8,7 @@ import axios from 'axios'
 import { FC, useEffect, useMemo, useRef, useState } from 'react'
 import Post from './Post'
 import { useSession } from 'next-auth/react'
+import { Button } from '@/components/ui/Button'
 
 import '@/styles/loader.css'
 import { SkeletonCard } from './SkeletonCard'
@@ -97,7 +98,7 @@ const PostFeed: FC<PostFeedProps> = ({ initialPosts, subredditName, username }) 
   }, [posts]);
 
   return (
-    <ul className='flex flex-col col-span-2 space-y-6'>
+    <ul className='flex flex-col space-y-4'>
         {isLoading && !postsLoaded && (
           <li>
             <SkeletonCard />
@@ -146,22 +147,17 @@ const PostFeed: FC<PostFeedProps> = ({ initialPosts, subredditName, username }) 
           })
         )}
       {postsLoaded && (
-        <li className='flex justify-center'>
-          {/* Mostrar el botón de recarga o el Loader según isLoadingMore */}
+        <li className='flex justify-center gap-2 pt-2'>
           {isLoadingMore ? (
-            <div className="loader"></div> // Muestra el componente Loader
+            <div className='loader' role='status' aria-label='Cargando publicaciones'></div>
           ) : (
             <>
-              <button onClick={reloadPosts} aria-label="Recargar publicaciones">
-                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24">
-                  <path fill="currentColor" d="M12 20q-3.35 0-5.675-2.325T4 12t2.325-5.675T12 4q1.725 0 3.3.712T18 6.75V5q0-.425.288-.712T19 4t.713.288T20 5v5q0 .425-.288.713T19 11h-5q-.425 0-.712-.288T13 10t.288-.712T14 9h3.2q-.8-1.4-2.187-2.2T12 6Q9.5 6 7.75 7.75T6 12t1.75 4.25T12 18q1.7 0 3.113-.862t2.187-2.313q.2-.35.563-.487t.737-.013q.4.125.575.525t-.025.75q-1.025 2-2.925 3.2T12 20" />
-                </svg>
-              </button>
-              <button onClick={loadMorePosts} aria-label="Cargar más publicaciones">
-                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24">
-                  <path fill="#000000" d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6z" />
-                </svg>
-              </button>
+              <Button variant='outline' size='sm' onClick={loadMorePosts}>
+                Cargar más
+              </Button>
+              <Button variant='ghost' size='sm' onClick={reloadPosts} aria-label='Recargar publicaciones'>
+                Recargar
+              </Button>
             </>
           )}
         </li>

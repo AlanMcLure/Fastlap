@@ -1,14 +1,12 @@
 'use client'
-import { Button } from '@/components/ui/Button'
 import { toast } from '@/hooks/use-toast'
 import { useCustomToasts } from '@/hooks/use-custom-toasts'
-import { cn } from '@/lib/utils'
 import { CommentVoteRequest } from '@/lib/validators/vote'
 import { usePrevious } from '@mantine/hooks'
 import { CommentVote, VoteType } from '@prisma/client'
 import { useMutation } from '@tanstack/react-query'
+import VotePill from './post-vote/VotePill'
 import axios, { AxiosError } from 'axios'
-import { ArrowBigDown, ArrowBigUp } from 'lucide-react'
 import { FC, useState } from 'react'
 
 interface CommentVotesProps {
@@ -75,43 +73,7 @@ const CommentVotes: FC<CommentVotesProps> = ({
     },
   })
 
-  return (
-    <div className='flex gap-1'>
-      {/* upvote */}
-      <Button
-        onClick={() => vote('UP')}
-        size='xs'
-        variant='ghost'
-        aria-label='upvote'>
-        <ArrowBigUp
-          className={cn('h-5 w-5 text-foreground', {
-            'text-success fill-success': currentVote?.type === 'UP',
-          })}
-        />
-      </Button>
-
-      {/* score */}
-      <p className='text-center py-2 px-1 font-medium text-xs text-foreground'>
-        {votesAmt}
-      </p>
-
-      {/* downvote */}
-      <Button
-        onClick={() => vote('DOWN')}
-        size='xs'
-        className={cn({
-          'text-success': currentVote?.type === 'DOWN',
-        })}
-        variant='ghost'
-        aria-label='downvote'>
-        <ArrowBigDown
-          className={cn('h-5 w-5 text-foreground', {
-            'text-signal fill-signal': currentVote?.type === 'DOWN',
-          })}
-        />
-      </Button>
-    </div>
-  )
+  return <VotePill size='sm' votes={votesAmt} current={currentVote?.type} onVote={(type) => vote(type)} />
 }
 
 export default CommentVotes

@@ -2,10 +2,11 @@ import { useSession } from 'next-auth/react'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import axios from 'axios'
 import { Button } from '@/components/ui/Button'
-import { Trash2 } from 'lucide-react'
+import { MoreHorizontal, Trash2 } from 'lucide-react'
 import { usePathname, useRouter } from 'next/navigation'
 import { toast } from '@/hooks/use-toast'
 import { FC, useState } from 'react'
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/DropdownMenu'
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/Dialog'
 
 interface DeletePostButtonProps {
@@ -59,30 +60,41 @@ const DeletePostButton: FC<DeletePostButtonProps> = ({ postId, authorId, invalid
   }
 
   return (
-    <Dialog open={isDialogOpen} onOpenChange={setDialogOpen}>
-      <Button
-        onClick={openDialog}
-        variant='destructive'
-        size='sm'
-        aria-label='Borrar post'
-        role='button'>
-        Borrar
-        <Trash2 className='ml-1.5' size={16} aria-hidden='true' />
-      </Button>
+    <>
+      <DropdownMenu modal={false}>
+        <DropdownMenuTrigger asChild>
+          <button
+            type='button'
+            aria-label='Más acciones de la publicación'
+            className='-mr-2 -mt-1 inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-muted-foreground transition-colors hover:bg-accent hover:text-display focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring'>
+            <MoreHorizontal className='h-4 w-4' aria-hidden='true' />
+          </button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align='end'>
+          <DropdownMenuItem onSelect={openDialog} className='cursor-pointer gap-2 text-signal focus:text-signal'>
+            <Trash2 size={16} aria-hidden='true' />
+            Borrar publicación
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
 
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle>¿Estás seguro de que quieres borrar este post?</DialogTitle>
-          <DialogDescription>
-            Está acción no se puede deshacer.
-          </DialogDescription>
-        </DialogHeader>
-        <DialogFooter>
-          <Button size='xs' variant='outline' type="button" onClick={() => setDialogOpen(false)}>Cancelar</Button>
-          <Button size='xs' variant='destructive' type="submit" onClick={handleDelete}>Confirmar</Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
+      <Dialog open={isDialogOpen} onOpenChange={setDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>¿Borrar esta publicación?</DialogTitle>
+            <DialogDescription>Esta acción no se puede deshacer.</DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button size='sm' variant='outline' type='button' onClick={() => setDialogOpen(false)}>
+              Cancelar
+            </Button>
+            <Button size='sm' variant='destructive' type='button' onClick={handleDelete}>
+              Borrar
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </>
   )
 }
 

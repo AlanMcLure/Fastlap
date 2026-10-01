@@ -1,11 +1,11 @@
 'use client'
 
 import { formatTimeToNow } from '@/lib/utils'
+import { postPreview } from '@/lib/postPreview'
 import { Post as PrismaPost, User, Vote } from '@prisma/client'
 import { MessageSquare } from 'lucide-react'
 import Link from 'next/link'
-import { FC, useRef } from 'react'
-import EditorOutput from './EditorOutput'
+import { FC, useMemo } from 'react'
 import PostVoteClient from './post-vote/PostVoteClient'
 import DeletePostButton from './DeletePostButton'
 import { useQueryClient } from '@tanstack/react-query'
@@ -23,6 +23,7 @@ interface PostProps {
   commentAmt: number
 }
 
+/** A post in a feed: where and who, title, the start of the text or first image, votes and comments. */
 const Post: FC<PostProps> = ({
   post,
   votesAmt: _votesAmt,
@@ -30,70 +31,66 @@ const Post: FC<PostProps> = ({
   subredditName,
   commentAmt,
 }) => {
-  const pRef = useRef<HTMLParagraphElement>(null)
-
-  const queryClient = useQueryClient();
+  const queryClient = useQueryClient()
+  const preview = useMemo(() => postPreview(post.content), [post.content])
+  const href = `/r/${subredditName}/post/${post.id}`
 
   const invalidatePostsCache = () => {
-    queryClient.invalidateQueries({ queryKey: ['posts'] }); // Invalidar la caché de los posts
-  };
+    queryClient.invalidateQueries({ queryKey: ['posts'] })
+  }
 
   return (
-    <div className='rounded-md bg-card'>
-      <div className='px-6 py-4 flex justify-between'>
-        <PostVoteClient
-          postId={post.id}
-          initialVotesAmt={_votesAmt}
-          initialVote={_currentVote?.type}
-        />
-
-        <div className='w-0 flex-1'>
-          <div className='max-h-40 mt-1 text-xs text-muted-foreground'>
+    <article className='rounded-xl border border-border bg-card transition-colors hover:border-input'>
+      <div className='p-5'>
+        <div className='flex items-start justify-between gap-3'>
+          <p className='min-w-0 text-xs text-muted-foreground'>
             {subredditName ? (
               <>
-                <Link
-                  className='underline text-foreground text-sm underline-offset-2'
-                  href={`/r/${subredditName}`}>
+                <Link className='font-medium text-display hover:underline underline-offset-2' href={`/r/${subredditName}`}>
                   r/{subredditName}
                 </Link>
-                <span className='px-1'>•</span>
+                <span className='px-1.5' aria-hidden='true'>·</span>
               </>
             ) : null}
-            <span>Publicado por <Link
-              className='hover:underline text-foreground text-xs underline-offset-2'
-              href={`/u/${post.author.username}`}>
+            <Link className='hover:text-display hover:underline underline-offset-2' href={`/u/${post.author.username}`}>
               u/{post.author.username}
             </Link>
-            </span>{' '}
+            <span className='px-1.5' aria-hidden='true'>·</span>
             {formatTimeToNow(new Date(post.createdAt))}
-          </div>
-          <Link href={`/r/${subredditName}/post/${post.id}`}>
-            <h1 className='text-lg font-semibold py-2 leading-6 text-foreground'>
-              {post.title}
-            </h1>
-          </Link>
-
-          <div
-            className='relative text-sm max-h-40 w-full overflow-clip'
-            ref={pRef}>
-            <EditorOutput content={post.content} />
-            {pRef.current?.clientHeight === 160 ? (
-              // blur bottom if content is too long
-              <div className='absolute bottom-0 left-0 h-24 w-full bg-gradient-to-t from-card to-transparent'></div>
-            ) : null}
-          </div>
+          </p>
+          <DeletePostButton postId={post.id} authorId={post.authorId} invalidatePostsCache={invalidatePostsCache} />
         </div>
+
+        <Link href={href} className='mt-3 block'>
+          <h2 className='text-xl leading-snug text-display'>{post.title}</h2>
+          {preview.text && <p className='mt-2 line-clamp-3 text-muted-foreground'>{preview.text}</p>}
+        </Link>
+
+        {preview.imageUrl && (
+          <Link href={href} className='mt-4 block' tabIndex={-1} aria-hidden='true'>
+            {/* user-uploaded image from any allowed host: a plain <img> avoids next/image domain restrictions */}
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={preview.imageUrl}
+              alt={preview.imageAlt ?? ''}
+              loading='lazy'
+              referrerPolicy='no-referrer'
+              className='max-h-72 w-full rounded-lg border border-border object-cover'
+            />
+          </Link>
+        )}
       </div>
 
-      <div className='bg-muted z-20 text-sm px-4 py-4 sm:px-6 flex justify-between'>
+      <div className='flex items-center gap-2 border-t border-border px-4 py-3 sm:px-5'>
+        <PostVoteClient postId={post.id} initialVotesAmt={_votesAmt} initialVote={_currentVote?.type} />
         <Link
-          href={`/r/${subredditName}/post/${post.id}`}
-          className='w-fit flex items-center gap-2'>
-          <MessageSquare className='h-4 w-4' /> {commentAmt} {commentAmt === 1 ? 'comentario' : 'comentarios'}
+          href={href}
+          className='inline-flex h-9 items-center gap-2 rounded-full px-3 text-sm text-muted-foreground transition-colors hover:bg-accent hover:text-display'>
+          <MessageSquare className='h-4 w-4' aria-hidden='true' />
+          {commentAmt} {commentAmt === 1 ? 'comentario' : 'comentarios'}
         </Link>
-        <DeletePostButton postId={post.id} authorId={post.authorId} invalidatePostsCache={invalidatePostsCache} />
       </div>
-    </div>
+    </article>
   )
 }
 export default Post

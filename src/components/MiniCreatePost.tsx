@@ -1,42 +1,35 @@
 'use client'
 
-import { Button } from '@/components/ui/Button'
-import { Input } from '@/components/ui/Input'
-import { Image as ImageIcon, Link2 } from 'lucide-react'
-import { FC } from 'react'
 import { UserAvatar } from './UserAvatar'
 import type { Session } from 'next-auth'
 import { usePathname, useRouter } from 'next/navigation'
+import { FC } from 'react'
 
 interface MiniCreatePostProps {
   session: Session | null
 }
 
+/** A fake input at the top of a community: clicking it opens the post editor. */
 const MiniCreatePost: FC<MiniCreatePostProps> = ({ session }) => {
   const router = useRouter()
   const pathname = usePathname()
 
   return (
-    <li className='overflow-hidden rounded-md bg-card'>
-      <div className='h-full px-6 py-4 flex justify-between gap-6'>
-        <div className='relative'>
-          <UserAvatar
-            user={{
-              name: session?.user.name || null,
-              image: session?.user.image || null,
-            }}
-          />
-
-          <span className='absolute bottom-0 right-0 rounded-full w-3 h-3 bg-success outline outline-2 outline-card' />
-        </div>
-        <Button
-          onClick={() => router.push(pathname + '/submit')}
-          variant='ghost'
-        >
-          Crear publicación
-        </Button>
-      </div>
-    </li>
+    <div>
+      <button
+        type='button'
+        onClick={() => router.push(pathname + '/submit')}
+        className='flex w-full items-center gap-4 rounded-xl border border-border bg-card px-5 py-3 text-left transition-colors hover:border-input focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring'>
+        <UserAvatar
+          user={{
+            name: session?.user.name || null,
+            image: session?.user.image || null,
+          }}
+        />
+        <span className='flex-1 text-muted-foreground'>Crear publicación</span>
+        <span className='label hidden sm:inline'>NUEVA</span>
+      </button>
+    </div>
   )
 }
 

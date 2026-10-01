@@ -96,7 +96,7 @@ Servidor primero; sin datos inventados; tipado de extremo a extremo (Zod en la f
 | V1 | Sistema de diseño | Tokens, tipografía, modo oscuro, componentes (dirección B) | ✅ |
 | 7 | Hub de fin de semana de carrera | Hilo automático por GP con resultados y votación de Piloto del Día | ⏳ |
 | 8 | Ligas de pronósticos en las comunidades | Pronóstico de clasificación/sprint/carrera, puntuación automática, reglas configurables | ⏳ |
-| V2 | Rediseño de pantallas clave | Feed, tarjeta de post, comunidad, hub de carrera | ⏳ |
+| V2 | Rediseño de pantallas clave | Feed, tarjeta de post, comunidad, comentarios, logotipo (el hub de carrera va en la rebanada 7) | ✅ |
 | 9 | Datos en vivo (opcional) | Prototipo medido antes de comprometerse (§6) | ⏳ |
 
 Antes de encender Premium: resolver R1.

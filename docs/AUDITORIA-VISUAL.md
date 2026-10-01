@@ -101,3 +101,11 @@ Elegida la dirección **B**. Implementado: tokens en CSS con tema oscuro por def
 Queda para **V2** (rediseño de pantallas, con la dirección B de las maquetas): tarjeta de post con vista previa y acciones en menú, módulo de próximo GP en el feed, hub de carrera y la clasificación como torre de tiempos; además un logotipo vectorial propio (el actual es una línea muy fina y pequeña).
 
 **Barra lateral del dashboard (rehecha):** se sustituyó por una navegación horizontal de secciones (`DashboardNav`, píldoras desplazables). Libera el ancho completo para tablas y gráficos, funciona igual en móvil y elimina el logotipo duplicado y el bloque flotante que se veía mal.
+
+## 6. Estado de V2
+
+Hecho (feed, comunidad, post y comentarios en la dirección B): tarjeta de post con vista previa de texto (`postPreview`, máx. 280 caracteres) y primera imagen https, píldora de voto (`VotePill`), acciones del post en un menú "⋯" con confirmación, módulo "Próximo GP" con cuenta atrás en el feed (`NextRaceModule`, con tiempo límite de 4 s; no aparece si la API falla), cabecera de comunidad con etiquetas, detalle de post con comentarios en sección propia, estado vacío, respuestas anidadas, logotipo vectorial propio (`Icons.logo`, `app/icon.svg`) y placeholder de búsqueda corto en móvil.
+
+Nota técnica: el `DropdownMenu` del post usa `modal={false}`; en modo modal el bloqueo de scroll desplazaba el layout y el menú seleccionaba "Borrar" al soltar el ratón.
+
+Pendiente: revisar inicio de sesión/registro, crear comunidad y ajustes; el hub de fin de semana de carrera (rebanada 7) y la clasificación con color de equipo (decisión del autor).

@@ -62,58 +62,52 @@ const Layout = async ({
     },
   })
 
+  const isCreator = subreddit.creatorId === session?.user?.id
+
   return (
-    <div className='sm:container max-w-7xl mx-auto h-full pt-12'>
-      <div>
-        <BackButton />
+    <div>
+      <BackButton className='-ml-5' />
 
-        <div className='grid grid-cols-1 md:grid-cols-3 gap-y-4 md:gap-x-4 py-6'>
-          <ul className='flex flex-col col-span-2 space-y-6'>{children}</ul>
+      <div className='grid grid-cols-1 gap-y-6 py-6 md:grid-cols-3 md:gap-x-6'>
+        <div className='flex flex-col space-y-4 md:col-span-2'>{children}</div>
 
-          {/* info sidebar */}
-          <div className='overflow-hidden h-fit rounded-lg border border-border order-first md:order-last'>
-            <div className='bg-muted px-6 py-4'>
-              <p className='font-semibold py-3'>Sobre r/{subreddit.name}</p>
-            </div>
-            <dl className='divide-y divide-border px-6 py-4 text-sm leading-6 bg-card'>
-              <div className='flex justify-between gap-x-4 py-3'>
-                <dt className='text-muted-foreground'>Creado</dt>
-                <dd className='text-foreground'>
-                  <time dateTime={subreddit.createdAt.toDateString()}>
-                    {format(subreddit.createdAt, "d 'de' MMMM 'de' yyyy", { locale: es })}
-                  </time>
-                </dd>
-              </div>
-              <div className='flex justify-between gap-x-4 py-3'>
-                <dt className='text-muted-foreground'>Miembros</dt>
-                <dd className='flex items-start gap-x-2'>
-                  <div className='text-foreground'>{memberCount}</div>
-                </dd>
-              </div>
-              {subreddit.creatorId === session?.user?.id ? (
-                <div className='flex justify-between gap-x-4 py-3'>
-                  <dt className='text-muted-foreground'>Eres el creador de esta comunidad</dt>
-                </div>
-              ) : null}
-
-              {subreddit.creatorId !== session?.user?.id ? (
-                <SubscribeLeaveToggle
-                  isSubscribed={isSubscribed}
-                  subredditId={subreddit.id}
-                  subredditName={subreddit.name}
-                />
-              ) : null}
-                <Link
-                  className={buttonVariants({
-                    variant: 'outline',
-                    className: 'w-full mb-6',
-                  })}
-                  href={`/r/${slug}/submit`}>
-                  Crear publicación
-                </Link>
-            </dl>
+        {/* info sidebar */}
+        <aside className='order-first h-fit space-y-5 rounded-xl border border-border bg-card p-5 md:order-last'>
+          <div>
+            <p className='label'>SOBRE LA COMUNIDAD</p>
+            <p className='mt-2 text-lg text-display'>r/{subreddit.name}</p>
           </div>
-        </div>
+
+          <dl className='divide-y divide-border text-sm'>
+            <div className='flex justify-between gap-x-4 py-3'>
+              <dt className='label self-center'>CREADA</dt>
+              <dd className='text-foreground'>
+                <time dateTime={subreddit.createdAt.toISOString()}>
+                  {format(subreddit.createdAt, "d 'de' MMMM 'de' yyyy", { locale: es })}
+                </time>
+              </dd>
+            </div>
+            <div className='flex justify-between gap-x-4 py-3'>
+              <dt className='label self-center'>MIEMBROS</dt>
+              <dd className='font-mono text-display'>{memberCount}</dd>
+            </div>
+          </dl>
+
+          {isCreator ? (
+            <p className='label'>ERES EL CREADOR DE ESTA COMUNIDAD</p>
+          ) : (
+            <SubscribeLeaveToggle
+              isSubscribed={isSubscribed}
+              subredditId={subreddit.id}
+              subredditName={subreddit.name}
+            />
+          )}
+          <Link
+            className={buttonVariants({ variant: 'outline', className: 'w-full' })}
+            href={`/r/${slug}/submit`}>
+            Crear publicación
+          </Link>
+        </aside>
       </div>
     </div>
   )

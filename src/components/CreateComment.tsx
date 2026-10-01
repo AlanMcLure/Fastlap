@@ -54,7 +54,7 @@ const CreateComment: FC<CreateCommentProps> = ({ postId, replyToId }) => {
 
   return (
     <div className='grid w-full gap-1.5'>
-      <Label htmlFor='comment'>Tú comentario</Label>
+      <Label htmlFor='comment'>Tu comentario</Label>
       <div className='mt-2'>
         <Textarea
           id='comment'

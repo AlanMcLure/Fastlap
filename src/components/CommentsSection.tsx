@@ -29,12 +29,14 @@ const CommentsSection = async ({ postId }: CommentsSectionProps) => {
   })
 
   return (
-    <div className='flex flex-col gap-y-4 mt-4'>
-      <hr className='w-full h-px my-6' />
-
+    <div className='mt-4 flex flex-col gap-y-6'>
       <CreateComment postId={postId} />
 
-      <div className='flex flex-col gap-y-6 mt-4'>
+      {comments.length === 0 && (
+        <p className='border-t border-border pt-6 text-sm text-muted-foreground'>Todavía no hay comentarios. ¡Sé el primero!</p>
+      )}
+
+      <div className='flex flex-col gap-y-6 border-t border-border pt-6'>
         {comments
           .filter((comment) => !comment.replyToId)
           .map((topLevelComment) => {
@@ -79,7 +81,7 @@ const CommentsSection = async ({ postId }: CommentsSectionProps) => {
                     return (
                       <div
                         key={reply.id}
-                        className='ml-2 py-2 pl-4 border-l-2 border-border'>
+                        className='ml-3 border-l border-input py-2 pl-4'>
                         <PostComment
                           comment={reply}
                           currentVote={replyVote}

@@ -5,12 +5,10 @@ import { PostVoteRequest } from '@/lib/validators/vote'
 import { usePrevious } from '@mantine/hooks'
 import { VoteType } from '@prisma/client'
 import { useMutation } from '@tanstack/react-query'
+import VotePill from './VotePill'
 import axios, { AxiosError } from 'axios'
 import { useEffect, useState } from 'react'
 import { toast } from '../../hooks/use-toast'
-import { Button } from '../ui/Button'
-import { ArrowBigDown, ArrowBigUp } from 'lucide-react'
-import { cn } from '@/lib/utils'
 
 interface PostVoteClientProps {
   postId: string
@@ -77,43 +75,7 @@ const PostVoteClient = ({
     },
   })
 
-  return (
-    <div className='flex flex-col gap-4 sm:gap-0 pr-6 sm:w-20 pb-4 sm:pb-0'>
-      {/* upvote */}
-      <Button
-        onClick={() => vote('UP')}
-        size='sm'
-        variant='ghost'
-        aria-label='upvote'>
-        <ArrowBigUp
-          className={cn('h-5 w-5 text-foreground', {
-            'text-success fill-success': currentVote === 'UP',
-          })}
-        />
-      </Button>
-
-      {/* score */}
-      <p className='text-center py-2 font-medium text-sm text-foreground'>
-        {votesAmt}
-      </p>
-
-      {/* downvote */}
-      <Button
-        onClick={() => vote('DOWN')}
-        size='sm'
-        className={cn({
-          'text-success': currentVote === 'DOWN',
-        })}
-        variant='ghost'
-        aria-label='downvote'>
-        <ArrowBigDown
-          className={cn('h-5 w-5 text-foreground', {
-            'text-signal fill-signal': currentVote === 'DOWN',
-          })}
-        />
-      </Button>
-    </div>
-  )
+  return <VotePill votes={votesAmt} current={currentVote} onVote={(type) => vote(type)} />
 }
 
 export default PostVoteClient

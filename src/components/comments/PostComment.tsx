@@ -80,7 +80,7 @@ const PostComment: FC<PostCommentProps> = ({
           className='h-6 w-6'
         />
         <div className='ml-2 flex items-center gap-x-2'>
-          <p className='text-sm font-medium text-foreground'>u/{comment.author.username}</p>
+          <p className='text-sm font-medium text-display'>u/{comment.author.username}</p>
 
           <p className='max-h-40 truncate text-xs text-muted-foreground'>
             {formatTimeToNow(new Date(comment.createdAt))}
@@ -88,10 +88,10 @@ const PostComment: FC<PostCommentProps> = ({
         </div>
       </div>
 
-      <p className='text-sm text-foreground mt-2'>{comment.text}</p>
+      <p className='mt-2 whitespace-pre-wrap break-words text-sm leading-6 text-foreground'>{comment.text}</p>
 
-      <div className='flex justify-between items-center'>
-        <div className='flex gap-2 items-center'>
+      <div className='mt-2 flex items-center justify-between'>
+        <div className='flex items-center gap-2'>
           <CommentVotes
             commentId={comment.id}
             votesAmt={votesAmt}
@@ -114,7 +114,7 @@ const PostComment: FC<PostCommentProps> = ({
 
       {isReplying ? (
         <div className='grid w-full gap-1.5'>
-          <Label htmlFor='comment'>Tú comentario</Label>
+          <Label htmlFor='comment'>Tu comentario</Label>
           <div className='mt-2'>
             <Textarea
               onFocus={(e) =>
@@ -128,7 +128,7 @@ const PostComment: FC<PostCommentProps> = ({
               value={input}
               onChange={(e) => setInput(e.target.value)}
               rows={1}
-              placeholder='Qué piensas?'
+              placeholder='¿Qué piensas?'
             />
 
             <div className='mt-2 flex justify-end gap-2'>

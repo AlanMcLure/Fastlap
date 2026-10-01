@@ -58,24 +58,24 @@ const DeleteCommentButton:FC<DeleteCommentButtonProps> = ({ commentId, authorId 
     <Dialog open={isDialogOpen} onOpenChange={setDialogOpen}>
       <Button
         onClick={openDialog}
-        variant='destructive'
+        variant='ghost'
         size='xs'
-        aria-label='Borrar comentario'
-        role='button'>
+        className='text-muted-foreground hover:text-signal'
+        aria-label='Borrar comentario'>
+        <Trash2 className='mr-1.5' size={14} aria-hidden='true' />
         Borrar
-        <Trash2 className='ml-1.5' size={16} aria-hidden='true' />
       </Button>
 
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>¿Estás seguro de que quieres borrar este comentario?</DialogTitle>
+          <DialogTitle>¿Borrar este comentario?</DialogTitle>
           <DialogDescription>
-            Está acción no se puede deshacer.
+            Esta acción no se puede deshacer.
           </DialogDescription>
         </DialogHeader>
         <DialogFooter>
-          <Button size='xs' variant='outline' type="button" onClick={() => setDialogOpen(false)}>Cancelar</Button>
-          <Button size='xs' variant='destructive' type="submit" onClick={handleDelete}>Confirmar</Button>
+          <Button size='sm' variant='outline' type="button" onClick={() => setDialogOpen(false)}>Cancelar</Button>
+          <Button size='sm' variant='destructive' type="button" onClick={handleDelete}>Borrar</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

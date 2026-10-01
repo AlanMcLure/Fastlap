@@ -89,14 +89,14 @@ const SubscribeLeaveToggle = ({
 
   return isSubscribed ? (
     <Button
-      className='w-full mt-1 mb-4'
+      className='w-full'
       isLoading={isUnsubLoading}
       onClick={() => unsubscribe()}>
       Dejar comunidad
     </Button>
   ) : (
     <Button
-      className='w-full mt-1 mb-4'
+      className='w-full'
       isLoading={isSubLoading}
       onClick={() => subscribe()}>
       Únete para postear

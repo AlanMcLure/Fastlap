@@ -76,7 +76,7 @@ const SearchBar: FC<SearchBarProps> = ({ }) => {
         }}
         value={input}
         className='h-9 outline-none border-none focus:border-none focus:outline-none ring-0'
-        placeholder='Buscar comunidades...'
+        placeholder='Buscar…'
         aria-label='Campo de búsqueda'
       />
 
