@@ -1,4 +1,6 @@
 import PostFeed from "@/components/PostFeed"
+import ProfilePredictions from "@/components/ProfilePredictions"
+import { loadProfilePredictions } from "@/lib/predictionData"
 import { PAGINATION_RESULTS } from "@/config"
 import { db } from "@/lib/db"
 import type { Metadata } from "next"
@@ -46,11 +48,18 @@ const page = async ({ params }: PageProps) => {
 
   if (!posts) return notFound()
 
+  // Prediction stats are a bonus: a failure here must not take the profile down.
+  const predictions = await loadProfilePredictions(user.id).catch((error) => {
+    console.error('Profile predictions unavailable', error)
+    return null
+  })
+
   return (
     <>
       <h1 className='font-bold text-3xl md:text-4xl h-14'>
         u/{user.username}
       </h1>
+      {predictions && <ProfilePredictions data={predictions} />}
       <PostFeed initialPosts={posts} username={user.username || undefined} />
     </>
   )

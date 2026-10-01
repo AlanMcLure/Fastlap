@@ -23,6 +23,10 @@ const Navbar = async () => {
 
         {/* F1 Dashboard link: every signed-in user, or only PREMIUM/ADMIN when Premium is enabled */}
         <nav className='flex shrink-0 items-center gap-4'>
+          {/* on phones the header is full: the link lives in the home page and the account menu */}
+          <Link href='/pronosticos' className={`${navLink} hidden sm:inline`}>
+            PRONÓSTICOS
+          </Link>
           {session?.user && canAccessDashboard(session.user.role) && (
             <Link href='/f1-dashboard' className={navLink}>
               F1

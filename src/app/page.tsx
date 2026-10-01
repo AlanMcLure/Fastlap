@@ -25,6 +25,16 @@ export default async function Home() {
             <NextRaceModule showDashboardLink={!!session && canAccessDashboard(session.user.role)} />
           </Suspense>
 
+          <Link
+            href='/pronosticos'
+            className='flex items-center justify-between gap-4 rounded-xl border border-border bg-card px-5 py-4 text-display transition-colors hover:border-input'>
+            <span>
+              <span className='label block'>PRONÓSTICOS</span>
+              <span className='mt-1 block text-sm text-muted-foreground'>Clasificación global de la temporada</span>
+            </span>
+            <span aria-hidden='true'>→</span>
+          </Link>
+
           <div className='hidden rounded-xl border border-border bg-card p-5 md:block'>
             <p className='label'>INICIO</p>
             <p className='mt-3 text-sm leading-6 text-muted-foreground'>

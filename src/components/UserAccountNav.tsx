@@ -54,6 +54,10 @@ export function UserAccountNav({ user }: UserAccountNavProps) {
         </DropdownMenuItem>
 
         <DropdownMenuItem asChild>
+          <Link href='/pronosticos'>Pronósticos</Link>
+        </DropdownMenuItem>
+
+        <DropdownMenuItem asChild>
           <Link href={`/u/${user.username}`}>Perfil</Link>
         </DropdownMenuItem>
 
