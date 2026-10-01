@@ -6,7 +6,7 @@ import { getAuthSession } from '@/lib/auth'
 import { db } from '@/lib/db'
 
 export const dynamic = 'force-dynamic'
-export const metadata: Metadata = { title: 'Notificaciones' }
+export const metadata: Metadata = { title: 'Notificaciones', robots: { index: false, follow: false } }
 
 const LIMIT = 50
 

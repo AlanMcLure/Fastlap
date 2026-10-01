@@ -4,8 +4,11 @@ import { cn } from '@/lib/utils'
 import { ChevronLeft } from 'lucide-react'
 import Link from 'next/link'
 import { FC } from 'react'
+import type { Metadata } from 'next'
 
 interface pageProps {}
+
+export const metadata: Metadata = { title: 'Crear cuenta', robots: { index: false, follow: false } }
 
 const page: FC<pageProps> = ({}) => {
   return (

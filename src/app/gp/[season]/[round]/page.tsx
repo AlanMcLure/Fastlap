@@ -9,7 +9,9 @@ import DataError from '@/components/f1-dashboard/DataError'
 import { getAuthSession } from '@/lib/auth'
 import { db } from '@/lib/db'
 import { dotdTally } from '@/lib/dotd'
-import { raceStatus } from '@/lib/f1/calendar'
+import JsonLd from '@/components/JsonLd'
+import { absoluteUrl } from '@/lib/seo'
+import { raceStatus, sessionStart } from '@/lib/f1/calendar'
 import { formatRaceDate } from '@/lib/f1/format'
 import { getCalendar, getRaceResults } from '@/lib/f1/queries'
 import type { Race } from '@/lib/f1/schemas'
@@ -26,7 +28,27 @@ interface Props {
 
 const parse = (value: string) => (/^\d{1,4}$/.test(value) ? Number(value) : NaN)
 
-export const metadata: Metadata = { title: 'Fin de semana de carrera' }
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { season: rawSeason, round: rawRound } = await params
+  const season = parse(rawSeason)
+  const round = parse(rawRound)
+  const fallback: Metadata = { title: 'Fin de semana de carrera' }
+  if (!Number.isInteger(season) || !Number.isInteger(round)) return fallback
+  try {
+    const race = (await getCalendar(season)).find((r) => r.round === round)
+    if (!race) return fallback
+    const { locality, country } = race.Circuit.Location
+    const description = `${race.raceName} ${season} (ronda ${round}) en ${race.Circuit.circuitName}, ${locality}, ${country}: hilo del fin de semana, resultado y votación de Piloto del Día.`
+    return {
+      title: `${race.raceName} ${season}`,
+      description,
+      alternates: { canonical: `/gp/${season}/${round}` },
+      openGraph: { title: `${race.raceName} ${season} · FastLap`, description, url: `/gp/${season}/${round}` },
+    }
+  } catch {
+    return fallback // the F1 API is down: still a valid page
+  }
+}
 
 const RaceHubPage = async ({ params }: Props) => {
   const { season: rawSeason, round: rawRound } = await params
@@ -91,10 +113,26 @@ const RaceHubPage = async ({ params }: Props) => {
   }
 
   const { locality, country } = race.Circuit.Location
+  const { start: raceStart } = sessionStart(race.date, race.time)
   const showDashboard = !session?.user ? false : canAccessDashboard(session.user.role)
 
   return (
     <div className='mx-auto max-w-3xl space-y-8 py-6'>
+      <JsonLd
+        data={{
+          '@context': 'https://schema.org',
+          '@type': 'SportsEvent',
+          name: `${race.raceName} ${season}`,
+          sport: 'Formula 1',
+          startDate: raceStart.toISOString(),
+          url: absoluteUrl(`/gp/${season}/${round}`),
+          location: {
+            '@type': 'Place',
+            name: race.Circuit.circuitName,
+            address: { '@type': 'PostalAddress', addressLocality: locality, addressCountry: country },
+          },
+        }}
+      />
       <header>
         <p className='label'>
           TEMPORADA {season} · RONDA {round} · {formatRaceDate(race.date).toUpperCase()}

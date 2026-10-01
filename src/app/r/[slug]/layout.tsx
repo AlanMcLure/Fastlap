@@ -10,9 +10,22 @@ import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { ReactNode } from 'react'
 
-export const metadata: Metadata = {
-  title: 'FastLap',
-  description: 'La red social para los aficionados de la Fórmula 1',
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
+  const { slug } = await params
+  const community = await db.subreddit.findFirst({
+    where: { name: slug },
+    select: { name: true, _count: { select: { posts: true, subscribers: true } } },
+  })
+  if (!community) return { title: 'Comunidad no encontrada', robots: { index: false } }
+
+  const { posts, subscribers } = community._count
+  const description = `r/${community.name}, comunidad de FastLap para aficionados de la Fórmula 1: ${posts} ${posts === 1 ? 'publicación' : 'publicaciones'} y ${subscribers} ${subscribers === 1 ? 'miembro' : 'miembros'}.`
+  return {
+    title: `r/${community.name}`,
+    description,
+    alternates: { canonical: `/r/${community.name}` },
+    openGraph: { title: `r/${community.name} · FastLap`, description, url: `/r/${community.name}` },
+  }
 }
 
 const Layout = async ({

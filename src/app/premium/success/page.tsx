@@ -7,6 +7,7 @@ import PremiumActivation from '@/components/PremiumActivation'
 
 export const metadata = {
   title: 'Suscripción Premium',
+  robots: { index: false, follow: false },
   description: '',
 }
 

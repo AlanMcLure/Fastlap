@@ -10,9 +10,49 @@ import { Loader2 } from 'lucide-react'
 import { notFound } from 'next/navigation'
 import { Suspense } from 'react'
 import Link from 'next/link'
+import type { Metadata } from 'next'
+import JsonLd from '@/components/JsonLd'
+import { postPreview } from '@/lib/postPreview'
+import { absoluteUrl, DESCRIPTION_MAX, truncate } from '@/lib/seo'
 
 interface SubRedditPostPageProps {
   params: Promise<{ postId: string }>
+}
+
+const getPostMeta = (postId: string) =>
+  db.post.findUnique({
+    where: { id: postId },
+    select: {
+      id: true, title: true, content: true, createdAt: true, updatedAt: true,
+      author: { select: { username: true } },
+      subreddit: { select: { name: true } },
+      _count: { select: { comments: true } },
+    },
+  })
+
+export async function generateMetadata({ params }: SubRedditPostPageProps): Promise<Metadata> {
+  const { postId } = await params
+  const post = await getPostMeta(postId)
+  if (!post) return { title: 'Publicación no encontrada', robots: { index: false } }
+
+  const preview = postPreview(post.content, DESCRIPTION_MAX)
+  const description = truncate(preview.text || `Publicación de u/${post.author.username} en r/${post.subreddit.name}`, DESCRIPTION_MAX)
+  const path = `/r/${post.subreddit.name}/post/${post.id}`
+  return {
+    title: post.title,
+    description,
+    alternates: { canonical: path },
+    openGraph: {
+      type: 'article',
+      title: post.title,
+      description,
+      url: path,
+      publishedTime: post.createdAt.toISOString(),
+      modifiedTime: post.updatedAt.toISOString(),
+      // The first https image of the post when there is one; otherwise the generated card (opengraph-image).
+      ...(preview.imageUrl ? { images: [{ url: preview.imageUrl, alt: preview.imageAlt }] } : {}),
+    },
+  }
 }
 
 const SubRedditPostPage = async ({ params }: SubRedditPostPageProps) => {
@@ -39,9 +79,25 @@ const SubRedditPostPage = async ({ params }: SubRedditPostPageProps) => {
   if (!post && !cachedPost) return notFound()
 
   const author = post?.author.username ?? cachedPost.authorUsername
+  const meta = await getPostMeta(postId)
 
   return (
     <div className='space-y-4'>
+      {meta && (
+        <JsonLd
+          data={{
+            '@context': 'https://schema.org',
+            '@type': 'DiscussionForumPosting',
+            headline: meta.title,
+            url: absoluteUrl(`/r/${meta.subreddit.name}/post/${meta.id}`),
+            datePublished: meta.createdAt.toISOString(),
+            dateModified: meta.updatedAt.toISOString(),
+            author: { '@type': 'Person', name: `u/${author}`, url: absoluteUrl(`/u/${author}`) },
+            commentCount: meta._count.comments,
+            isPartOf: { '@type': 'WebPage', name: `r/${meta.subreddit.name}`, url: absoluteUrl(`/r/${meta.subreddit.name}`) },
+          }}
+        />
+      )}
       <article className='rounded-xl border border-border bg-card p-5 sm:p-6'>
         <p className='text-xs text-muted-foreground'>
           <Link className='hover:text-display hover:underline underline-offset-2' href={`/u/${author}`}>

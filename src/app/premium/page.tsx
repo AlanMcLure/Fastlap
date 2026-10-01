@@ -11,8 +11,8 @@ import { Stripe } from "stripe";
 import CheckoutButton from '@/components/CheckoutButton'
 
 export const metadata = {
-  title: 'Premium pricing',
-  description: '',
+  title: 'Premium',
+  robots: { index: false, follow: false },
 }
 
 async function loadPrices() {

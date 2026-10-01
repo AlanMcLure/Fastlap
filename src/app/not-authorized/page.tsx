@@ -1,6 +1,9 @@
+import type { Metadata } from "next"
 import Link from "next/link"
 
 import { PREMIUM_ENABLED } from "@/lib/features"
+
+export const metadata: Metadata = { title: 'Acceso no autorizado', robots: { index: false, follow: false } }
 
 export default function NotAuthorized() {
     return (

@@ -7,6 +7,7 @@ import { ProfileImageForm } from '@/components/ProfileImageForm'
 
 export const metadata = {
   title: 'Ajustes',
+  robots: { index: false, follow: false },
   description: 'Ajustes de tu cuenta de FastLap',
 }
 

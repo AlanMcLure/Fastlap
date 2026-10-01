@@ -1,4 +1,6 @@
+import type { Metadata } from 'next'
 import Navbar from '@/components/Navbar'
+import { siteUrl } from '@/lib/seo'
 import { cn } from '@/lib/utils'
 import { Doto, Space_Grotesk, Space_Mono } from 'next/font/google'
 import Providers from '@/components/Providers'
@@ -10,9 +12,15 @@ const sans = Space_Grotesk({ subsets: ['latin'], variable: '--font-sans', displa
 const mono = Space_Mono({ weight: ['400', '700'], subsets: ['latin'], variable: '--font-mono', display: 'swap' })
 const display = Doto({ weight: ['700'], subsets: ['latin'], variable: '--font-display', display: 'swap' })
 
-export const metadata = {
-  title: 'FastLap',
-  description: 'La red social para los aficionados de la Fórmula 1',
+const description = 'La red social para los aficionados de la Fórmula 1: comunidades, hilos de cada Gran Premio, ligas de pronósticos y datos de la temporada.'
+
+export const metadata: Metadata = {
+  metadataBase: new URL(siteUrl()),
+  title: { default: 'FastLap · la red social de la Fórmula 1', template: '%s · FastLap' },
+  description,
+  applicationName: 'FastLap',
+  openGraph: { type: 'website', siteName: 'FastLap', locale: 'es_ES', title: 'FastLap', description },
+  twitter: { card: 'summary_large_image' },
 }
 
 // Applies the saved theme before first paint so there is no light/dark flash. Dark is the default.

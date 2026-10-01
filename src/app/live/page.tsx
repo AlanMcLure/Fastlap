@@ -5,7 +5,7 @@ import LiveTower from '@/components/live/LiveTower'
 import { liveEnabled } from '@/lib/live/hub'
 
 export const dynamic = 'force-dynamic'
-export const metadata: Metadata = { title: 'Directo (prototipo)' }
+export const metadata: Metadata = { title: 'Directo (prototipo)', robots: { index: false, follow: false } }
 
 /** Prototype of slice 9: live timing tower over a simulated source. Off unless LIVE_SIMULATION=true. */
 const LivePage = () => {
