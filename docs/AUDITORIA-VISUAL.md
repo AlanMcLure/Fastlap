@@ -109,3 +109,11 @@ Hecho (feed, comunidad, post y comentarios en la dirección B): tarjeta de post 
 Nota técnica: el `DropdownMenu` del post usa `modal={false}`; en modo modal el bloqueo de scroll desplazaba el layout y el menú seleccionaba "Borrar" al soltar el ratón.
 
 Pendiente: revisar inicio de sesión/registro, crear comunidad y ajustes; el hub de fin de semana de carrera (rebanada 7) y la clasificación con color de equipo (decisión del autor).
+
+## 7. Revisión de acceso y ajustes
+
+Pantallas: inicio de sesión, registro, modal de acceso (ruta interceptada), ajustes y crear comunidad, en escritorio y 390 px. Sin desbordamientos ni errores de consola.
+
+Corregido: textos ("¡Bienvenido!", "¿Nuevo en FastLap?", "Tu" en vez de "Tú", tuteo coherente en los avisos, "Comunidad" en minúscula); páginas de acceso en tarjeta centrada con el mismo lenguaje visual (el botón "Inicio" flotaba suelto); modal con `role="dialog"`, cierre con Escape y botón de cierre de 40 px con `aria-label` en español; ajustes: el selector de imagen era solo visible al pasar el ratón (inútil en móvil) y "Cambiar imagen" estaba activo sin imagen y devolvía un error: ahora el botón "+" siempre se ve, "Guardar imagen" se desactiva sin archivo y un fallo de subida muestra aviso (antes era silencioso); crear comunidad: formulario real (Enter envía), placeholder, filtro de caracteres y validación de servidor (`/r/<nombre>` solo admite letras, números y `_`; antes aceptaba espacios), y en móvil la tarjeta se estrechaba y los botones se salían.
+
+No probado: inicio de sesión real con Google (sin credenciales) y subida de imagen real (UploadThing sigue en v4 y sin acceso a la red).

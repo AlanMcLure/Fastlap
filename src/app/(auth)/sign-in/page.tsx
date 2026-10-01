@@ -7,18 +7,13 @@ import { FC } from 'react'
 
 const page: FC = () => {
   return (
-    <div className='absolute inset-0'>
-      <div className='h-full max-w-2xl mx-auto flex flex-col items-center justify-center gap-20'>
-        <Link
-          href='/'
-          className={cn(
-            buttonVariants({ variant: 'ghost' }),
-            'self-start -mt-20'
-          )}>
-          <ChevronLeft className='mr-2 h-4 w-4' />
-          Inicio
-        </Link>
+    <div className='mx-auto max-w-md space-y-6 py-10'>
+      <Link href='/' className={cn(buttonVariants({ variant: 'ghost' }), '-ml-4')}>
+        <ChevronLeft className='mr-2 h-4 w-4' aria-hidden='true' />
+        Inicio
+      </Link>
 
+      <div className='rounded-xl border border-input bg-card px-6 py-10'>
         <SignIn />
       </div>
     </div>

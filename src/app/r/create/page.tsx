@@ -15,6 +15,7 @@ const Page = () => {
   const router = useRouter()
   const [input, setInput] = useState<string>('')
   const { loginToast } = useCustomToasts()
+  const valid = input.length >= 3
 
   const { mutate: createCommunity, isPending: isLoading } = useMutation({
     mutationFn: async () => {
@@ -38,7 +39,7 @@ const Page = () => {
         if (err.response?.status === 422) {
           return toast({
             title: 'Nombre de comunidad inválido.',
-            description: 'Nombre entre 3 y 21 caracteres.',
+            description: 'Entre 3 y 21 caracteres: letras, números y guiones bajos.',
             variant: 'destructive',
           })
         }
@@ -60,49 +61,56 @@ const Page = () => {
   })
 
   return (
-    <div className='container flex flex-col items-start h-full max-w-3xl mx-auto'>
+    <div className='mx-auto w-full max-w-3xl'>
       <div className='w-full'>
         <BackButton />
       </div>
-      <div className='relative bg-card w-full h-fit p-4 rounded-lg space-y-6 mt-6 self-center'>
-        <div className='flex justify-between items-center'>
-          <h1 className='text-xl font-semibold'>Crear una Comunidad</h1>
+      <form
+        onSubmit={(e) => {
+          e.preventDefault()
+          if (valid && !isLoading) createCommunity()
+        }}
+        className='relative mt-6 h-fit w-full space-y-6 rounded-xl border border-input bg-card p-5'>
+        <div>
+          <p className='label'>NUEVA COMUNIDAD</p>
+          <h1 className='mt-2 text-xl font-semibold text-display'>Crear una comunidad</h1>
         </div>
 
-        <hr className='bg-border h-px' />
-
         <div>
-          <p className='text-lg font-medium'>Nombre</p>
-          <p className='text-xs pb-2'>
-            Los nombres de las comunidades no pueden ser cambiados (de momento).
+          <label htmlFor='community-name' className='text-lg font-medium text-display'>Nombre</label>
+          <p id='community-name-help' className='pb-2 text-sm text-muted-foreground'>
+            De 3 a 21 caracteres: letras, números y guiones bajos. El nombre no se puede cambiar (de momento).
           </p>
           <div className='relative'>
-            <p className='absolute text-sm left-0 w-8 inset-y-0 grid place-items-center text-muted-foreground'>
+            <p className='absolute text-sm left-0 w-8 inset-y-0 grid place-items-center text-muted-foreground' aria-hidden='true'>
               r/
             </p>
             <Input
+              id='community-name'
               value={input}
-              onChange={(e) => setInput(e.target.value)}
-              className='pl-6'
+              onChange={(e) => setInput(e.target.value.replace(/[^a-zA-Z0-9_]/g, ''))}
+              maxLength={21}
+              placeholder='formula1'
+              autoComplete='off'
+              aria-describedby='community-name-help'
+              className='pl-7'
             />
           </div>
         </div>
 
         <div className='flex justify-end gap-4'>
           <Button
+            type='button'
             disabled={isLoading}
             variant='subtle'
             onClick={() => router.back()}>
             Cancelar
           </Button>
-          <Button
-            isLoading={isLoading}
-            disabled={input.length === 0}
-            onClick={() => createCommunity()}>
-            Crear Comunidad
+          <Button type='submit' isLoading={isLoading} disabled={!valid}>
+            Crear comunidad
           </Button>
         </div>
-      </div>
+      </form>
     </div>
   )
 }

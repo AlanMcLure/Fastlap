@@ -55,7 +55,7 @@ export function UserNameForm({ user, className, ...props }: UserNameFormProps) {
         if (err.response?.status === 409) {
           return toast({
             title: 'Nombre de usuario no disponible',
-            description: 'Por favor, elija otro nombre de usuario',
+            description: 'Por favor, elige otro nombre de usuario',
             variant: 'destructive',
           })
         }
@@ -63,13 +63,13 @@ export function UserNameForm({ user, className, ...props }: UserNameFormProps) {
 
       return toast({
         title: 'Algo fue mal',
-        description: 'Por favor, inténtelo de nuevo más tarde',
+        description: 'Por favor, inténtalo de nuevo más tarde',
         variant: 'destructive',
       })
     },
     onSuccess: () => {
       toast({
-        description: 'Su nombre de usuario ha sido actualizado',
+        description: 'Tu nombre de usuario ha sido actualizado',
       })
       router.refresh()
     },
@@ -82,10 +82,10 @@ export function UserNameForm({ user, className, ...props }: UserNameFormProps) {
       {...props}>
       <Card className='min-h-[250px]'>
         <CardHeader>
-          <CardTitle>Tú nombre de usuario</CardTitle>
+          <CardTitle>Tu nombre de usuario</CardTitle>
           <CardDescription>
-            El nombre de usuario es único y se utiliza para identificarlo en
-            FastLap.
+            El nombre de usuario es único y se utiliza para identificarte en
+            FastLap. Solo letras, números y guiones bajos (3 a 32 caracteres).
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -94,7 +94,7 @@ export function UserNameForm({ user, className, ...props }: UserNameFormProps) {
               <span className='text-sm text-muted-foreground'>u/</span>
             </div>
             <Label className='sr-only' htmlFor='name'>
-              Nombre
+              Nombre de usuario
             </Label>
             <Input
               id='name'

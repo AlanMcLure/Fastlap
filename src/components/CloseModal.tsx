@@ -2,17 +2,23 @@
 
 import { X } from 'lucide-react'
 import { useRouter } from 'next/navigation'
-import { FC } from 'react'
+import { FC, useEffect } from 'react'
 import { Button } from './ui/Button'
 
-interface CloseModalProps {}
-
-const CloseModal: FC<CloseModalProps> = ({}) => {
+const CloseModal: FC = () => {
   const router = useRouter()
 
+  useEffect(() => {
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') router.back()
+    }
+    window.addEventListener('keydown', onKeyDown)
+    return () => window.removeEventListener('keydown', onKeyDown)
+  }, [router])
+
   return (
-    <Button variant='subtle' className='h-6 w-6 p-0 rounded-md' onClick={() => router.back()}>
-      <X aria-label='close modal' className='h-4 w-4' />
+    <Button variant='ghost' className='h-10 w-10 p-0' onClick={() => router.back()} aria-label='Cerrar'>
+      <X className='h-4 w-4' aria-hidden='true' />
     </Button>
   )
 }

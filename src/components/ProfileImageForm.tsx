@@ -4,7 +4,7 @@ import { User } from '@prisma/client'
 import { useRouter } from 'next/navigation'
 import React, { useState } from 'react'
 import { useMutation } from '@tanstack/react-query'
-import axios, { AxiosError } from 'axios'
+import axios from 'axios'
 import { toast } from '@/hooks/use-toast'
 import { uploadFiles } from '@/lib/uploadthing'
 import {
@@ -45,26 +45,26 @@ export function ProfileImageForm({ user, className, ...props }: ProfileImageForm
             // const { data } = await axios.patch(`/api/profile-image/`, formData)
             // return data
             let imageUrl = '';
-            if (selectedFile) {
-                const [res] = await uploadFiles([selectedFile], 'imageUploader');
-                imageUrl = res.fileUrl;
-            }
+            if (!selectedFile) throw new Error('No file selected')
+            const [res] = await uploadFiles([selectedFile], 'imageUploader');
+            imageUrl = res.fileUrl;
 
             const { data } = await axios.patch(`/api/profile-image/`, { imageUrl })
             return data
         },
-        onError: (err: any) => {
-            if (err instanceof AxiosError) {
-                return toast({
-                    title: 'Algo fue mal',
-                    description: 'Por favor, inténtelo de nuevo más tarde',
-                    variant: 'destructive',
-                })
-            }
+        onError: () => {
+            // Both a failed upload and a failed save end here.
+            toast({
+                title: 'Algo fue mal',
+                description: 'No se ha podido actualizar la imagen. Inténtalo de nuevo más tarde.',
+                variant: 'destructive',
+            })
         },
         onSuccess: () => {
+            setSelectedFile(null)
+            setPreviewImage(null)
             toast({
-                description: 'Su imagen de perfil ha sido actualizada',
+                description: 'Tu imagen de perfil ha sido actualizada',
             })
             router.refresh()
         },
@@ -90,14 +90,14 @@ export function ProfileImageForm({ user, className, ...props }: ProfileImageForm
             {...props}>
             <Card className='min-h-[250px]'>
                 <CardHeader>
-                    <CardTitle>Tú Imagen de perfil</CardTitle>
+                    <CardTitle>Tu imagen de perfil</CardTitle>
                     <CardDescription>
                         La imagen de perfil es pública. Puedes cambiarla en cualquier momento.
                     </CardDescription>
                 </CardHeader>
                 <CardContent>
                     <div className='flex flex-col sm:flex-row justify-between items-start sm:items-end gap-3'>
-                        <label className="relative w-24 h-24 cursor-pointer group">
+                        <label className="relative h-24 w-24 cursor-pointer rounded-full group focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2 focus-within:ring-offset-background" title="Elegir una imagen">
                             <UserAvatar
                                 user={{
                                     name: user.name || null,
@@ -105,12 +105,10 @@ export function ProfileImageForm({ user, className, ...props }: ProfileImageForm
                                 }}
                                 className="w-24 h-24"
                             />
-                            <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-0 group-hover:bg-opacity-50 rounded-full">
-                                <span className="text-4xl text-white opacity-0 group-hover:opacity-100">+</span>
-                            </div>
-                            <input type="file" accept="image/*" onChange={handleImageUpload} style={{ display: 'none' }} />
+                            <span className="absolute -bottom-1 -right-1 grid h-8 w-8 place-items-center rounded-full border border-input bg-card text-lg text-display group-hover:border-display" aria-hidden="true">+</span>
+                            <input type="file" accept="image/*" onChange={handleImageUpload} className="sr-only" aria-label="Elegir una imagen de perfil" />
                         </label>
-                        <Button isLoading={isLoading}>Cambiar imagen</Button>
+                        <Button isLoading={isLoading} disabled={!selectedFile || isLoading}>Guardar imagen</Button>
                     </div>
                 </CardContent>
             </Card>
