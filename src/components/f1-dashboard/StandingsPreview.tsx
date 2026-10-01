@@ -4,6 +4,7 @@ import { getDriverStandings } from '@/lib/f1/queries'
 
 import DataError from './DataError'
 import StandingsTable from './StandingsTable'
+import { driverRows } from './standingRows'
 
 /** The top of the current drivers' championship, for the dashboard home. */
 const StandingsPreview = async () => {
@@ -17,15 +18,7 @@ const StandingsPreview = async () => {
 
   if (!standings || standings.standings.length === 0) return null
 
-  const rows = standings.standings.slice(0, 5).map((s) => ({
-    id: s.Driver.driverId,
-    position: s.position !== undefined ? String(s.position) : s.positionText,
-    code: s.Driver.code ?? s.Driver.familyName.slice(0, 3).toUpperCase(),
-    name: `${s.Driver.givenName} ${s.Driver.familyName}`,
-    team: s.Constructors[0]?.name,
-    wins: s.wins,
-    points: s.points,
-  }))
+  const rows = driverRows(standings, 5)
 
   return (
     <section aria-labelledby='standings-preview-title' className='space-y-4'>

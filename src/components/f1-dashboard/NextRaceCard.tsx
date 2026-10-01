@@ -1,10 +1,10 @@
 import Link from 'next/link'
 
-import { raceStatus, sessionStart, weekendSessions, RACE_DURATION_HOURS } from '@/lib/f1/calendar'
+import { raceStatus, sessionStart, RACE_DURATION_HOURS } from '@/lib/f1/calendar'
 import type { Race } from '@/lib/f1/schemas'
 
 import Countdown from './Countdown'
-import LocalTime from './LocalTime'
+import SessionList from './SessionList'
 
 interface NextRaceCardProps {
   race: Race
@@ -16,7 +16,6 @@ const NextRaceCard = ({ race, now = new Date() }: NextRaceCardProps) => {
   const { start } = sessionStart(race.date, race.time)
   const end = new Date(start.getTime() + RACE_DURATION_HOURS * 3600 * 1000)
   const status = raceStatus(race, now)
-  const sessions = weekendSessions(race)
 
   return (
     <section
@@ -41,20 +40,9 @@ const NextRaceCard = ({ race, now = new Date() }: NextRaceCardProps) => {
         <Countdown startIso={start.toISOString()} endIso={end.toISOString()} />
       </div>
 
-      <ol className='relative mt-8 divide-y divide-border overflow-hidden rounded-xl border border-border bg-card'>
-        {sessions.map((session) => (
-          <li
-            key={session.key}
-            className={`flex flex-wrap items-center justify-between gap-x-4 gap-y-1 px-4 py-3 ${
-              session.key === 'Race' ? 'text-display' : 'text-foreground'
-            }`}>
-            <span className={session.key === 'Race' ? 'font-medium' : ''}>{session.label}</span>
-            <span className='label'>
-              <LocalTime iso={session.start.toISOString()} timeKnown={session.timeKnown} />
-            </span>
-          </li>
-        ))}
-      </ol>
+      <div className='relative mt-8'>
+        <SessionList race={race} />
+      </div>
 
       <div className='relative mt-6 flex flex-wrap gap-2'>
         <Link

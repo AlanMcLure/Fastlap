@@ -22,3 +22,18 @@ export function formatSessionTime(start: Date, timeZone?: string) {
     .format(start)
     .replace(/\./g, '')
 }
+
+interface NamedDriver {
+  code?: string
+  familyName: string
+}
+
+/** Three-letter code (VER); drivers from before codes existed get the first letters of their surname. */
+export const driverCode = (driver: NamedDriver) => driver.code ?? driver.familyName.slice(0, 3).toUpperCase()
+
+/** "22.4" -> 22.4, "1:02.345" -> 62.345 (a stop under a red flag can last minutes). */
+export function parseStopSeconds(duration: string): number {
+  const parts = duration.split(':').map(Number)
+  if (parts.some(Number.isNaN)) return NaN
+  return parts.reduce((total, part) => total * 60 + part, 0)
+}

@@ -4,7 +4,8 @@ import BackButton from '@/components/BackButton'
 import DataError from '@/components/f1-dashboard/DataError'
 import PointsChart from '@/components/f1-dashboard/PointsChart'
 import SeasonSelect from '@/components/f1-dashboard/SeasonSelect'
-import StandingsTable, { type StandingRow } from '@/components/f1-dashboard/StandingsTable'
+import StandingsTable from '@/components/f1-dashboard/StandingsTable'
+import { constructorRows, driverRows } from '@/components/f1-dashboard/standingRows'
 import { pointsProgression, type ProgressionKind } from '@/lib/f1/progression'
 import { getConstructorStandings, getDriverStandings, getSeasonResults, getSeasonSprintResults } from '@/lib/f1/queries'
 import { resolveSeason, seasonOptions } from '@/lib/f1/season'
@@ -21,27 +22,11 @@ interface StandingsPageProps {
 async function loadRows(season: number, kind: ProgressionKind) {
   if (kind === 'drivers') {
     const standings = await getDriverStandings(season)
-    const rows: StandingRow[] = (standings?.standings ?? []).map((s) => ({
-      id: s.Driver.driverId,
-      position: s.position !== undefined ? String(s.position) : s.positionText,
-      code: s.Driver.code ?? s.Driver.familyName.slice(0, 3).toUpperCase(),
-      name: `${s.Driver.givenName} ${s.Driver.familyName}`,
-      team: s.Constructors.map((c) => c.name).join(' / '),
-      wins: s.wins,
-      points: s.points,
-    }))
-    return { round: standings?.round, rows }
+    return { round: standings?.round, rows: driverRows(standings) }
   }
 
   const standings = await getConstructorStandings(season)
-  const rows: StandingRow[] = (standings?.standings ?? []).map((s) => ({
-    id: s.Constructor.constructorId,
-    position: s.position !== undefined ? String(s.position) : s.positionText,
-    name: s.Constructor.name,
-    wins: s.wins,
-    points: s.points,
-  }))
-  return { round: standings?.round, rows }
+  return { round: standings?.round, rows: constructorRows(standings) }
 }
 
 async function loadProgression(season: number, kind: ProgressionKind) {
@@ -74,7 +59,7 @@ const StandingsPage = async ({ searchParams }: StandingsPageProps) => {
   const round = table.status === 'fulfilled' ? table.value.round : undefined
 
   return (
-    <div className='mx-auto max-w-5xl space-y-8 px-4 pb-16 sm:px-6'>
+    <div className='max-w-5xl space-y-8'>
       <div>
         <BackButton defaultPath='/f1-dashboard' backText='Volver al Dashboard' />
         <div className='mt-4 flex flex-col justify-between gap-4 sm:flex-row sm:items-end'>

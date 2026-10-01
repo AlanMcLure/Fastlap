@@ -1,3 +1,4 @@
+import { driverCode } from './format'
 import type { RaceWithResults, RaceWithSprintResults } from './schemas'
 
 export interface ProgressionRound {
@@ -46,7 +47,7 @@ export function pointsProgression(
     for (const result of results) {
       const [id, code, name] =
         kind === 'drivers'
-          ? [result.Driver.driverId, result.Driver.code ?? result.Driver.familyName.slice(0, 3).toUpperCase(), `${result.Driver.givenName} ${result.Driver.familyName}`]
+          ? [result.Driver.driverId, driverCode(result.Driver), `${result.Driver.givenName} ${result.Driver.familyName}`]
           : [result.Constructor.constructorId, result.Constructor.name, result.Constructor.name]
       const entry = entries.get(id) ?? { code, name, perRound: new Map<number, number>() }
       entry.perRound.set(round, (entry.perRound.get(round) ?? 0) + result.points)

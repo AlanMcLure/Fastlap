@@ -99,3 +99,5 @@ Se maquetaron tres direcciones con los mismos datos de ejemplo (`docs/diseno/`):
 Elegida la dirección **B**. Implementado: tokens en CSS con tema oscuro por defecto y claro con selector (sin parpadeo al cargar), tipografías Space Grotesk / Space Mono / Doto, botones en píldora (primario invertido, destructivo con contorno rojo), barra superior nueva, y todos los colores fijos de la app sustituidos por tokens (también eliminadas las sombras). Reglas en `AGENTS.md`.
 
 Queda para **V2** (rediseño de pantallas, con la dirección B de las maquetas): tarjeta de post con vista previa y acciones en menú, módulo de próximo GP en el feed, hub de carrera y la clasificación como torre de tiempos; además un logotipo vectorial propio (el actual es una línea muy fina y pequeña).
+
+**Barra lateral del dashboard (rehecha):** se sustituyó por una navegación horizontal de secciones (`DashboardNav`, píldoras desplazables). Libera el ancho completo para tablas y gráficos, funciona igual en móvil y elimina el logotipo duplicado y el bloque flotante que se veía mal.

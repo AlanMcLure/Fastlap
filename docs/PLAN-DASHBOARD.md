@@ -90,7 +90,7 @@ Servidor primero; sin datos inventados; tipado de extremo a extremo (Zod en la f
 | V0 | Arreglos visuales rápidos | Textos y fechas en español, plural, barra lateral del dashboard, errores en español | ✅ |
 | 2 | Calendario y próxima carrera | Calendario, cuenta atrás, circuito | ✅ |
 | 3 | Clasificaciones | Pilotos y constructores, selector de temporada, evolución (gráfico) | ✅ |
-| 4 | Detalle de carrera | Resultados, parrilla, vuelta rápida, paradas | ⏳ |
+| 4 | Detalle de carrera | Resultados, parrilla, vuelta rápida, paradas | ✅ |
 | 5 | Pilotos | Listado y perfil con estadísticas calculadas de resultados reales | ⏳ |
 | 6 | Copia propia + API propia | Modelos Prisma, sincronización, lectura desde la BD | ⏳ |
 | V1 | Sistema de diseño | Tokens, tipografía, modo oscuro, componentes (dirección B) | ✅ |

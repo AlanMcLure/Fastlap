@@ -23,7 +23,7 @@ const DashboardPage = async () => {
   }
 
   return (
-    <div className='space-y-8 px-4 pb-16 sm:px-6'>
+    <div className='space-y-8'>
       <div>
         <p className='label'>FÓRMULA 1</p>
         <h1 className='mt-2 text-3xl font-bold text-display md:text-4xl'>Dashboard</h1>
