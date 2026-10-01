@@ -1,12 +1,20 @@
 import { db } from '@/lib/db'
 import { PrismaAdapter } from '@auth/prisma-adapter'
 import { UserRole } from '@prisma/client'
+import { stripProviderTokens } from '@/lib/accountTokens'
 import { nanoid } from 'nanoid'
 import NextAuth, { type NextAuthConfig } from 'next-auth'
 import GoogleProvider from 'next-auth/providers/google'
 
+const prismaAdapter = PrismaAdapter(db)
+
 export const authOptions: NextAuthConfig = {
-  adapter: PrismaAdapter(db),
+  // Google tokens are never stored: the app only needs the identity (JWT session)
+  adapter: {
+    ...prismaAdapter,
+    linkAccount: (account) =>
+      prismaAdapter.linkAccount!(stripProviderTokens(account)),
+  },
   session: {
     strategy: 'jwt',
   },

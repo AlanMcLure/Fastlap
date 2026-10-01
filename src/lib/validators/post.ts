@@ -5,9 +5,14 @@ const EditorBlock = z.object({
   data: z.record(z.any()),
 })
 
+// Third-party embeds (iframes) are not allowed: they set cookies and leak the
+// reader's IP. See docs/legal/CAMBIOS-TECNICOS.md.
 const EditorContent = z.object({
   time: z.number().optional(),
-  blocks: z.array(EditorBlock),
+  blocks: z.array(EditorBlock).refine(
+    (blocks) => blocks.every((block) => block.type !== 'embed'),
+    { message: 'No se admiten contenidos incrustados de otros sitios' }
+  ),
   version: z.string().optional(),
 })
 

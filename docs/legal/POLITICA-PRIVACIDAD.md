@@ -42,7 +42,7 @@ No vendemos tus datos. Las consultas de datos de Fórmula 1 se hacen desde nuest
 
 **Transferencias internacionales.** Algunos de estos proveedores pueden tratar datos fuera del Espacio Económico Europeo (por ejemplo, en EE. UU.). En ese caso se apoyan en [PENDIENTE: mecanismo — decisión de adecuación del Marco de Privacidad de Datos UE-EE. UU. o cláusulas contractuales tipo de la Comisión Europea]. Puedes pedirnos más información.
 
-**Contenido de terceros.** Las publicaciones pueden incluir imágenes o contenido incrustado de otros sitios. Al cargarlos, esos sitios pueden recibir tu dirección IP y, en el caso de contenido incrustado, usar sus propias cookies. Consulta la [Política de cookies](POLITICA-COOKIES.md).
+**Contenido de terceros.** Las publicaciones pueden incluir imágenes de otros sitios, que reciben tu dirección IP al cargarlas, y enlaces. No se admiten contenidos incrustados de terceros. Consulta la [Política de cookies](POLITICA-COOKIES.md).
 
 ## 5. Cuánto tiempo conservamos los datos
 

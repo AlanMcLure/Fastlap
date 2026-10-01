@@ -2,6 +2,7 @@
 
 import CustomCodeRenderer from '@/components/renderers/CustomCodeRenderer'
 import CustomImageRenderer from '@/components/renderers/CustomImageRenderer'
+import CustomEmbedRenderer from '@/components/renderers/CustomEmbedRenderer'
 import { FC } from 'react'
 import dynamic from 'next/dynamic'
 
@@ -17,6 +18,7 @@ interface EditorOutputProps {
 const renderers = {
   image: CustomImageRenderer,
   code: CustomCodeRenderer,
+  embed: CustomEmbedRenderer,
 }
 
 const style = {

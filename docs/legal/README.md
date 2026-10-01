@@ -12,6 +12,7 @@
 | [POLITICA-COOKIES.md](POLITICA-COOKIES.md) | Cookies y almacenamiento local que usa la web (hoy solo técnicos). |
 | [CONDICIONES-DE-USO.md](CONDICIONES-DE-USO.md) | Reglas del servicio, contenido de los usuarios, moderación, responsabilidad. |
 | [NORMAS-DE-LA-COMUNIDAD.md](NORMAS-DE-LA-COMUNIDAD.md) | Normas de convivencia en lenguaje claro, alineadas con los motivos de denuncia de la app. |
+| [CAMBIOS-TECNICOS.md](CAMBIOS-TECNICOS.md) | Cambios de código hechos por motivos legales, con cómo estaba antes y cómo revertirlos. |
 
 ## Datos que solo puede poner el titular
 
@@ -26,9 +27,9 @@ Todo lo que dice `[PENDIENTE: …]` es un dato o una decisión que no puedo inve
 
 Se han encontrado al preparar los borradores; los textos están escritos para ser **ciertos con el código actual**, pero estos puntos conviene resolverlos antes de abrir al público:
 
-1. **Contenido incrustado de terceros.** El editor incluye la herramienta *Embed* y el visor sabe pintar `iframe`: una publicación puede cargar contenido de otros sitios (vídeos, etc.), que pueden poner **sus propias cookies** y recibir la IP del lector. Eso exigiría consentimiento previo. Opciones: quitar la herramienta *Embed* del editor (lo más simple), limitar los dominios y usar sus modos «sin cookies», o añadir un aviso de consentimiento antes de cargarlos. **Hasta decidirlo, la política de cookies del borrador tiene que seguir diciendo que pueden existir cookies de terceros en contenidos incrustados** (ya lo recoge).
+1. ~~**Contenido incrustado de terceros.**~~ **Resuelto**: la herramienta Embed se quitó del editor, el servidor rechaza bloques `embed` y los posts antiguos los muestran como enlace. Cómo estaba antes y cómo revertirlo: [CAMBIOS-TECNICOS.md](CAMBIOS-TECNICOS.md).
 2. **Supresión y exportación de datos.** No existe un botón para borrar la cuenta ni para descargar los datos: los derechos del RGPD (acceso, supresión, portabilidad…) solo se pueden atender por correo y a mano. Además, las publicaciones y comentarios están ligados al autor sin borrado en cascada: borrar un usuario exige antes decidir si se **anonimizan** o se eliminan. Es lo más recomendable construir antes de abrir.
-3. **Tokens de Google guardados.** El adaptador de inicio de sesión guarda en la base de datos los tokens de acceso, de refresco y de identidad de Google. La aplicación solo necesita el correo, el nombre y la foto; guardar los tokens es innecesario (minimización) y conviene quitarlos.
+3. ~~**Tokens de Google guardados.**~~ **Resuelto en código**: ya no se guardan al iniciar sesión. Falta ejecutar `scripts/scrub-google-tokens.mjs` contra una base que ya tenga cuentas (ver [CAMBIOS-TECNICOS.md](CAMBIOS-TECNICOS.md)).
 4. **Edad mínima.** En España el consentimiento de un menor solo es válido desde los 14 años (art. 7 LOPDGDD). Hoy no se pregunta la edad: las condiciones lo exigen por declaración del usuario.
 5. **Avisos de retirada de contenido.** Hay denuncias y un aviso al autor cuando se elimina algo, pero sin explicación detallada ni forma de recurrir. Si la web se considera servicio de alojamiento de datos, el Reglamento de Servicios Digitales pide un mecanismo de notificación, motivación de las decisiones y un punto de contacto; pregunta al abogado qué te alcanza.
 6. **Premium (oculto).** Si algún día se activa, hay que añadir datos de facturación, condiciones de contratación, desistimiento y el tratamiento por Stripe, y los datos de F1 de Jolpica **no permiten uso comercial** sin licencia.

@@ -1,6 +1,6 @@
 # Política de cookies y almacenamiento local (borrador)
 
-> Borrador para revisión profesional (art. 22.2 LSSI-CE y guía de la AEPD sobre cookies). Los `[PENDIENTE]` los completa el titular. **Importante:** este texto es cierto solo mientras no se carguen contenidos de terceros incrustados (ver el punto 3 y el README, hueco 1). Versión: [PENDIENTE: fecha].
+> Borrador para revisión profesional (art. 22.2 LSSI-CE y guía de la AEPD sobre cookies). Los `[PENDIENTE]` los completa el titular. Las incrustaciones están desactivadas (ver [CAMBIOS-TECNICOS.md](CAMBIOS-TECNICOS.md)); este texto deja de ser cierto si se vuelven a permitir. Versión: [PENDIENTE: fecha].
 
 ## 1. Qué usamos
 
@@ -22,10 +22,7 @@ Al pulsar «Google» te redirigimos a `accounts.google.com`. Allí Google puede 
 
 ## 3. Contenido de terceros en las publicaciones
 
-Los usuarios pueden publicar **imágenes alojadas en otros sitios** y, mientras el editor lo permita, **contenido incrustado** (por ejemplo, vídeos). Al cargarlos, esos sitios reciben tu dirección IP y, en las incrustaciones, **pueden instalar sus propias cookies**, que no controlamos. [PENDIENTE: una de estas tres redacciones según la decisión técnica del README, hueco 1:
- (a) *«Hemos desactivado las incrustaciones; solo se muestran imágenes y enlaces»* (la opción recomendada);
- (b) *«Las incrustaciones solo se cargan tras tu consentimiento»* + descripción del aviso y de cada tercero;
- (c) *«Solo se admiten incrustaciones de [dominios] en su modo sin cookies»*.]
+Los usuarios pueden publicar **imágenes alojadas en otros sitios** y enlaces. Al cargar una imagen externa, ese sitio recibe tu dirección IP. **No se admiten contenidos incrustados de terceros** (vídeos, tuits, etc.): se muestran solo como enlace, y no cargan nada hasta que tú lo abres. [PENDIENTE: el abogado debe confirmar esta redacción.]
 
 ## 4. Cómo gestionarlas
 
