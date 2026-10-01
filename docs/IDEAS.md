@@ -30,7 +30,7 @@ Banco de ideas, ordenado por valor frente a esfuerzo. Estado: ⏳ pendiente · �
 
 ## C. Sin código, pero críticas
 
-- ✅ **Borradores legales** (`docs/legal/`: aviso legal, privacidad, cookies, condiciones, normas e inventario de datos verificado contra el código). Pendiente: datos del titular, revisión profesional y decisiones técnicas (embebidos, baja de cuenta, tokens de Google).
+- ✅ **Borradores legales** (`docs/legal/`: aviso legal, privacidad, cookies, condiciones, normas e inventario de datos verificado contra el código). Pendiente: datos del titular, revisión profesional y decisiones técnicas. Hechos: embebidos, tokens de Google y baja de cuenta (ver `docs/legal/CAMBIOS-TECNICOS.md`); faltan exportación de datos, edad mínima y avisos de retirada.
 - ✅ **Despliegue preparado** (imagen Docker verificada, comprobación de salud, validación del entorno, CI, guía en `DESPLIEGUE.md`). Falta desplegar de verdad: elegir hosting y crear las cuentas (base de datos, Upstash, Google, UploadThing).
 - ✅ **FAQs reescritas** con lo que la app hace de verdad (antes hablaban de una sección «Resultados» y un botón «Registrarse» que no existen); ahora salen de `src/lib/faqs.ts` y se publican también como datos estructurados. Revisarlas cada vez que cambie una función.
 - **Probar con aficionados reales** (cinco conversaciones valen más que otra funcionalidad): el plan se apoya en hipótesis.

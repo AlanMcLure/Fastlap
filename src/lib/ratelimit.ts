@@ -31,3 +31,10 @@ export const reportDailyRatelimit = new Ratelimit({
   limiter: Ratelimit.slidingWindow(30, '1 d'),
   prefix: 'rl:report-day',
 })
+
+/** Account deletion is irreversible: a few attempts per hour is plenty. */
+export const accountDeleteRatelimit = new Ratelimit({
+  redis,
+  limiter: Ratelimit.slidingWindow(3, '1 h'),
+  prefix: 'rl:account-delete',
+})

@@ -48,7 +48,7 @@ El servicio se ofrece «tal cual». En la medida permitida por la ley, el titula
 
 ## 10. Baja
 
-Puedes dejar de usar la web cuando quieras. Para pedir la eliminación de tu cuenta y tus datos escribe a [PENDIENTE: correo] (véase la Política de privacidad). [PENDIENTE: describir qué ocurre con tus publicaciones tras la baja.]
+Puedes dejar de usar la web cuando quieras. Puedes eliminar tu cuenta en Ajustes. Tus publicaciones y comentarios no se borran: quedan sin tu nombre, como «Usuario eliminado», salvo que los borres antes (véase la Política de privacidad). [PENDIENTE: el abogado debe confirmar esta redacción.]
 
 ## 11. Ley aplicable y jurisdicción
 

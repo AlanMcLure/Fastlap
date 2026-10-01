@@ -46,7 +46,7 @@ No vendemos tus datos. Las consultas de datos de Fórmula 1 se hacen desde nuest
 
 ## 5. Cuánto tiempo conservamos los datos
 
-- **Cuenta y actividad:** mientras tengas cuenta. [PENDIENTE: qué ocurre tras la baja — p. ej. eliminación de la cuenta y anonimización de las publicaciones].
+- **Cuenta y actividad:** mientras tengas cuenta. Si eliminas tu cuenta, se borran tu perfil, votos, suscripciones, pronósticos y notificaciones; tus publicaciones y comentarios se conservan sin tu nombre, como «Usuario eliminado» (puedes borrarlos tú antes). [PENDIENTE: el abogado debe confirmar esta redacción y la base para conservar el texto anonimizado].
 - **Notificaciones:** [PENDIENTE: plazo].
 - **Denuncias:** hasta su resolución; se eliminan junto con el contenido denunciado. **Registro de decisiones de moderación:** [PENDIENTE: plazo].
 - **Contadores técnicos:** de segundos a un día. **Registros del servidor:** [PENDIENTE: plazo del proveedor].
@@ -56,7 +56,7 @@ No vendemos tus datos. Las consultas de datos de Fórmula 1 se hacen desde nuest
 
 Puedes ejercer los derechos de **acceso, rectificación, supresión, oposición, limitación del tratamiento y portabilidad** escribiendo a [PENDIENTE: correo], indicando tu nombre de usuario y el derecho que ejerces. Respondemos en el plazo de un mes (ampliable en casos complejos). Es posible que te pidamos que acredites tu identidad.
 
-- Puedes **cambiar tu nombre de usuario y tu imagen** en Ajustes, y **borrar tus publicaciones y comentarios** tú mismo.
+- Puedes **cambiar tu nombre de usuario y tu imagen** en Ajustes, **borrar tus publicaciones y comentarios** tú mismo y **eliminar tu cuenta** desde Ajustes.
 - Si consideras que no tratamos tus datos conforme a la normativa, puedes **reclamar ante la Agencia Española de Protección de Datos** (www.aepd.es).
 
 ## 7. Menores

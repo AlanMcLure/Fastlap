@@ -1,5 +1,6 @@
 import { getAuthSession } from '@/lib/auth'
 import { db } from '@/lib/db'
+import { isReservedUsername } from '@/lib/accountRules'
 import { UsernameValidator } from '@/lib/validators/username'
 import { z } from 'zod'
 
@@ -13,6 +14,10 @@ export async function PATCH(req: Request) {
 
     const body = await req.json()
     const { name } = UsernameValidator.parse(body)
+
+    if (isReservedUsername(name)) {
+      return new Response('Username is taken', { status: 409 })
+    }
 
     // check if username is taken
     const username = await db.user.findFirst({

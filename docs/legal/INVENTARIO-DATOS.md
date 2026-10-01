@@ -47,7 +47,7 @@ No se usa **analítica**, **publicidad**, **seguimiento** ni perfilado. No hay c
 | Derecho | Estado |
 |---|---|
 | Acceso, rectificación | El usuario puede cambiar su nombre de usuario y su imagen en Ajustes. El resto, por correo |
-| Supresión | **Solo por correo y a mano.** No hay botón de baja; las publicaciones están ligadas al autor sin borrado en cascada (ver README, hueco 2) |
+| Supresión | **Botón «Eliminar mi cuenta» en Ajustes.** Borra el perfil, votos, suscripciones, pronósticos y notificaciones; publicaciones y comentarios quedan como «Usuario eliminado». No borra las imágenes de UploadThing (ver [CAMBIOS-TECNICOS.md](CAMBIOS-TECNICOS.md)) |
 | Portabilidad | **No hay exportación**; solo a mano |
 | Oposición / limitación | Por correo |
 | Retirar contenido propio | El autor puede borrar sus publicaciones y comentarios |

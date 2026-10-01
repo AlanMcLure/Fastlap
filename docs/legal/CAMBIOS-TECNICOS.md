@@ -2,6 +2,34 @@
 
 Registro de lo que se cambió en el código a raíz de los «huecos técnicos» del [README](README.md), con **cómo estaba antes** para poder revertirlo o explicárselo al abogado. Más reciente primero.
 
+## 2. Borrado de cuenta (hueco 2, primera parte)
+
+**Antes**
+- No había forma de borrar la cuenta: ni botón, ni endpoint, ni script. Los derechos de supresión solo se podían atender a mano con SQL.
+- Borrar un `User` a mano fallaba o destruía contenido, según la relación del esquema: `Post.author`, `Vote.user`, `CommentVote.user` y `Subscription.user` no tienen borrado en cascada (la base rechaza el borrado), mientras que `Comment.author` sí es `onDelete: Cascade` (borraría todos sus comentarios, y con ellos las respuestas de otras personas colgadas de ellos).
+- `/api/username` aceptaba cualquier nombre libre, incluido «eliminado» o «fastlap».
+
+**Ahora**
+- **Ajustes → «Eliminar mi cuenta»** (`src/components/DeleteAccountForm.tsx`): hay que escribir el propio nombre de usuario para confirmar. Después se cierra la sesión.
+- **`DELETE /api/account`** (`src/app/api/account/route.ts`): exige sesión, limita a 3 intentos por hora (`accountDeleteRatelimit`), comprueba rol y nombre de usuario en la base (no en el token) y llama a `deleteAccount`.
+- **`deleteAccount`** (`src/lib/accountDeletion.ts`), en una sola transacción:
+  - **Se conserva, anonimizado:** publicaciones y comentarios pasan a un usuario compartido «Usuario eliminado» (`u/eliminado`, `eliminado@fastlap.invalid`), para que los hilos y las respuestas de otras personas sigan teniendo sentido. El texto que escribió la persona sigue ahí: si quiere quitarlo, debe borrarlo *antes* (posts y comentarios propios, desde la propia web).
+  - **Se borra:** el usuario (perfil, correo, nombre, foto, rol), sus cuentas de acceso y sesiones, votos de publicaciones y comentarios, suscripciones, pronósticos, votos de Piloto del Día, notificaciones y las denuncias que hizo.
+  - **Se desvincula:** las comunidades que creó quedan sin creador (`creatorId = null`); en `ModerationLog`, el autor sale (`null`) y, si era el moderador, se sustituye por el usuario eliminado.
+  - **Notificaciones de otros** que citaban su nombre («u/ana ha respondido…») pasan a «Un usuario ha respondido…».
+  - **Caché Redis** de sus publicaciones populares: se invalida.
+- **Reglas** (`src/lib/accountRules.ts`): una cuenta ADMIN no puede borrarse (hay que quitarle el rol antes, para no dejar la web sin administrador); los nombres `eliminado`, `fastlap`, `sistema`, `admin`, `administrador` y `moderador` están reservados en `/api/username`.
+- **Tests:** `accountRules.test.ts` (reglas) y `accountDeletion.test.ts` (integración contra Postgres real; se salta sin `TEST_DATABASE_URL`). Se probó contra un Postgres local con el esquema de `prisma db push`.
+
+**Límites conocidos (para el abogado)**
+- Las imágenes que la persona subió a UploadThing (foto de perfil o dentro de sus posts) **no se borran** de UploadThing (la integración está en v4 y no se ha automatizado). La foto de perfil de Google es solo una URL de Google.
+- Quien tenga la sesión abierta en **otro dispositivo** conserva su cookie (JWT) hasta que caduque; no puede escribir nada (la base lo rechaza) pero no se cierra sola. Mitigación pendiente: comprobar que el usuario existe al leer la sesión.
+- **No hay exportación de datos** (portabilidad): sigue siendo un hueco.
+- Los votos que dio se borran, así que las puntuaciones de publicaciones ajenas bajan.
+- El texto de sus publicaciones y comentarios puede contener datos personales que ella misma escribió; se conserva (interés en la continuidad de las conversaciones), salvo que lo borre antes o lo pida por correo.
+
+**Para revertir:** quitar `DeleteAccountForm` de `settings/page.tsx` y el endpoint `src/app/api/account`; el resto (`accountDeletion.ts`, reglas, límite) es código aislado. No hay cambios de esquema ni migraciones.
+
 ## 1. Embeds (hueco 1) y tokens de Google (hueco 3)
 
 ### 1.1 Contenido incrustado de terceros
