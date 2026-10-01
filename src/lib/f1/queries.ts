@@ -1,3 +1,4 @@
+import { findUpcomingRace } from './calendar'
 import { f1Client } from './client'
 import {
   ConstructorStandingsResponseSchema,
@@ -52,14 +53,6 @@ export function revalidateFor(season: Season, now = new Date()) {
   return season !== 'current' && season < now.getUTCFullYear() ? 7 * DAY : HOUR
 }
 
-// ---- pure helpers -----------------------------------------------------------
-
-/** First race whose date is today or later, or null when the season is over. */
-export function findNextRace(races: Race[], now = new Date()): Race | null {
-  const today = now.toISOString().slice(0, 10)
-  return races.find((race) => race.date >= today) ?? null
-}
-
 // ---- queries ----------------------------------------------------------------
 
 export async function getCalendar(season: Season = 'current'): Promise<Race[]> {
@@ -68,8 +61,17 @@ export async function getCalendar(season: Season = 'current'): Promise<Race[]> {
   })
 }
 
+/**
+ * The next race to be run (the one in progress counts). When the current season
+ * is over it looks at the following season's calendar, once it is published.
+ */
 export async function getNextRace(now = new Date()): Promise<Race | null> {
-  return findNextRace(await getCalendar('current'), now)
+  const races = await getCalendar('current')
+  const next = findUpcomingRace(races, now)
+  if (next || races.length === 0) return next
+
+  const following = await getCalendar(races[0].season + 1)
+  return findUpcomingRace(following, now)
 }
 
 export async function getDriverStandings(

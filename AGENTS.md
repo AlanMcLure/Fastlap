@@ -57,7 +57,7 @@ The Prisma schema uses real database foreign keys (the former `relationMode = "p
 - Route groups: `(auth)` holds `/sign-in` and `/sign-up`. The `@authModal` parallel route slot ([src/app/@authModal/](src/app/@authModal/)) uses intercepting routes (`(.)sign-in`, `(.)sign-up`) to render auth as a modal over the current page; the root layout renders both `{children}` and `{authModal}` ([src/app/layout.tsx](src/app/layout.tsx)).
 - `/r/[slug]` is a subreddit page; `/r/[slug]/submit` is the post-creation page; `/r/create` creates a subreddit.
 - `/u/[slug]` is a user profile.
-- `/f1-dashboard/` contains `pilotos`, `carreras`, `noticias` sections (plus `piloto`, `carrera`, `noticia` detail routes) with its own sidebar ([src/app/f1-dashboard/layout.tsx](src/app/f1-dashboard/layout.tsx)).
+- `/f1-dashboard/` contains `pilotos`, `carreras` (calendar), `noticias` sections (plus `piloto`, `carrera`, `noticia` detail routes) with its own sidebar ([src/app/f1-dashboard/layout.tsx](src/app/f1-dashboard/layout.tsx)).
 - Other pages: `/premium`, `/faqs`, `/settings`, `/not-authorized`.
 - **Next 16 async APIs:** `params` in pages and route handlers is a `Promise<{...}>` and must be awaited; `headers()` is async. Follow the existing pages as the pattern.
 
@@ -71,7 +71,7 @@ Under [src/app/api/](src/app/api/):
 - `users/[slug]`, `username/` (rename), `profile-image/`, `search/`
 - `link/` (URL preview for EditorJS LinkTool; `isSafeUrl()` blocks private IPs and non-http(s) protocols to prevent SSRF — keep that check on any server-side fetch of user-supplied URLs), `uploadthing/` (image uploads — see [core.ts](src/app/api/uploadthing/core.ts))
 - `checkout/` + `prices/` + `webhook/` — Stripe Premium subscription flow (Stripe API version pinned to `2024-04-10`)
-- `ergast/{calendar,driver,laps,race-results,standings}` — server-side proxies to the F1 data API. `ergast.com` was shut down after the 2024 season, so they call its drop-in successor [Jolpica-F1](https://github.com/jolpica/jolpica-f1) (`https://api.jolpi.ca/ergast/f1`, overridable with `ERGAST_BASE_URL`) through [src/lib/ergast.ts](src/lib/ergast.ts). Jolpica limits `limit` to 100 (use `fetchAllDrivers` for big lists) and the IP to 4 req/s and 500 req/h, so every `fetch` revalidates hourly (`ERGAST_FETCH_OPTIONS`) instead of the old `force-cache`, which never refreshed `season=current`. Calendar and driver endpoints paginate in-memory before returning. `driver?driverId=` mixes API data with hard-coded stats per driver (and random numbers for unknown ones) — treat those numbers as placeholders.
+- `ergast/{driver,race-results,standings}` — server-side proxies (the calendar endpoint was replaced by the data layer; the rest go away with slices 3–5) to the F1 data API. `ergast.com` was shut down after the 2024 season, so they call its drop-in successor [Jolpica-F1](https://github.com/jolpica/jolpica-f1) (`https://api.jolpi.ca/ergast/f1`, overridable with `ERGAST_BASE_URL`) through [src/lib/ergast.ts](src/lib/ergast.ts). Jolpica limits `limit` to 100 (use `fetchAllDrivers` for big lists) and the IP to 4 req/s and 500 req/h, so every `fetch` revalidates hourly (`ERGAST_FETCH_OPTIONS`) instead of the old `force-cache`, which never refreshed `season=current`. Calendar and driver endpoints paginate in-memory before returning. `driver?driverId=` mixes API data with hard-coded stats per driver (and random numbers for unknown ones) — treat those numbers as placeholders.
 
 Request bodies are validated with Zod schemas in [src/lib/validators/](src/lib/validators/) (`post.ts`, `comment.ts`, `subreddit.ts`, `username.ts`, `vote.ts`, `piloto.ts`).
 
@@ -83,7 +83,8 @@ Typed, validated access to Jolpica-F1 for the rebuilt dashboard (see [docs/PLAN-
 - `schemas.ts`: Zod schemas that also convert Ergast's numeric strings to numbers. A response that does not match throws `F1SchemaError` naming the offending path.
 - `queries.ts`: `getCalendar`, `getNextRace`, `getDriverStandings`, `getConstructorStandings`, `getRaceResults`, `getPitStops`, `getDrivers`, `getDriver`, `getDriverResults`. Path inputs (season, round, ids) are validated before they reach the URL. Closed seasons are cached for a week, the running one for an hour.
 - Tests use **synthetic** fixtures in `__fixtures__/`. Real responses can be captured with `node scripts/capture-f1-fixtures.mjs` (needs internet) into `__fixtures__/real/`; `contract.test.ts` then validates the schemas against them.
-- The old `/api/ergast/*` routes still exist until the dashboard pages are migrated to this layer (plan slices 2–5).
+- Migrated to this layer so far: the dashboard home (next race) and `/f1-dashboard/carreras` (season calendar), both server components. Pure calendar helpers (`weekendSessions`, `raceStatus`, `findUpcomingRace`) live in `calendar.ts`, date formatting in `format.ts`. Times are UTC in the API; `LocalTime` shows them in the viewer's time zone and `Countdown` ticks with `useSyncExternalStore` (no effects, no hydration mismatch).
+- The remaining `/api/ergast/*` routes still exist until the other dashboard pages are migrated (plan slices 3–5).
 
 ### Design system ("Nothing" language, direction B)
 

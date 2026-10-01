@@ -88,7 +88,7 @@ Servidor primero; sin datos inventados; tipado de extremo a extremo (Zod en la f
 | 0 | Limpieza | Código muerto, datos inventados, CRUD ajeno | ✅ (noticias pendientes de D4) |
 | 1 | Capa de datos | `src/lib/f1/` + tests + captura de fixtures reales | ✅ |
 | V0 | Arreglos visuales rápidos | Textos y fechas en español, plural, barra lateral del dashboard, errores en español | ✅ |
-| 2 | Calendario y próxima carrera | Calendario, cuenta atrás, circuito | ⏳ |
+| 2 | Calendario y próxima carrera | Calendario, cuenta atrás, circuito | ✅ |
 | 3 | Clasificaciones | Pilotos y constructores, selector de temporada, evolución (gráfico) | ⏳ |
 | 4 | Detalle de carrera | Resultados, parrilla, vuelta rápida, paradas | ⏳ |
 | 5 | Pilotos | Listado y perfil con estadísticas calculadas de resultados reales | ⏳ |

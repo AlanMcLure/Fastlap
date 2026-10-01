@@ -1,153 +1,73 @@
-'use client';
+import BackButton from '@/components/BackButton'
+import DataError from '@/components/f1-dashboard/DataError'
+import RaceCard from '@/components/f1-dashboard/RaceCard'
+import SeasonSelect from '@/components/f1-dashboard/SeasonSelect'
+import { findUpcomingRace } from '@/lib/f1/calendar'
+import { getCalendar } from '@/lib/f1/queries'
+import type { Race } from '@/lib/f1/schemas'
 
-import React, { useEffect, useState, useRef } from 'react';
-import RaceCard, { RaceStats } from '@/components/f1-dashboard/RaceCard';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
-import Link from 'next/link';
-import BackButton from '@/components/BackButton';
-import DataError from '@/components/f1-dashboard/DataError';
+// Rendered per request: the status of each race (finished, next...) depends on the current time.
+export const dynamic = 'force-dynamic'
 
-export default function RacesPage() {
-  const [races, setRaces] = useState<RaceStats[]>([]);
-  const [page, setPage] = useState(0);
-  const [totalPages, setTotalPages] = useState(0);
-  const totalElementsRef = useRef(20);
-  const [hasError, setHasError] = useState(false);
-  const [attempt, setAttempt] = useState(0);
+export const metadata = { title: 'Calendario · FastLap' }
 
-  const [season, setSeason] = useState(new Date().getFullYear().toString());
+const FIRST_SEASON = 1950
 
-  useEffect(() => {
-    const fetchRaces = async () => {
-      const url = `/api/ergast/calendar?page=${page}&limit=8&season=${season}`;
+interface RacesPageProps {
+  searchParams: Promise<{ season?: string }>
+}
 
-      try {
-        const response = await fetch(url);
-        if (!response.ok) {
-          throw new Error('Failed to fetch data');
-        }
-        const data = await response.json();
-        setRaces(data.content);
-        setTotalPages(data.totalPages);
-        totalElementsRef.current = data.totalElements;
-        setHasError(false);
-      } catch (error) {
-        console.error(error);
-        setHasError(true);
-      }
-    };
+const RacesPage = async ({ searchParams }: RacesPageProps) => {
+  const now = new Date()
+  const currentYear = now.getUTCFullYear()
+  const requested = Number((await searchParams).season)
+  const season =
+    Number.isInteger(requested) && requested >= FIRST_SEASON && requested <= currentYear + 1 ? requested : currentYear
+  const years = Array.from({ length: currentYear - FIRST_SEASON + 1 }, (_, i) => currentYear - i)
+  if (!years.includes(season)) years.unshift(season)
 
-    fetchRaces();
-  }, [page, season, attempt]);
+  let races: Race[] = []
+  let failed = false
+  try {
+    races = await getCalendar(season)
+  } catch (error) {
+    console.error('Could not load the calendar', error)
+    failed = true
+  }
 
-  const handlePreviousPage = () => {
-    if (page >= 1) {
-      setPage(page - 1);
-    }
-  };
-
-  const handleNextPage = () => {
-    if (page < totalPages - 1) {
-      setPage(page + 1);
-    }
-  };
+  const nextRace = findUpcomingRace(races, now)
 
   return (
-    <div className="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
-      <BackButton defaultPath="/f1-dashboard" backText="Volver al Dashboard" />
-      <div className="flex flex-col sm:flex-row justify-between items-center mb-4 mt-4">
-        <h1 className="font-bold text-3xl md:text-4xl mb-2">Calendario de Carreras</h1>
-        <div className="flex items-center space-x-2">
-          <div>
-            <select
-              value={season}
-              onChange={e => {
-                setSeason(e.target.value);
-                setPage(0);
-              }}
-              className="border border-input rounded p-2"
-            >
-              <option value={new Date().getFullYear().toString()}>Actual</option>
-              {Array.from({ length: 75 }, (_, i) => {
-                const year = new Date().getFullYear() - i;
-                return (
-                  <option key={year} value={year}>
-                    {year}
-                  </option>
-                );
-              })}
-            </select>
-          </div>
+    <div className='mx-auto max-w-7xl px-4 pb-16 sm:px-6'>
+      <BackButton defaultPath='/f1-dashboard' backText='Volver al Dashboard' />
+
+      <div className='mb-8 mt-4 flex flex-col justify-between gap-4 sm:flex-row sm:items-end'>
+        <div>
+          <p className='label'>
+            {failed ? 'CALENDARIO' : `${races.length} CARRERAS`} · TEMPORADA {season}
+          </p>
+          <h1 className='mt-2 text-3xl font-bold text-display md:text-4xl'>Calendario</h1>
         </div>
+        <SeasonSelect value={season} years={years} />
       </div>
-      {hasError ? (
-        <DataError onRetry={() => setAttempt((n) => n + 1)} />
+
+      {failed ? (
+        <DataError refresh />
+      ) : races.length === 0 ? (
+        <p className='rounded-xl border border-border bg-card p-6 text-muted-foreground'>
+          Todavía no hay calendario publicado para la temporada {season}.
+        </p>
       ) : (
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-        {races && races.length > 0 ? (
-          races.map(race => (
-            <Link href={`/f1-dashboard/carrera/${race.season}/${race.round}`} key={race.round}>
-              <RaceCard key={race.round} race={race} />
-            </Link>
-          ))
-        ) : (
-          <p>No se encontraron carreras que cumplan con el filtro.</p>
-        )}
-      </div>
+        <ul className='grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3'>
+          {races.map((race) => (
+            <li key={race.round}>
+              <RaceCard race={race} isNext={race.round === nextRace?.round} now={now} />
+            </li>
+          ))}
+        </ul>
       )}
-      <div className="flex items-center justify-between border-t border-border px-4 py-3 sm:px-6 mt-2">
-        <div className="flex flex-1 justify-between sm:hidden">
-          <button
-            onClick={handlePreviousPage}
-            disabled={page === 0}
-            className="relative inline-flex items-center rounded-md border border-input bg-card px-4 py-2 text-sm font-medium text-foreground hover:bg-muted"
-          >
-            Anterior
-          </button>
-          <button
-            onClick={handleNextPage}
-            disabled={page === totalPages - 1}
-            className="relative ml-3 inline-flex items-center rounded-md border border-input bg-card px-4 py-2 text-sm font-medium text-foreground hover:bg-muted"
-          >
-            Siguiente
-          </button>
-        </div>
-        <div className="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between">
-          <div>
-            <p className="text-sm text-foreground">
-              Mostrando <span className="font-medium">{(page) * 8 + 1}</span> a <span className="font-medium">{Math.min((page + 1) * 8, totalPages * 8, totalElementsRef.current)}</span> de{' '}
-              <span className="font-medium">{totalElementsRef.current}</span> carreras
-            </p>
-          </div>
-          <div>
-            <nav className="isolate inline-flex -space-x-px rounded-md" aria-label="Pagination">
-              <button
-                onClick={handlePreviousPage}
-                disabled={page === 0}
-                className="relative inline-flex items-center rounded-l-md px-2 py-2 text-muted-foreground ring-1 ring-inset ring-input hover:bg-muted focus:z-20 focus:outline-offset-0"
-              >
-                <span className="sr-only">Anterior</span>
-                <ChevronLeft className="h-5 w-5" aria-hidden="true" />
-              </button>
-              <div className="flex justify-between">
-                {page !== 0 && <button className="relative inline-flex items-center px-2 py-2 text-muted-foreground ring-1 ring-inset ring-input hover:bg-muted focus:z-20 focus:outline-offset-0" onClick={() => setPage(0)} disabled={page === 0}>1</button>}
-                {page > 0 && page !== 1 && <button className="relative inline-flex items-center px-2 py-2 text-muted-foreground ring-1 ring-inset ring-input hover:bg-muted focus:z-20 focus:outline-offset-0" onClick={() => setPage(page - 1)}>{page}</button>}
-                <button className="relative inline-flex items-center px-2 py-2 bg-primary text-primary-foreground ring-1 ring-inset ring-input focus:z-20 focus:outline-offset-0" disabled>{page + 1}</button>
-                {page < totalPages - 1 && page !== totalPages - 2 && <button className="relative inline-flex items-center px-2 py-2 text-muted-foreground ring-1 ring-inset ring-input hover:bg-muted focus:z-20 focus:outline-offset-0" onClick={() => setPage(page + 1)}>{page + 2}</button>}
-                {page !== totalPages - 1 && <button className="relative inline-flex items-center px-2 py-2 text-muted-foreground ring-1 ring-inset ring-input hover:bg-muted focus:z-20 focus:outline-offset-0" onClick={() => setPage(totalPages - 1)}>{totalPages}</button>}
-              </div>
-              <button
-                onClick={handleNextPage}
-                disabled={page === totalPages - 1}
-                className="relative inline-flex items-center rounded-r-md px-2 py-2 text-muted-foreground ring-1 ring-inset ring-input hover:bg-muted focus:z-20 focus:outline-offset-0"
-              >
-                <span className="sr-only">Siguiente</span>
-                <ChevronRight className="h-5 w-5" aria-hidden="true" />
-              </button>
-            </nav>
-          </div>
-        </div>
-      </div>
     </div>
-  );
+  )
 }
+
+export default RacesPage

@@ -2,17 +2,16 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { fixture } from './fixtures'
 import {
-  findNextRace,
   getCalendar,
   getConstructorStandings,
   getDriver,
   getDriverResults,
   getDriverStandings,
+  getNextRace,
   getPitStops,
   getRaceResults,
   revalidateFor,
 } from './queries'
-import { RacesResponseSchema } from './schemas'
 
 const ok = (body: unknown) => new Response(JSON.stringify(body), { status: 200 })
 
@@ -25,20 +24,8 @@ beforeEach(() => {
 })
 afterEach(() => vi.unstubAllGlobals())
 
-describe('pure helpers', () => {
-  const races = RacesResponseSchema.parse(fixture('calendar')).MRData.RaceTable.Races
-
-  it('findNextRace returns the first race today or later', () => {
-    expect(findNextRace(races, new Date('2025-03-17T10:00:00Z'))?.round).toBe(2)
-    expect(findNextRace(races, new Date('2025-03-23T22:00:00Z'))?.round).toBe(2) // race day still counts
-    expect(findNextRace(races, new Date('2025-01-01T00:00:00Z'))?.round).toBe(1)
-  })
-
-  it('findNextRace returns null once the season is over', () => {
-    expect(findNextRace(races, new Date('2025-12-31T00:00:00Z'))).toBeNull()
-  })
-
-  it('revalidateFor: closed seasons are cached for a week, the running one for an hour', () => {
+describe('revalidateFor', () => {
+  it('closed seasons are cached for a week, the running one for an hour', () => {
     const now = new Date('2026-06-01T00:00:00Z')
     expect(revalidateFor(2024, now)).toBe(7 * 24 * 3600)
     expect(revalidateFor(2026, now)).toBe(3600)
@@ -47,6 +34,28 @@ describe('pure helpers', () => {
 })
 
 describe('queries', () => {
+  it('getNextRace returns the upcoming race of the current season', async () => {
+    fetchMock.mockImplementation(async () => ok(fixture('calendar')))
+    const next = await getNextRace(new Date('2025-03-17T10:00:00Z'))
+    expect(next?.round).toBe(2)
+    expect(requested()).toEqual(['/ergast/f1/current.json?limit=100&offset=0'])
+  })
+
+  it('getNextRace falls back to the next season when the current one is over', async () => {
+    fetchMock.mockImplementationOnce(async () => ok(fixture('calendar')))
+    fetchMock.mockImplementationOnce(async () =>
+      ok({ MRData: { total: '1', RaceTable: { Races: [{ season: '2026', round: '1', raceName: 'Australian Grand Prix', Circuit: { circuitId: 'albert_park', circuitName: 'Albert Park', Location: { lat: '-37.8', long: '144.9', locality: 'Melbourne', country: 'Australia' } }, date: '2026-03-08', time: '04:00:00Z' }] } } })
+    )
+    const next = await getNextRace(new Date('2025-12-31T00:00:00Z'))
+    expect(next?.season).toBe(2026)
+    expect(requested()[1]).toBe('/ergast/f1/2026.json?limit=100&offset=0')
+  })
+
+  it('getNextRace is null when there is no calendar at all', async () => {
+    fetchMock.mockImplementation(async () => ok({ MRData: { total: '0', RaceTable: { Races: [] } } }))
+    expect(await getNextRace(new Date())).toBeNull()
+  })
+
   it('getCalendar requests the season and returns typed races', async () => {
     fetchMock.mockResolvedValueOnce(ok(fixture('calendar')))
     const races = await getCalendar(2025)

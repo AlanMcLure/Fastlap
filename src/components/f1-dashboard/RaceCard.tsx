@@ -1,68 +1,51 @@
-import React from 'react';
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '../ui/Card';
+import Link from 'next/link'
 
-export interface RaceStats {
-    season: string;
-    round: string;
-    url: string;
-    raceName: string;
-    Circuit: {
-        circuitId: string;
-        url: string;
-        circuitName: string;
-        Location: {
-            lat: string;
-            long: string;
-            locality: string;
-            country: string;
-        };
-    };
-    date: string;
-    time: string;
-    FirstPractice: {
-        date: string;
-        time: string;
-    };
-    SecondPractice: {
-        date: string;
-        time: string;
-    };
-    ThirdPractice?: {
-        date: string;
-        time: string;
-    };
-    Qualifying: {
-        date: string;
-        time: string;
-    };
-    Sprint?: {
-        date: string;
-        time: string;
-    };
+import { raceStatus, type RaceStatus } from '@/lib/f1/calendar'
+import { formatRaceDay } from '@/lib/f1/format'
+import type { Race } from '@/lib/f1/schemas'
+
+const STATUS_LABEL: Record<RaceStatus, string> = {
+  finished: 'FINALIZADA',
+  'in-progress': 'EN CURSO',
+  upcoming: 'PENDIENTE',
 }
 
 interface RaceCardProps {
-    race: RaceStats;
+  race: Race
+  /** Highlights the race that comes next. */
+  isNext?: boolean
+  now?: Date
 }
 
-const RaceCard: React.FC<RaceCardProps> = ({ race }) => {
-    const { raceName, Circuit, date } = race;
-    const circuitName = Circuit?.circuitName;
-    const locality = Circuit?.Location?.locality;
-    const country = Circuit?.Location?.country;
+/** One race of the season calendar, linking to its results. */
+const RaceCard = ({ race, isNext = false, now = new Date() }: RaceCardProps) => {
+  const status = raceStatus(race, now)
+  const { locality, country } = race.Circuit.Location
 
-    return (
-        <Card className="bg-card rounded-lg overflow-hidden flex flex-col justify-between h-36 sm:h-48">
-            <CardHeader className="px-4 py-2">
-                <CardTitle className="text-lg font-semibold">{raceName}</CardTitle>
-            </CardHeader>
-            <CardContent className="px-4 py-2 flex-1">
-                <p className="text-base">{circuitName}</p>
-                <p className="text-sm text-muted-foreground">{locality}, {country}</p>
-                <p className="text-sm text-muted-foreground">{new Date(date).toLocaleDateString()}</p>
-            </CardContent>
-        </Card>
-    );
-};
+  return (
+    <Link
+      href={`/f1-dashboard/carrera/${race.season}/${race.round}`}
+      className={`group flex h-full flex-col justify-between gap-6 rounded-xl border bg-card p-5 transition-colors hover:border-display ${
+        isNext ? 'border-display' : 'border-border'
+      }`}>
+      <div>
+        <div className='flex items-center justify-between gap-2'>
+          <span className='label'>RONDA {String(race.round).padStart(2, '0')}</span>
+          <span className={`label ${status === 'in-progress' ? 'text-signal' : isNext ? 'text-display' : 'text-faint'}`}>
+            {status === 'in-progress' ? '● ' : ''}
+            {isNext && status === 'upcoming' ? 'PRÓXIMA' : STATUS_LABEL[status]}
+          </span>
+        </div>
+        <h3 className='mt-4 text-xl leading-snug text-display'>{race.raceName}</h3>
+        <p className='mt-1 text-sm text-muted-foreground'>
+          {locality}, {country}
+        </p>
+      </div>
+      <p className='label'>
+        <span className='text-foreground'>{formatRaceDay(race.date)}</span> · {race.Circuit.circuitName}
+      </p>
+    </Link>
+  )
+}
 
-export default RaceCard;
+export default RaceCard

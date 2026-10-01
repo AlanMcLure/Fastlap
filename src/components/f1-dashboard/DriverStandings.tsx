@@ -1,3 +1,5 @@
+'use client'
+
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import DataError from '@/components/f1-dashboard/DataError';

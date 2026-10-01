@@ -1,39 +1,50 @@
-'use client';
+import Link from 'next/link'
 
-import React, { useEffect, useState } from 'react';
-import axios from 'axios';
-import DriverStandings from '@/components/f1-dashboard/DriverStandings';
-import CountdownCard from '@/components/f1-dashboard/CountDownCard'
+import DataError from '@/components/f1-dashboard/DataError'
+import DriverStandings from '@/components/f1-dashboard/DriverStandings'
+import NextRaceCard from '@/components/f1-dashboard/NextRaceCard'
+import { getNextRace } from '@/lib/f1/queries'
+import type { Race } from '@/lib/f1/schemas'
 
-const DashboardPage: React.FC = () => {
-    const [nextRace, setNextRace] = useState<{ date: string, raceName: string, time: string } | null>(null);
+// Rendered per request: the status of each race (finished, next...) depends on the current time.
+export const dynamic = 'force-dynamic'
 
-    useEffect(() => {
-        const fetchNextRace = async () => {
-            try {
-                const response = await axios.get('/api/ergast/calendar?limit=1000');
-                const races = response.data.content;
-                const now = new Date();
-                const upcomingRaces = races.filter((race: any) => new Date(`${race.date}`) > now);
-                const nextRace = upcomingRaces[0]; // Get the first upcoming race
-                if (nextRace) {
-                    setNextRace({ date: nextRace.date, raceName: nextRace.raceName, time: nextRace.time });
-                }
-            } catch (error) {
-                console.error('Error fetching next race:', error);
-            }
-        };
+export const metadata = { title: 'F1 · FastLap' }
 
-        fetchNextRace();
-    }, []);
+const DashboardPage = async () => {
+  let nextRace: Race | null = null
+  let failed = false
 
-    return (
-        <div>
-            <h1 className="font-bold text-3xl md:text-4xl mb-4">Bienvenido al Dashboard de F1</h1>
-            {nextRace && <CountdownCard nextRace={nextRace} />}
-            <DriverStandings />
+  try {
+    nextRace = await getNextRace()
+  } catch (error) {
+    console.error('Could not load the next race', error)
+    failed = true
+  }
+
+  return (
+    <div className='space-y-8 px-4 pb-16 sm:px-6'>
+      <div>
+        <p className='label'>FÓRMULA 1</p>
+        <h1 className='mt-2 text-3xl font-bold text-display md:text-4xl'>Dashboard</h1>
+      </div>
+
+      {failed ? (
+        <DataError refresh />
+      ) : nextRace ? (
+        <NextRaceCard race={nextRace} />
+      ) : (
+        <div className='rounded-xl border border-border bg-card p-6'>
+          <p className='text-foreground'>La temporada ha terminado y el calendario de la siguiente aún no está publicado.</p>
+          <Link href='/f1-dashboard/carreras' className='label mt-4 inline-block text-display underline-offset-4 hover:underline'>
+            VER EL CALENDARIO
+          </Link>
         </div>
-    );
-};
+      )}
 
-export default DashboardPage;
+      <DriverStandings />
+    </div>
+  )
+}
+
+export default DashboardPage
