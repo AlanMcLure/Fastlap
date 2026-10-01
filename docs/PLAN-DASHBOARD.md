@@ -97,7 +97,7 @@ Servidor primero; sin datos inventados; tipado de extremo a extremo (Zod en la f
 | 7 | Hub de fin de semana de carrera | Hilo automático por GP con resultados y votación de Piloto del Día | ✅ |
 | 8 | Ligas de pronósticos en las comunidades | Pronóstico de podio y vuelta rápida (carrera y sprint), puntuación automática, reglas configurables | ✅ (ver nota) |
 | V2 | Rediseño de pantallas clave | Feed, tarjeta de post, comunidad, comentarios, logotipo (el hub de carrera va en la rebanada 7) | ✅ |
-| 9 | Datos en vivo (opcional) | Prototipo medido antes de comprometerse (§6) | ⏳ |
+| 9 | Datos en vivo (opcional) | Prototipo medido antes de comprometerse (§6) | ✅ prototipo con fuente simulada (ver nota); decisión pendiente |
 
 Antes de encender Premium: resolver R1.
 
@@ -139,3 +139,26 @@ Antes de encender Premium: resolver R1.
 - **Los puntos no se guardan:** se calculan al leer con los resultados oficiales, así que una corrección de resultados reescribe la tabla y no hay tarea de puntuación que mantener. Coste: cada visita a la liga lee los resultados de la temporada (con caché de Next y, para temporadas cerradas, la copia propia). Si hubiese mucha carga se guardaría una caché por carrera.
 - **Empates:** desempata el número de puestos exactos; si siguen iguales comparten posición (1, 1, 3).
 - **Pendiente:** ligas con invitación o privadas, histórico entre temporadas, notificaciones de cierre, pronóstico de la pole y de abandonos. La vuelta rápida depende de que Jolpica la incluya en los resultados de la temporada (si falta, ese acierto no puntúa); no verificado con datos reales.
+
+## Rebanada 9: prototipo de datos en vivo (resultado de la medición)
+
+**Qué se hizo:** la mitad del problema que se puede verificar aquí, la **entrega** de un directo, con una **fuente simulada** (carrera con pilotos inventados, safety car y bandera a cuadros). Piezas: estado neutro (`LiveState`), `LiveHub` (reparto en proceso, solo late mientras hay espectadores), ruta SSE `/api/live/stream`, torre de tiempos y mensajes de dirección de carrera en `/live`. Apagado por defecto (`LIVE_SIMULATION=true`). **No se escribió conexión con el feed real de F1**: el sandbox no llega a él y sus condiciones de uso siguen sin comprobarse (R4); escribir contra un formato no documentado sin poder probarlo habría sido adivinar.
+
+**Medidas** (`scripts/measure-live.mjs`, build de producción, una sola máquina con el generador de carga en la misma máquina; son órdenes de magnitud, no una prueba de carga real):
+
+| Espectadores | Tráfico por espectador | Salida total | Dispersión de reparto (p50 / p95) | CPU del servidor | Memoria |
+|---|---|---|---|---|---|
+| 1 | 1,8 KB/s (1 actualización/s, 1,8 KB cada una) | despreciable | – | 0,02 s en 20 s | ~108 MB |
+| 200 | 1,8 KB/s | 0,35 MB/s | 8 ms / – | 1,3 s en 20 s | +22 MB |
+| 500 | 1,8 KB/s | 0,9 MB/s | 13 / 18 ms | 1,5 s en 30 s (~5 %) | +35–45 MB durante la prueba (≈0,1 MB por conexión; medido en RSS, sujeto al recolector de basura) |
+
+- Sin espectadores el consumo es cero (no hay temporizador). Cap de 500 conexiones por proceso en la ruta (503 por encima).
+- Cada actualización lleva el estado completo (1,8 KB). Con deltas bajaría a unos pocos cientos de bytes; no merece la pena hasta que haya miles de espectadores.
+
+**Conclusiones sobre el esfuerzo:**
+1. **El reparto es la parte barata.** SSE sobre un proceso Node aguanta cientos de espectadores con CPU y memoria modestas; el resto (torre, mensajes, reconexión automática de `EventSource`) son ~600 líneas con tests.
+2. **El coste real y desconocido es la fuente**: leer el feed de F1 Live Timing (no documentado, formato cambiante, términos sin comprobar), traducirlo a `LiveState` y mantener ese adaptador cada vez que cambie. Esa parte no está medida y es donde está el riesgo (R4) y la mayor parte del mantenimiento.
+3. **Despliegue:** exige un proceso de larga vida (Docker/standalone, como ya usa el proyecto); no sirve en serverless/Vercel. Con más de una instancia haría falta un único lector del feed y Redis pub/sub entre instancias.
+4. **Valor frente a lo que ya existe:** f1-dash y f1-telemetry cubren la telemetría; el hueco propio es enlazar el directo con la comunidad (hilo, Piloto del Día, pronósticos puntuados en directo). Eso ya existe sin directo (rebanadas 7 y 8), y el directo solo lo mejoraría.
+
+**Decisión que necesito (D6):** ¿se sigue con una fuente real? Recomiendo **no** hasta tener (a) los términos del feed comprobados por escrito y (b) una máquina con acceso a internet para desarrollar y probar el adaptador contra sesiones reales. Mientras tanto el prototipo queda apagado y sirve de demo. Alternativa de bajo riesgo: usar `/live` solo como demo interna.
