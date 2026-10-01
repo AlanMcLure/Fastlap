@@ -5,7 +5,7 @@ import { ExtendedPost } from '@/types/db'
 import { useIntersection } from '@mantine/hooks'
 import { useInfiniteQuery, useQuery, useQueryClient } from '@tanstack/react-query'
 import axios from 'axios'
-import { FC, useEffect, useMemo, useRef, useState } from 'react'
+import { FC, useMemo, useRef, useState } from 'react'
 import Post from './Post'
 import { useSession } from 'next-auth/react'
 import { Button } from '@/components/ui/Button'
@@ -32,7 +32,6 @@ const PostFeed: FC<PostFeedProps> = ({ initialPosts, subredditName, username }) 
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [limit, setLimit] = useState(PAGINATION_RESULTS);
-  const [postsLoaded, setPostsLoaded] = useState(false);
   // const [posts, setPosts] = useState(initialPosts);
   const queryClient = useQueryClient();
 
@@ -91,15 +90,13 @@ const PostFeed: FC<PostFeedProps> = ({ initialPosts, subredditName, username }) 
     }
   };
 
-  useEffect(() => {
-    if (posts && posts.length > 0) {
-      setPostsLoaded(true);
-    }
-  }, [posts]);
+  // Derived, not state: a flag set in an effect arrives one render late and made the list jump.
+  const postsLoaded = posts.length > 0;
 
   return (
     <ul className='flex flex-col space-y-4'>
-        {isLoading && !postsLoaded && (
+        {/* only when the server sent nothing: a skeleton above server-rendered posts pushed them down and then away */}
+        {isLoading && initialPosts.length === 0 && (
           <li>
             <SkeletonCard />
           </li>

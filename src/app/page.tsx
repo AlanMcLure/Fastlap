@@ -4,8 +4,7 @@ import PremiumCard from '@/components/PremiumCard'
 import { PREMIUM_ENABLED, canAccessDashboard } from '@/lib/features'
 import CustomFeed from '@/components/homepage/CustomFeed'
 import GeneralFeed from '@/components/homepage/GeneralFeed'
-import NextRaceModule from '@/components/homepage/NextRaceModule'
-import { SkeletonCard } from '@/components/SkeletonCard'
+import NextRaceModule, { NextRacePlaceholder } from '@/components/homepage/NextRaceModule'
 import { buttonVariants } from '@/components/ui/Button'
 import { getAuthSession } from '@/lib/auth'
 import Link from 'next/link'
@@ -21,9 +20,12 @@ export default async function Home() {
       <div className='grid grid-cols-1 gap-y-6 py-8 md:grid-cols-3 md:gap-x-6'>
         {/* Next race, about FastLap and Premium */}
         <aside className='order-first space-y-4 md:order-last'>
-          <Suspense fallback={<SkeletonCard />}>
-            <NextRaceModule showDashboardLink={!!session && canAccessDashboard(session.user.role)} />
-          </Suspense>
+          {/* the wrapper keeps the stand-in and the streamed card at the same offset in the `space-y` stack */}
+          <div>
+            <Suspense fallback={<NextRacePlaceholder />}>
+              <NextRaceModule showDashboardLink={!!session && canAccessDashboard(session.user.role)} />
+            </Suspense>
+          </div>
 
           <Link
             href='/pronosticos'

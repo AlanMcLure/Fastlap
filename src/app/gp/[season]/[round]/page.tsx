@@ -32,7 +32,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { season: rawSeason, round: rawRound } = await params
   const season = parse(rawSeason)
   const round = parse(rawRound)
-  const fallback: Metadata = { title: 'Fin de semana de carrera' }
+  const fallback: Metadata = {
+    title: 'Fin de semana de carrera',
+    description: 'Hilo del fin de semana, resultado y votación de Piloto del Día de este Gran Premio en FastLap.',
+  }
   if (!Number.isInteger(season) || !Number.isInteger(round)) return fallback
   try {
     const race = (await getCalendar(season)).find((r) => r.round === round)

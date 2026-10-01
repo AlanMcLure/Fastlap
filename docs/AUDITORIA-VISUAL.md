@@ -141,3 +141,25 @@ No probado: inicio de sesión real con Google (sin credenciales) y subida de ima
 **Ya estaba bien:** `lang="es"`, `prefers-reduced-motion`, objetivos táctiles (regla `target-size` de WCAG 2.2 sin avisos), indicador de foco en todos los controles recorridos, títulos de página únicos, etiquetas en los botones de icono.
 
 **Pendiente (necesita personas):** prueba con lector de pantalla (NVDA/VoiceOver) en los flujos de pronóstico y denuncia, ampliación al 200 % y modo de contraste forzado, y revisar con usuarios reales los textos que leen las ayudas técnicas.
+
+## 9. Rendimiento y PWA (A9, segunda parte)
+
+**Método.** Lighthouse 12 (móvil con la limitación de red y CPU simulada por defecto, y escritorio) sobre el build de producción (`next start`) en este entorno, con datos de prueba, en 8 páginas públicas y sin sesión. Son medidas de laboratorio en una sola máquina y sin red real: sirven para detectar regresiones y problemas de estructura, no para prometer cifras a usuarios reales. Todo se midió contra `localhost`, así que el tiempo de respuesta del servidor y la latencia de red no son los de producción.
+
+**Antes → después** (móvil, mediana de las páginas): rendimiento 93–96 → 95–97; el peor LCP pasó de 3,3 s a 2,6–2,9 s; CLS de 0,061 (inicio) a 0. Accesibilidad 100 y SEO 100 en todas (el GP bajaba a 91). Mejores prácticas 96–100 (la única nota es un error de red por una imagen de prueba de `utfs.io`, bloqueada en este entorno).
+
+**Corregido**
+| Problema | Causa | Arreglo |
+|---|---|---|
+| Salto de diseño de 0,06 en el inicio y las comunidades | `PostFeed` pintaba un esqueleto de carga *encima* de las publicaciones que el servidor ya había enviado, y lo quitaba un instante después (la bandera `postsLoaded` se activaba en un efecto, un renderizado tarde) | el esqueleto solo sale si no hay publicaciones iniciales; `postsLoaded` pasa a ser un valor derivado, sin estado ni efecto |
+| Salto de 16 px al llegar el módulo «Próximo GP» | la maqueta provisional tenía otro desplazamiento (`space-y`) y otra altura que la tarjeta real | `NextRacePlaceholder` con la altura medida (242 / 266 px) dentro de un contenedor propio |
+| Imágenes de publicación sin tamaño reservado | `<img>` sin dimensiones | caja fija 16:9 con `object-cover` |
+| Meta descripción del GP ausente en Lighthouse y en rastreadores sin JavaScript | Next.js «streamea» los metadatos al `<body>` cuando `generateMetadata` espera datos | `htmlLimitedBots: /.*/`: metadatos siempre en `<head>`; además descripción de reserva si falla la API de F1 |
+
+**Probado y descartado:** `experimental.inlineCss` (CSS en el HTML): no mejoró LCP y subió el tamaño transferido.
+
+**No se puede arreglar sin cambiar la arquitectura:** la caché atrás/adelante del navegador (`bf-cache`) queda bloqueada porque las páginas se sirven con `Cache-Control: no-store`. Todas leen la sesión en la cabecera, así que son dinámicas; hacerlas estáticas exigiría sacar la sesión de la cabecera (cargarla en el cliente).
+
+**PWA.** `manifest.webmanifest` (nombre, iconos 192/512 y maskable, colores, accesos directos a Pronósticos y Notificaciones), iconos de puntos propios en `public/icons/`, `theme-color` negro, icono para iOS, y `public/sw.js`: las páginas siempre van a la red (son personales y cambian a cada momento) y, **sin conexión, se muestra `offline.html`**; los archivos de compilación (`/_next/static`) y los iconos se guardan para siempre; `/api/*` (sesión, votos, directo), otros orígenes y peticiones que no son GET no se tocan. `sw.js` se sirve con `no-cache`. Comprobado en navegador: se registra y activa, la caché solo contiene lo previsto (nunca páginas ni API), con el servidor parado cualquier ruta muestra la página sin conexión y «Reintentar» recarga, y Chrome no da errores de instalabilidad (solo «modo incógnito» en la prueba).
+
+**Pendiente.** Probar la instalación en un móvil real y bajo HTTPS (obligatorio en producción; `localhost` cuenta como seguro); notificaciones push; modo sin conexión con contenido (lectura de lo ya visto) si se considera útil; medir con datos de campo (Core Web Vitals reales) una vez publicado.

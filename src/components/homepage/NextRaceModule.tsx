@@ -9,6 +9,16 @@ const withTimeout = <T,>(promise: Promise<T>, ms: number) =>
   Promise.race([promise, new Promise<never>((_, reject) => setTimeout(() => reject(new Error('timeout')), ms))])
 
 /**
+ * Stand-in while the module streams in. It has the height of the finished card (measured: 242 px on
+ * phones, 266 px from md up), so the feed below does not jump when the card arrives (CLS).
+ */
+export const NextRacePlaceholder = () => (
+  <div className='h-[242px] rounded-xl border border-border bg-card p-5 md:h-[266px]' aria-hidden='true'>
+    <div className='h-3 w-1/2 animate-pulse rounded bg-muted' />
+  </div>
+)
+
+/**
  * Next race with its countdown, for the home page. The social home must never wait for
  * (or fail because of) the F1 API: it gives up after a few seconds and renders nothing.
  */

@@ -68,8 +68,9 @@ const Post: FC<PostProps> = ({
           {preview.text && <p className='mt-2 line-clamp-3 text-muted-foreground'>{preview.text}</p>}
         </Link>
 
+        {/* the image sits in a fixed 16:9 box: its space is reserved before it loads (no layout shift) */}
         {preview.imageUrl && (
-          <Link href={href} className='mt-4 block' tabIndex={-1} aria-hidden='true'>
+          <Link href={href} className='mt-4 block aspect-video max-h-72 w-full overflow-hidden rounded-lg border border-border bg-muted' tabIndex={-1} aria-hidden='true'>
             {/* user-uploaded image from any allowed host: a plain <img> avoids next/image domain restrictions */}
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
@@ -77,7 +78,7 @@ const Post: FC<PostProps> = ({
               alt={preview.imageAlt ?? ''}
               loading='lazy'
               referrerPolicy='no-referrer'
-              className='max-h-72 w-full rounded-lg border border-border object-cover'
+              className='h-full w-full object-cover'
             />
           </Link>
         )}

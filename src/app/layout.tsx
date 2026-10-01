@@ -1,5 +1,6 @@
-import type { Metadata } from 'next'
+import type { Metadata, Viewport } from 'next'
 import Navbar from '@/components/Navbar'
+import ServiceWorkerRegister from '@/components/ServiceWorkerRegister'
 import { siteUrl } from '@/lib/seo'
 import { cn } from '@/lib/utils'
 import { Doto, Space_Grotesk, Space_Mono } from 'next/font/google'
@@ -21,7 +22,12 @@ export const metadata: Metadata = {
   applicationName: 'FastLap',
   openGraph: { type: 'website', siteName: 'FastLap', locale: 'es_ES', title: 'FastLap', description },
   twitter: { card: 'summary_large_image' },
+  icons: { apple: '/icons/apple-touch-icon.png' },
+  appleWebApp: { capable: true, title: 'FastLap', statusBarStyle: 'black-translucent' },
 }
+
+// The app is dark by default: the browser chrome matches it.
+export const viewport: Viewport = { themeColor: '#000000', colorScheme: 'dark light' }
 
 // Applies the saved theme before first paint so there is no light/dark flash. Dark is the default.
 const themeScript = `try{document.documentElement.dataset.theme=localStorage.getItem('theme')==='light'?'light':'dark'}catch(e){document.documentElement.dataset.theme='dark'}`
@@ -57,6 +63,7 @@ export default function RootLayout({
           </main>
         </Providers>
         <Toaster />
+        <ServiceWorkerRegister />
       </body>
     </html>
   )
