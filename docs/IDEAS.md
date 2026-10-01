@@ -12,7 +12,7 @@ Banco de ideas, ordenado por valor frente a esfuerzo. Estado: ⏳ pendiente · �
 | A4 | **Perfil público con estadísticas de pronósticos**: puntos, aciertos exactos, mejor carrera, racha, insignia por ganar una liga. | Da identidad y motivo para volver; los datos ya se calculan. | ✅ estadísticas e insignias (campeón global y de liga en temporadas cerradas); ⏳ historial de pronósticos con detalle, comparar con otro usuario |
 | A5 | **Clasificación global de pronósticos** por temporada. | Enseña la liga a todos y atrae a las comunidades. | ✅ `/pronosticos` con selector de temporada y listado de ligas; ⏳ clasificación mensual o por equipos |
 | A6 | **Comparador de pilotos** cara a cara con las estadísticas ya calculadas y gráfico monocromo. | Contenido compartible. | ⏳ |
-| A7 | **Búsqueda mejor**: publicaciones, usuarios y pilotos, con atajo de teclado. | Hoy solo busca comunidades. | ⏳ |
+| A7 | **Búsqueda mejor**: publicaciones, usuarios y pilotos, con atajo de teclado. | Hoy solo busca comunidades. | ✅ comunidades, usuarios, títulos de publicaciones y pilotos, atajo `/`, teclado; ⏳ buscar dentro del texto de las publicaciones, página de resultados completa, búsqueda por similitud |
 | A8 | **Imágenes para compartir**: resumen visual de un GP o de tu posición en la liga. | Tráfico externo. | 🚧 hechas las tarjetas de post, comunidad y GP; ⏳ resumen del resultado de un GP y de tu posición en la liga |
 | A9 | **Accesibilidad, rendimiento y PWA**: contraste, teclado, Lighthouse, instalable en el móvil. | Calidad general. | ⏳ |
 

@@ -20,8 +20,12 @@ const ThemeToggle = () => {
       onClick={toggle}
       className='label whitespace-nowrap rounded-full px-3 py-2 transition-colors hover:text-display focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring'
       aria-label='Cambiar entre tema claro y oscuro'>
-      <span className='when-dark'>[ CLARO ]</span>
-      <span className='when-light'>[ OSCURO ]</span>
+      {/* phones: a short mark, so the search keeps room in the header */}
+      <span className='sm:hidden' aria-hidden='true'>[◐]</span>
+      <span className='hidden sm:inline'>
+        <span className='when-dark'>[ CLARO ]</span>
+        <span className='when-light'>[ OSCURO ]</span>
+      </span>
     </button>
   )
 }
