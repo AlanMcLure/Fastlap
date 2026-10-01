@@ -1,6 +1,6 @@
 import type { PredictionKind } from '@/lib/league'
 
-export type NotificationType = 'POST_COMMENT' | 'COMMENT_REPLY' | 'PREDICTION_CLOSING' | 'PREDICTION_SCORED'
+export type NotificationType = 'POST_COMMENT' | 'MOD_REMOVED' | 'COMMENT_REPLY' | 'PREDICTION_CLOSING' | 'PREDICTION_SCORED'
 
 export interface NewNotification {
   userId: string

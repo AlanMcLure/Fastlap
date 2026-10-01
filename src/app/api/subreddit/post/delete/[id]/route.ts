@@ -1,6 +1,6 @@
 import { getAuthSession } from '@/lib/auth'
 import { db } from '@/lib/db'
-import { invalidatePostCache } from '@/lib/redis'
+import { deletePost } from '@/lib/content'
 import { z } from 'zod';
 
 export async function DELETE(
@@ -27,15 +27,7 @@ export async function DELETE(
       return new Response('Forbidden', { status: 403 });
     }
 
-    await db.comment.updateMany({
-      where: { postId: id },
-      data: { replyToId: null },
-    })
-
-    await db.post.delete({
-      where: { id },
-    })
-    await invalidatePostCache(id)
+    await deletePost(id)
 
     return new Response('OK')
   } catch (error) {

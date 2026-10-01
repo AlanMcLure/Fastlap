@@ -8,7 +8,7 @@ export default function robots(): MetadataRoute.Robots {
     rules: {
       userAgent: '*',
       allow: '/',
-      disallow: ['/api/', '/settings', '/notificaciones', '/f1-dashboard', '/live', '/premium', '/sign-in', '/sign-up', '/not-authorized'],
+      disallow: ['/api/', '/settings', '/notificaciones', '/admin', '/f1-dashboard', '/live', '/premium', '/sign-in', '/sign-up', '/not-authorized'],
     },
     sitemap: absoluteUrl('/sitemap.xml'),
   }

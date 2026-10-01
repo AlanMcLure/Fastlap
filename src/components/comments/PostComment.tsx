@@ -17,6 +17,7 @@ import { Textarea } from '../ui/Textarea'
 import { toast } from '../../hooks/use-toast'
 import { useSession } from 'next-auth/react'
 import DeleteCommentButton from '../DeleteCommentButton'
+import ReportCommentButton from '../ReportCommentButton'
 
 type ExtendedComment = Comment & {
   votes: CommentVote[]
@@ -109,7 +110,10 @@ const PostComment: FC<PostCommentProps> = ({
             Responde
           </Button>
         </div>
-        <DeleteCommentButton commentId={comment.id} authorId={comment.authorId} />
+        <div className='flex items-center'>
+          <ReportCommentButton commentId={comment.id} authorId={comment.authorId} />
+          <DeleteCommentButton commentId={comment.id} authorId={comment.authorId} />
+        </div>
       </div>
 
       {isReplying ? (

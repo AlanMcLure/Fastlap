@@ -8,6 +8,7 @@ import Link from 'next/link'
 import { FC, useMemo } from 'react'
 import PostVoteClient from './post-vote/PostVoteClient'
 import DeletePostButton from './DeletePostButton'
+import ReportPostMenu from './ReportPostMenu'
 import { useQueryClient } from '@tanstack/react-query'
 
 type PartialVote = Pick<Vote, 'type'>
@@ -59,6 +60,7 @@ const Post: FC<PostProps> = ({
             {formatTimeToNow(new Date(post.createdAt))}
           </p>
           <DeletePostButton postId={post.id} authorId={post.authorId} invalidatePostsCache={invalidatePostsCache} />
+          <ReportPostMenu postId={post.id} authorId={post.authorId} />
         </div>
 
         <Link href={href} className='mt-3 block'>

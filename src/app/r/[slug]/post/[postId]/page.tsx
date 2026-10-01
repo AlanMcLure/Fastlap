@@ -12,6 +12,7 @@ import { Suspense } from 'react'
 import Link from 'next/link'
 import type { Metadata } from 'next'
 import JsonLd from '@/components/JsonLd'
+import ReportPostMenu from '@/components/ReportPostMenu'
 import { postPreview } from '@/lib/postPreview'
 import { absoluteUrl, DESCRIPTION_MAX, truncate } from '@/lib/seo'
 
@@ -23,7 +24,7 @@ const getPostMeta = (postId: string) =>
   db.post.findUnique({
     where: { id: postId },
     select: {
-      id: true, title: true, content: true, createdAt: true, updatedAt: true,
+      id: true, title: true, content: true, createdAt: true, updatedAt: true, authorId: true,
       author: { select: { username: true } },
       subreddit: { select: { name: true } },
       _count: { select: { comments: true } },
@@ -99,6 +100,7 @@ const SubRedditPostPage = async ({ params }: SubRedditPostPageProps) => {
         />
       )}
       <article className='rounded-xl border border-border bg-card p-5 sm:p-6'>
+        <div className='flex items-start justify-between gap-3'>
         <p className='text-xs text-muted-foreground'>
           <Link className='hover:text-display hover:underline underline-offset-2' href={`/u/${author}`}>
             u/{author}
@@ -106,6 +108,8 @@ const SubRedditPostPage = async ({ params }: SubRedditPostPageProps) => {
           <span className='px-1.5' aria-hidden='true'>·</span>
           {formatTimeToNow(new Date(post?.createdAt ?? cachedPost.createdAt))}
         </p>
+        <ReportPostMenu postId={post?.id ?? cachedPost.id} authorId={post?.authorId ?? meta?.authorId ?? ''} />
+        </div>
         <h1 className='mt-3 text-2xl leading-snug text-display sm:text-3xl'>{post?.title ?? cachedPost.title}</h1>
 
         <div className='mt-4'>

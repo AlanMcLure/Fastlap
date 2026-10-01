@@ -18,3 +18,16 @@ export const commentRatelimit = new Ratelimit({
   limiter: Ratelimit.slidingWindow(10, '1 m'),
   prefix: 'rl:comment',
 })
+
+/** Reports: a few per minute and a daily cap, so the queue cannot be flooded. */
+export const reportRatelimit = new Ratelimit({
+  redis,
+  limiter: Ratelimit.slidingWindow(5, '1 m'),
+  prefix: 'rl:report',
+})
+
+export const reportDailyRatelimit = new Ratelimit({
+  redis,
+  limiter: Ratelimit.slidingWindow(30, '1 d'),
+  prefix: 'rl:report-day',
+})

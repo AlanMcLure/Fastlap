@@ -74,6 +74,7 @@ model User {
   dotdVotes     DriverOfDayVote[]
   predictions   Prediction[]
   notifications Notification[]
+  reportsMade   Report[]
 }
 
 model Subreddit {
@@ -114,6 +115,7 @@ model Post {
   comments    Comment[]
   votes       Vote[]
   raceWeekend RaceWeekend?
+  reports     Report[]
 
   @@index([authorId])
   @@index([subredditId])
@@ -133,6 +135,7 @@ model Comment {
   replies   Comment[] @relation("ReplyTo")
 
   votes     CommentVote[]
+  reports   Report[]
   commentId String?
 
   @@index([authorId])
@@ -239,6 +242,7 @@ model Prediction {
 
 enum NotificationType {
   POST_COMMENT
+  MOD_REMOVED
   COMMENT_REPLY
   PREDICTION_CLOSING
   PREDICTION_SCORED
@@ -259,4 +263,56 @@ model Notification {
 
   @@unique([userId, dedupeKey])
   @@index([userId, readAt, createdAt])
+}
+
+enum ReportReason {
+  SPAM
+  ABUSE
+  OFF_TOPIC
+  OTHER
+}
+
+enum ReportStatus {
+  OPEN
+  RESOLVED
+  DISMISSED
+}
+
+/// A user's report of a post or a comment (see src/lib/moderation.ts). `targetKey`
+/// ("post:<id>" / "comment:<id>") makes one report per user and target. Reports go away
+/// with the content (cascade); what moderators did is kept in ModerationLog.
+model Report {
+  id         String       @id @default(cuid())
+  reporter   User         @relation(fields: [reporterId], references: [id], onDelete: Cascade)
+  reporterId String
+  targetKey  String
+  post       Post?        @relation(fields: [postId], references: [id], onDelete: Cascade)
+  postId     String?
+  comment    Comment?     @relation(fields: [commentId], references: [id], onDelete: Cascade)
+  commentId  String?
+  reason     ReportReason
+  details    String?
+  status     ReportStatus @default(OPEN)
+  resolvedAt DateTime?
+  createdAt  DateTime     @default(now())
+
+  @@unique([reporterId, targetKey])
+  @@index([status, createdAt])
+  @@index([targetKey])
+}
+
+/// What moderators decided, kept after the reported content is gone.
+model ModerationLog {
+  id          String   @id @default(cuid())
+  moderatorId String
+  /// REMOVE_POST | REMOVE_COMMENT | DISMISS
+  action      String
+  targetKey   String
+  /// Start of the content or title, for the log.
+  excerpt     String
+  authorId    String?
+  reportCount Int
+  createdAt   DateTime @default(now())
+
+  @@index([createdAt])
 }

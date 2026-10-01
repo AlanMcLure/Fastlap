@@ -61,6 +61,12 @@ export function UserAccountNav({ user }: UserAccountNavProps) {
           <Link href='/settings'>Ajustes</Link>
         </DropdownMenuItem>
 
+        {user.role === 'ADMIN' && (
+          <DropdownMenuItem asChild>
+            <Link href='/admin/denuncias'>Moderación</Link>
+          </DropdownMenuItem>
+        )}
+
         <DropdownMenuItem asChild>
           <Link href='/faqs'>FAQs</Link>
         </DropdownMenuItem>
