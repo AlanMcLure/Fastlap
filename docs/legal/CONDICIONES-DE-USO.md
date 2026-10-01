@@ -8,7 +8,7 @@ FastLap lo ofrece [PENDIENTE: titular, NIF y domicilio, como en el [Aviso legal]
 
 ## 2. Tu cuenta
 
-- Debes tener **al menos 14 años** y declaras que la información que das es veraz.
+- Debes tener **al menos 14 años**: al crear la cuenta lo declaras y aceptas estas condiciones y la Política de privacidad, y guardamos la fecha y la versión aceptadas. Declaras también que la información que das es veraz.
 - El inicio de sesión se hace con tu cuenta de Google. Eres responsable de lo que se haga con tu cuenta; avísanos si sospechas un uso no autorizado.
 - Puedes cambiar tu nombre de usuario y tu imagen en Ajustes. No puedes hacerte pasar por otra persona ni elegir un nombre que infrinja derechos de terceros u ofenda.
 - Una persona, una cuenta: no crees cuentas adicionales para evadir una retirada de contenido o manipular votos, pronósticos o clasificaciones.

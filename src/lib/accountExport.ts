@@ -20,7 +20,7 @@ export function exportFileName(username: string | null, now = new Date()): strin
 export async function collectUserData(userId: string, now = new Date()) {
   const user = await db.user.findUnique({
     where: { id: userId },
-    select: { id: true, name: true, email: true, username: true, image: true, role: true, createdAt: true, updatedAt: true },
+    select: { id: true, name: true, email: true, username: true, image: true, role: true, termsAcceptedAt: true, termsVersion: true, createdAt: true, updatedAt: true },
   })
   if (!user) return null
 

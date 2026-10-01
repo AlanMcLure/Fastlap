@@ -19,7 +19,7 @@ export const FAQS: Faq[] = [
   {
     question: '¿Cómo me registro?',
     answer:
-      'Pulsa «Iniciar sesión» en la esquina superior derecha y entra con tu cuenta de Google. Si es tu primera vez, la cuenta se crea sola y se te asigna un nombre de usuario que puedes cambiar en Ajustes.',
+      'Pulsa «Iniciar sesión» en la esquina superior derecha y entra con tu cuenta de Google. Si es tu primera vez, tienes que marcar la casilla que confirma que tienes al menos 14 años y aceptas las condiciones; la cuenta se crea sola y se te asigna un nombre de usuario que puedes cambiar en Ajustes.',
   },
   {
     question: '¿Cuesta algo usar FastLap?',

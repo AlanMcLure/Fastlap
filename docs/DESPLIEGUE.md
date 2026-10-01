@@ -83,6 +83,7 @@ En el entorno de desarrollo (sin acceso a Google, UploadThing, Stripe ni a la AP
 - [ ] Instalar como app en un móvil real; página sin conexión.
 - [ ] Copia de seguridad hecha **y restaurada** en una base de prueba.
 - [ ] Administrador creado; `CRON_SECRET` y tarea programada funcionando; copia de datos de F1 hecha.
+- [ ] Aplicar el esquema (`prisma db push` / servicio `migrate`): hay dos columnas nuevas en `User` (`termsAcceptedAt`, `termsVersion`).
 - [ ] Si la base ya tenía cuentas: `node scripts/scrub-google-tokens.mjs` (simulación) y luego `--apply` para borrar los tokens de Google antiguos.
 - [ ] Textos legales revisados por un profesional y publicados (borradores en `docs/legal/`; ver su README con los huecos técnicos).
 - [ ] Prueba con un lector de pantalla y con algunos aficionados reales.

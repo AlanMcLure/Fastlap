@@ -2,6 +2,8 @@ import { db } from '@/lib/db'
 import { PrismaAdapter } from '@auth/prisma-adapter'
 import { UserRole } from '@prisma/client'
 import { stripProviderTokens } from '@/lib/accountTokens'
+import { canSignIn, CONSENT_COOKIE, TERMS_VERSION } from '@/lib/consent'
+import { cookies } from 'next/headers'
 import { nanoid } from 'nanoid'
 import NextAuth, { type NextAuthConfig } from 'next-auth'
 import GoogleProvider from 'next-auth/providers/google'
@@ -20,6 +22,8 @@ export const authOptions: NextAuthConfig = {
   },
   pages: {
     signIn: '/sign-in',
+    // Auth errors (e.g. AccessDenied when the age declaration is missing) show on the sign-in page.
+    error: '/sign-in',
   },
   providers: [
     GoogleProvider({
@@ -27,7 +31,31 @@ export const authOptions: NextAuthConfig = {
       clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
     }),
   ],
+  events: {
+    // The account is only created after signIn() verified the declaration below.
+    async createUser({ user }) {
+      if (!user.id) return
+      await db.user.update({
+        where: { id: user.id },
+        data: { termsAcceptedAt: new Date(), termsVersion: TERMS_VERSION },
+      })
+    },
+  },
   callbacks: {
+    // New accounts need the age declaration and the acceptance of the terms (cookie set by the form).
+    async signIn({ user }) {
+      try {
+        const existing = user.email
+          ? await db.user.findUnique({ where: { email: user.email }, select: { id: true } })
+          : null
+        const jar = await cookies()
+        return canSignIn(!!existing, jar.get(CONSENT_COOKIE)?.value)
+      } catch (error) {
+        console.error('Sign-in consent check failed:', error)
+        return false
+      }
+    },
+
     async session({ token, session }) {
       if (token) {
         session.user.id = token.id

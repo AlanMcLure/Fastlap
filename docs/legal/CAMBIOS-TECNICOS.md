@@ -2,6 +2,29 @@
 
 Registro de lo que se cambió en el código a raíz de los «huecos técnicos» del [README](README.md), con **cómo estaba antes** para poder revertirlo o explicárselo al abogado. Más reciente primero.
 
+## 4. Edad mínima y aceptación de las condiciones (hueco 4)
+
+**Antes**
+- Iniciar sesión con Google creaba la cuenta sin preguntar nada. Las condiciones y la política decían «debes tener al menos 14 años», pero no había ninguna declaración ni constancia de aceptación.
+- `User` no guardaba nada sobre esto; `pages` de Auth.js solo definía `signIn`, y los errores de Auth.js iban a su página genérica `/api/auth/error`.
+
+**Ahora**
+- **Casilla obligatoria** en el formulario de acceso (`src/components/UserAuthForm.tsx`, usado en `/sign-in` y `/sign-up`, también en el modal): «Tengo al menos 14 años y acepto las Condiciones de uso y la Política de privacidad». El botón de Google está desactivado hasta marcarla.
+- Al pulsar, el formulario pone una cookie propia, técnica y de 10 minutos (`fastlap-consent=<versión>`). En `signIn` (`src/lib/auth.ts`) una **cuenta nueva solo se crea si esa cookie es válida** (`canSignIn` en `src/lib/consent.ts`); quien ya tiene cuenta entra sin más. Si falta, se rechaza y se vuelve a `/sign-in?error=AccessDenied` con un mensaje («Para crear tu cuenta debes confirmar…»).
+- Al crearse el usuario (`events.createUser`) se guardan **`User.termsAcceptedAt`** (fecha y hora) y **`User.termsVersion`** (hoy `1`, constante `TERMS_VERSION`). Se incluyen en la exportación de datos.
+- Hay que **aplicar el esquema** (`prisma db push`): dos columnas nuevas, opcionales, sin migración de datos.
+- `error: '/sign-in'` en las páginas de Auth.js: los errores de acceso se muestran en nuestra página.
+- Tests: `src/lib/consent.test.ts` (reglas). Se probó con un navegador real contra un proveedor OAuth falso local (no con Google): casilla desactivada/activada, alta con casilla (se guarda fecha y versión), intento directo sin casilla (rechazado, sin crear usuario, mensaje visible) y usuario existente sin casilla (entra).
+
+**Límites conocidos (para el abogado)**
+- **Es una declaración, no una verificación.** Google no nos da la fecha de nacimiento (solo identificador, correo, nombre y foto), así que no se puede comprobar la edad. Una verificación real (documento, tarjeta, estimación facial) pediría más datos y un tercero, y la AEPD recomienda proporcionalidad: para un foro sin contenido para adultos suele bastar la declaración. El abogado debe confirmarlo.
+- La cookie la pone el navegador, así que alguien con conocimientos puede saltarse la casilla. No es una barrera de seguridad, solo deja constancia de lo que se declaró.
+- Las **cuentas anteriores** a este cambio tienen `termsAcceptedAt` en `NULL`; no se les pide nada. No hay flujo de «reaceptar» si cambian las condiciones (subir `TERMS_VERSION` solo afecta a cuentas nuevas).
+- El texto de la casilla **no enlaza** las condiciones ni la política: aún no hay páginas públicas (siguen siendo borradores). Al publicarlas hay que añadir los enlaces en `CONSENT_TEXT`/`UserAuthForm`.
+- Si alguien declara una edad falsa, la política ya dice que se eliminará la cuenta si se detecta; no hay herramienta para ello salvo el borrado manual por un administrador.
+
+**Para revertir:** quitar la casilla y el cookie de `UserAuthForm.tsx`, el callback `signIn` y el evento `createUser` de `auth.ts` y (opcional) las dos columnas del esquema.
+
 ## 3. Exportación de datos (hueco 2, segunda parte)
 
 **Antes**

@@ -61,7 +61,7 @@ Puedes ejercer los derechos de **acceso, rectificación, supresión, oposición,
 
 ## 7. Menores
 
-Para registrarte debes tener **al menos 14 años**. Si eres menor de 14 años, no uses la web; si detectamos una cuenta de una persona menor de esa edad, la eliminaremos.
+Para registrarte debes tener **al menos 14 años**: al crear la cuenta lo declaras marcando una casilla y guardamos la fecha en que lo hiciste y la versión de las condiciones aceptadas. No podemos comprobar tu edad. Si eres menor de 14 años, no uses la web; si detectamos una cuenta de una persona menor de esa edad, la eliminaremos.
 
 ## 8. Seguridad
 
