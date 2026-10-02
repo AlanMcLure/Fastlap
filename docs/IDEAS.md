@@ -15,6 +15,7 @@ Banco de ideas, ordenado por valor frente a esfuerzo. Estado: ⏳ pendiente · �
 | A7 | **Búsqueda mejor**: publicaciones, usuarios y pilotos, con atajo de teclado. | Hoy solo busca comunidades. | ✅ comunidades, usuarios, títulos de publicaciones y pilotos, atajo `/`, teclado; ⏳ buscar dentro del texto de las publicaciones, página de resultados completa, búsqueda por similitud |
 | A8 | **Imágenes para compartir**: resumen visual de un GP o de tu posición en la liga. | Tráfico externo. | ✅ tarjetas con el resultado del GP (podio y vuelta rápida), la liga, la clasificación global y el perfil, que además son la imagen al compartir el enlace, con botones «Compartir» y «Descargar imagen»; ⏳ tarjeta de un pronóstico concreto (con tus picks), formato vertical para historias, tarjeta de la clasificación del campeonato de F1 |
 | A9 | **Accesibilidad, rendimiento y PWA**: contraste, teclado, Lighthouse, instalable en el móvil. | Calidad general. | ✅ accesibilidad (axe, teclado, contraste, reflujo a 320 px; ver AUDITORIA-VISUAL §8); ✅ rendimiento (Lighthouse 95–100, CLS ≈ 0) y PWA instalable con página sin conexión (ver AUDITORIA-VISUAL §9); ⏳ prueba con lector de pantalla, instalación en móvil real bajo HTTPS, notificaciones push |
+| A10 | **Minijuegos diarios** para atraer visitas: «Adivina el piloto» (estilo Wordle, sin cuenta, racha y resultado compartible). Siguientes: luces de salida (reflejos) y un juego de montar equipo. | Entrada sin cuenta y hábito diario. | ✅ Adivina el piloto (`/juegos`) · ⏳ resto |
 
 ## B. Más grandes, con decisión previa
 

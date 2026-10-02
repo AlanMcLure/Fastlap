@@ -19,6 +19,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: absoluteUrl('/'), changeFrequency: 'hourly', priority: 1 },
     { url: absoluteUrl('/faqs'), changeFrequency: 'monthly', priority: 0.3 },
     { url: absoluteUrl('/pronosticos'), changeFrequency: 'daily', priority: 0.7 },
+    { url: absoluteUrl('/juegos'), changeFrequency: 'weekly', priority: 0.6 },
+    { url: absoluteUrl('/juegos/adivina-piloto'), changeFrequency: 'daily', priority: 0.7 },
   ]
 
   try {

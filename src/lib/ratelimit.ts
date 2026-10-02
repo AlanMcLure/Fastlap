@@ -45,3 +45,10 @@ export const accountExportRatelimit = new Ratelimit({
   limiter: Ratelimit.slidingWindow(3, '1 h'),
   prefix: 'rl:account-export',
 })
+
+/** Daily mini-games are public (no account): limit per IP so the guess endpoint cannot be hammered. */
+export const gameRatelimit = new Ratelimit({
+  redis,
+  limiter: Ratelimit.slidingWindow(60, '1 m'),
+  prefix: 'rl:game',
+})

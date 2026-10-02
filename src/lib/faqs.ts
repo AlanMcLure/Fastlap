@@ -61,6 +61,11 @@ export const FAQS: Faq[] = [
       'Sí, en «Ajustes», al final de la página: «Eliminar mi cuenta». Se borran tu perfil, votos, suscripciones, pronósticos y notificaciones. Tus publicaciones y comentarios no se borran: quedan como «Usuario eliminado», así que si quieres quitarlos, bórralos antes. No se puede deshacer.',
   },
   {
+    question: '¿Qué son los juegos y necesito cuenta?',
+    answer:
+      'En «Juegos» hay minijuegos de F1 gratuitos y sin premios. Por ahora, «Adivina el piloto»: un piloto secreto de la parrilla cada día, con 8 intentos y pistas. No hace falta cuenta: tu partida y tu racha se guardan solo en tu navegador, y no se envían a FastLap.',
+  },
+  {
     question: '¿Cómo cambio mi nombre de usuario o mi foto?',
     answer: 'En «Ajustes», dentro del menú de tu cuenta. El nombre de usuario es único y admite letras, números y guiones bajos.',
   },

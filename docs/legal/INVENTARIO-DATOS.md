@@ -19,10 +19,11 @@ Estado: verificado contra el código a fecha de esta versión. Es la base de la 
 | 11 | **Denuncias**: quién denuncia, qué, motivo y texto libre (≤ 300 caracteres) | Usuario | `Report` | Moderación | Administradores | Interés legítimo en moderar el servicio (6.1.f) y obligaciones de la normativa de servicios digitales | Hasta resolver; se borran con el contenido |
 | 12 | **Registro de moderación**: qué se hizo, extracto del contenido, autor, número de denuncias | Administradores | `ModerationLog` | Trazabilidad de decisiones | Administradores | Interés legítimo / obligación legal | [PENDIENTE] |
 | 13 | **Imágenes subidas** (perfil y publicaciones) | Usuario | UploadThing (tercero) | Alojar imágenes | Públicas por su URL | Contrato | Hasta que se borren de la publicación; **no se borran de UploadThing automáticamente** |
-| 14 | **Límites de uso** (anti-abuso): contadores por identificador de usuario, ventanas de segundos o minutos | Sistema | Redis (Upstash) | Evitar abusos | Nadie | Interés legítimo (seguridad) | Segundos a 1 día |
+| 14 | **Límites de uso** (anti-abuso): contadores por identificador de usuario o, en los minijuegos públicos (sin cuenta), **por dirección IP**, en ventanas de segundos o minutos | Sistema | Redis (Upstash) | Evitar abusos | Nadie | Interés legítimo (seguridad) | Segundos a 1 día |
 | 15 | **Preferencia de tema** (claro/oscuro) | Usuario | `localStorage` del navegador | Recordar el tema | Nadie | Exención (preferencia solicitada por el usuario) | Hasta que el usuario lo borre |
 | 16 | **Registros del servidor** (accesos, errores) | Alojamiento | [PENDIENTE: proveedor] — pueden incluir la **dirección IP** | Seguridad y diagnóstico | Titular / proveedor | Interés legítimo | [PENDIENTE] |
 | 17 | **Vista previa de enlaces**: al pegar un enlace en una publicación, el servidor lo visita para leer su título e imagen | Usuario | No se guarda como dato personal | Servicio | — | Contrato | — |
+| 18 | **Progreso de los minijuegos** (intentos del día, racha, partidas ganadas) | Usuario, al jugar | Solo el navegador (`localStorage`, claves `fastlap-adivina-piloto*`); **no se envía ni se guarda en el servidor**, y no hay cuenta ni ranking | Guardar tu partida | Solo tú, en tu dispositivo | Necesario para el servicio pedido (exención de consentimiento) | Hasta que borres los datos del navegador |
 
 No se usa **analítica**, **publicidad**, **seguimiento** ni perfilado. No hay correos electrónicos de la aplicación (solo se usa el correo para identificar la cuenta). No se recogen datos de categorías especiales.
 

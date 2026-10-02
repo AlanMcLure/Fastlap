@@ -12,6 +12,7 @@
 | Si la base ya tenía cuentas: `node scripts/scrub-google-tokens.mjs` (primero sin `--apply`) | `docs/legal/CAMBIOS-TECNICOS.md` §1.2 |
 | **Enviar el correo a Jolpica** (`admin@jolpi.ca`) si habrá publicidad o cobro: los datos son CC BY-NC-SA, uso no comercial | `docs/DESPLIEGUE.md` §7, `docs/IDEAS.md` |
 | **Decisiones de producto** abiertas: noticias (B4), colores de equipo (B5), datos en vivo reales (B6) | `docs/IDEAS.md` |
+| **Segundo minijuego**: describir la idea «tipo futbol11» (no pude abrir la web) y elegir entre ese, las luces de salida u otro | `docs/IDEAS.md` A10 |
 | **Datos del titular** y el resto de `[PENDIENTE]` de los textos legales (`grep -rn PENDIENTE docs/legal`) | `docs/legal/README.md` |
 
 ## 2. Necesita un profesional
@@ -36,6 +37,7 @@ Todo lo que depende de servicios reales se verificó contra un simulador local:
 - **Google OAuth real** (se probó con un proveedor falso: casilla de edad, creación de cuenta, usuarios existentes).
 - **UploadThing, Stripe** y **Redis/Postgres de producción**.
 - `docker compose up` con un `.env` real, y la instalación como app (PWA) en un móvil real por HTTPS.
+- **«Adivina el piloto»** con la parrilla real de Jolpica: se probó entera en navegador (partida ganada y perdida, persistencia, accesibilidad), pero con datos simulados (pilotos inventados, sin número de coche).
 - La **pantalla** de Ajustes (borrado y exportación) en navegador: solo está comprobada por tipos y tests de datos.
 
 ## 5. Límites conocidos (decididos, no son fallos)

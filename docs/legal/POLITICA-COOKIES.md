@@ -12,6 +12,7 @@ FastLap **solo usa cookies y almacenamiento técnicos, necesarios para el funcio
 | `authjs.csrf-token` (en HTTPS: `__Host-authjs.csrf-token`) | Cookie propia, técnica | Protección contra falsificación de peticiones en el inicio de sesión | Sesión |
 | `authjs.callback-url` (en HTTPS: `__Secure-authjs.callback-url`) | Cookie propia, técnica | Volver a la página en la que estabas tras iniciar sesión | Sesión |
 | `fastlap-consent` | Cookie propia, técnica | Indicar al servidor que marcaste la casilla de edad y condiciones al crear la cuenta | 10 minutos |
+| `fastlap-adivina-piloto` y `fastlap-adivina-piloto-stats` | Almacenamiento local (`localStorage`), técnico | Guardar tus intentos del día y tu racha en el minijuego «Adivina el piloto» (a petición tuya al jugar). No salen de tu dispositivo | Hasta que los borres |
 | `theme` | Almacenamiento local (`localStorage`), técnico | Recordar si prefieres el tema claro u oscuro | Hasta que lo borres |
 | Caché del navegador (service worker) | Almacenamiento local, técnico | Guardar archivos estáticos de la aplicación (iconos, scripts) para que cargue más rápido y una página «sin conexión» | Hasta que se actualice la aplicación o lo borres |
 

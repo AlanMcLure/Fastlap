@@ -27,6 +27,9 @@ const Navbar = async () => {
           <Link href='/pronosticos' className={`${navLink} hidden sm:inline`}>
             PRONÓSTICOS
           </Link>
+          <Link href='/juegos' className={`${navLink} hidden md:inline`}>
+            JUEGOS
+          </Link>
           {session?.user && canAccessDashboard(session.user.role) && (
             <Link href='/f1-dashboard' className={`${navLink} hidden min-[360px]:inline`}>
               F1

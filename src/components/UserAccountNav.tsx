@@ -58,6 +58,10 @@ export function UserAccountNav({ user }: UserAccountNavProps) {
           <Link href='/pronosticos'>Pronósticos</Link>
         </DropdownMenuItem>
 
+        <DropdownMenuItem asChild>
+          <Link href='/juegos'>Juegos</Link>
+        </DropdownMenuItem>
+
         {canAccessDashboard(user.role) && (
           <DropdownMenuItem asChild>
             <Link href='/f1-dashboard'>Datos de F1</Link>
