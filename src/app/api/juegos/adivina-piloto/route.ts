@@ -3,7 +3,6 @@ import { z } from 'zod'
 import { dateKeyMadrid, feedbackFor, isSolved, MAX_ATTEMPTS, pickDaily } from '@/lib/games/driverGuess'
 import { loadGamePool } from '@/lib/games/driverGuessData'
 import { gameRatelimit } from '@/lib/ratelimit'
-import { withTimeout } from '@/lib/timeout'
 
 const Body = z.object({
   driverId: z.string().min(1).max(64),
@@ -20,9 +19,8 @@ const Body = z.object({
 export async function POST(req: Request) {
   try {
     const ip = req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || 'unknown'
-    // If Redis is down or slow the game keeps working: a rate limit must not take a free game offline.
-    const limited = await withTimeout(gameRatelimit.limit(ip), 800).then((r) => !r.success, () => false)
-    if (limited) return new Response('Too many requests', { status: 429 })
+    const { success } = await gameRatelimit.limit(ip)
+    if (!success) return new Response('Too many requests', { status: 429 })
 
     const { driverId, date, attempt } = Body.parse(await req.json())
 

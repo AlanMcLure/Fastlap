@@ -174,6 +174,7 @@ Inventario de mejoras detectadas tras revisar el código. Agrupadas por impacto 
 ### ✅ 20. Sin rate limiting
 - **Problema**: votar/comentar/crear posts no tiene rate limit. Un script puede ametrallar.
 - **Acción**: ~~añadir `@upstash/ratelimit`~~. **Hecho** — [src/lib/ratelimit.ts](src/lib/ratelimit.ts) con 3 limitadores sobre el Redis existente: votos (10/10s), posts (5/min), comentarios (10/min). Devuelve 429 con mensaje en español.
+- **Octubre de 2026:** Redis retirado (Upstash borró la base inactiva y la app no toleraba su ausencia). Los límites pasan a memoria con la misma interfaz y desaparece la caché de posts de #14. Motivos y cuándo volver a añadirlo: [docs/IDEAS.md](docs/IDEAS.md) § D.
 
 ### ✅ 21. Posible SSRF en `/api/link`
 - **Archivo**: [src/app/api/link/route.ts](src/app/api/link/route.ts)

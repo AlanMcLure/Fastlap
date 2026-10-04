@@ -33,7 +33,6 @@ Para ofrecer el servicio usamos proveedores que tratan datos por nuestra cuenta 
 
 - **Alojamiento de la aplicación:** [PENDIENTE: proveedor, país].
 - **Base de datos:** [PENDIENTE: proveedor, región].
-- **Upstash (Redis):** contadores de uso y copia temporal de publicaciones populares.
 - **UploadThing:** alojamiento de las imágenes que subes.
 - **Google:** el inicio de sesión se hace con tu cuenta de Google. Google trata tus datos conforme a su propia política; nosotros solo recibimos tu identificador, correo, nombre y foto.
 - **Stripe:** solo si se activa en el futuro la suscripción Premium (hoy no está disponible).

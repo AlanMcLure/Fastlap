@@ -13,11 +13,9 @@ const required = (names, why) => {
 required(['DATABASE_URL'], 'PostgreSQL connection string')
 if (!has('NEXTAUTH_SECRET') && !has('AUTH_SECRET')) problems.push('NEXTAUTH_SECRET (or AUTH_SECRET) is missing: generate one with `openssl rand -base64 32`')
 required(['GOOGLE_CLIENT_ID', 'GOOGLE_CLIENT_SECRET'], 'Google sign-in')
-required(['REDIS_URL', 'REDIS_SECRET'], 'Upstash Redis REST URL and token')
 required(['UPLOADTHING_SECRET', 'UPLOADTHING_APP_ID'], 'image uploads')
 
 if (has('DATABASE_URL') && !/^postgres(ql)?:\/\//.test(env.DATABASE_URL)) problems.push('DATABASE_URL must start with postgresql://')
-if (has('REDIS_URL') && !/^https?:\/\//.test(env.REDIS_URL)) problems.push('REDIS_URL must be the REST URL of Upstash (https://…), not a redis:// URL')
 if (has('NEXTAUTH_SECRET') && env.NEXTAUTH_SECRET.length < 24) warnings.push('NEXTAUTH_SECRET is short: use at least 32 random characters')
 
 if (!has('AUTH_URL')) problems.push('AUTH_URL is missing: the public https URL of the site (self-hosted deployments need it)')

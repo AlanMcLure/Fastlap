@@ -6,7 +6,6 @@ const url = process.env.TEST_DATABASE_URL
 if (url) process.env.DATABASE_URL = url
 
 vi.mock('server-only', () => ({}))
-vi.mock('@/lib/redis', () => ({ invalidatePostCache: vi.fn(async () => undefined) }))
 
 describe.skipIf(!url)('deleteAccount (Postgres)', () => {
   let db: typeof import('@/lib/db').db

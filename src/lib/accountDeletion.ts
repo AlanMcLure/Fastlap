@@ -4,7 +4,6 @@ import { nanoid } from 'nanoid'
 
 import { anonymizeActor, DELETED_USER } from '@/lib/accountRules'
 import { db } from '@/lib/db'
-import { invalidatePostCache } from '@/lib/redis'
 
 /**
  * Deletes an account. What the person wrote stays, attributed to the shared "eliminado"
@@ -16,8 +15,6 @@ import { invalidatePostCache } from '@/lib/redis'
 export async function deleteAccount(userId: string): Promise<boolean> {
   const user = await db.user.findUnique({ where: { id: userId }, select: { id: true, username: true } })
   if (!user) return false
-
-  const postIds = (await db.post.findMany({ where: { authorId: userId }, select: { id: true } })).map((p) => p.id)
 
   await db.$transaction(
     async (tx) => {
@@ -51,8 +48,6 @@ export async function deleteAccount(userId: string): Promise<boolean> {
     { timeout: 30_000 }
   )
 
-  // The hot-post cache holds the author's username.
-  await Promise.all(postIds.map((id) => invalidatePostCache(id).catch(() => undefined)))
   return true
 }
 

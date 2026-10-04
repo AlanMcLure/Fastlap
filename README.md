@@ -32,9 +32,6 @@ GOOGLE_CLIENT_SECRET=
 
 UPLOADTHING_SECRET=
 UPLOADTHING_APP_ID=
-
-REDIS_URL=
-REDIS_SECRET=
 ```
 
 En el archivo .env.example tienes los datos de ejemplo de uso.

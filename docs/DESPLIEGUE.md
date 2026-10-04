@@ -8,7 +8,6 @@ Estado: el repositorio está **preparado** para desplegar (imagen Docker probada
 |---|---|---|
 | **Proceso Node de larga vida** (Docker) | La web, la tarea de sincronización y el directo (`/live`, desactivado por defecto) | VPS con Docker, Fly.io, Railway, Render… Cualquier sitio que ejecute una imagen Docker y dé HTTPS |
 | **PostgreSQL 16** | Todos los datos | Gestionado (Neon, Supabase, RDS…) o el contenedor `db` de `docker-compose` (solo pruebas) |
-| **Redis con API REST de Upstash** | Límites de uso, caché de publicaciones populares, bloqueo de notificaciones | Upstash (plan gratuito suficiente al principio). Un Redis normal **no sirve**: el cliente habla HTTP |
 | **Google OAuth** | Inicio de sesión (único método) | Consola de Google Cloud |
 | **UploadThing** | Imágenes de perfil y publicaciones | Cuenta de UploadThing |
 | **Stripe** | Solo si activas Premium (hoy oculto) | Cuenta de Stripe |
@@ -27,7 +26,6 @@ Compruébalas con `node scripts/check-env.mjs` (o `yarn check-env`; dentro de la
 | `AUTH_URL` | sí en Docker | URL pública `https://tu-dominio` |
 | `AUTH_TRUST_HOST` | sí en Docker | `true` |
 | `GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET` | sí | URI de redirección autorizada: `https://tu-dominio/api/auth/callback/google` |
-| `REDIS_URL` / `REDIS_SECRET` | sí | URL REST y token de Upstash |
 | `UPLOADTHING_SECRET` / `UPLOADTHING_APP_ID` | sí | UploadThing sigue en la v4 (la v7 usa un único `UPLOADTHING_TOKEN`) |
 | `NEXT_PUBLIC_SITE_URL` | **recomendada, en tiempo de compilación** | `https://tu-dominio`. Sin ella, las URL canónicas, el sitemap y las tarjetas para compartir dirán `localhost` |
 | `NEXT_PUBLIC_PREMIUM_ENABLED` | no (compilación) | `false` por defecto. A `true` muestra Premium y exige Stripe **y licencia comercial de los datos** |
@@ -40,7 +38,7 @@ Compruébalas con `node scripts/check-env.mjs` (o `yarn check-env`; dentro de la
 
 ## 3. Primer despliegue, paso a paso
 
-1. **Crea las cuentas** (base de datos, Upstash, Google, UploadThing) y rellena `.env` a partir de `.env.example`.
+1. **Crea las cuentas** (base de datos, Google, UploadThing) y rellena `.env` a partir de `.env.example`.
 2. `node scripts/check-env.mjs` hasta que diga `OK`.
 3. **Construye** la imagen: `docker compose build` (o `docker build --build-arg NEXT_PUBLIC_SITE_URL=https://tu-dominio -t fastlap .`).
 4. **Crea el esquema** en la base de datos: `docker compose --profile tools run --rm migrate`. Usa `prisma db push` (así se creó la base de producción): lee lo que muestra, rechaza cambios destructivos salvo que añadas `--accept-data-loss`, y no deja un historial de migraciones.
@@ -55,17 +53,17 @@ Compruébalas con `node scripts/check-env.mjs` (o `yarn check-env`; dentro de la
 
 ## 4. Operación
 
-- **Salud:** `GET /api/health` → 200 `ok` o `degraded` (Redis caído: sigue funcionando sin límites de uso ni caché) y 503 `down` (sin base de datos). La imagen incluye `HEALTHCHECK`, que asume el puerto 3000.
+- **Salud:** `GET /api/health` → 200 `ok` o 503 `down` (sin base de datos). La imagen incluye `HEALTHCHECK`, que asume el puerto 3000.
 - **Registros:** salen por la salida estándar (`docker logs`). No hay seguimiento de errores externo (ver sección 7).
 - **Copias de seguridad:** diaria con `pg_dump -Fc "$DATABASE_URL" > fastlap-$(date +%F).dump`, guardada fuera del servidor. Restaurar: `pg_restore -d "$DATABASE_URL" --clean fastlap-AAAA-MM-DD.dump`. Los servicios gestionados suelen traer copias automáticas: actívalas y **prueba una restauración** antes de depender de ellas.
 - **Actualizar:** `git pull`, `docker compose build`, `docker compose --profile tools run --rm migrate` (si cambió el esquema), `docker compose up -d`. **Volver atrás:** vuelve a la etiqueta anterior de la imagen; los cambios de esquema no se deshacen solos (por eso conviene la copia previa).
-- **Un solo proceso:** el directo (si lo activas) y el bloqueo de notificaciones funcionan por proceso. Con varias réplicas, el directo tendría una fuente por réplica (ver `docs/PLAN-DASHBOARD.md`, rebanada 9).
+- **Un solo proceso:** los límites de uso, el directo (si lo activas) y la sincronización de notificaciones viven en la memoria del proceso. Con varias réplicas, cada una contaría por su cuenta y el directo tendría una fuente por réplica: antes de escalar, ver `docs/IDEAS.md` § D (Redis) y `docs/PLAN-DASHBOARD.md`, rebanada 9.
 - **CI:** `.github/workflows/ci.yml` ejecuta tipos, lint, tests, build y construye las dos imágenes en cada pull request.
 
 ## 5. Lo que se ha verificado aquí
 
 En el entorno de desarrollo (sin acceso a Google, UploadThing, Stripe ni a la API real de F1):
-- La **imagen de producción se construye y arranca** como usuario no root, con la base de datos y Redis reales en local: `/api/health` da `ok`; con Redis parado, `degraded` (HTTP 200); con la base parada, `down` (HTTP 503).
+- La **imagen de producción se construye y arranca** como usuario no root, con la base de datos real en local: `/api/health` da `ok`; con la base parada, `down` (HTTP 503). (Esta prueba se hizo cuando la app aún usaba Redis, retirado en octubre de 2026.)
 - Las **URL canónicas y el sitemap usan el `NEXT_PUBLIC_SITE_URL`** pasado al compilar, y las cabeceras de seguridad y `/sw.js` (sin caché) salen como se espera.
 - La **imagen de migración crea todas las tablas** en una base de datos vacía.
 - `check-env` falla con un entorno vacío y pasa con uno completo.

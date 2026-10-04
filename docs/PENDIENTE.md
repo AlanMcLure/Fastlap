@@ -6,7 +6,7 @@
 
 | Qué | Dónde está el detalle |
 |---|---|
-| Elegir **hosting** y crear las cuentas: Postgres (Neon u otro), Upstash Redis, Google OAuth, UploadThing (Stripe solo si se activa Premium) | `docs/DESPLIEGUE.md` |
+| Elegir **hosting** y crear las cuentas: Postgres (Neon u otro), Google OAuth, UploadThing (Stripe solo si se activa Premium) | `docs/DESPLIEGUE.md` |
 | Definir `NEXT_PUBLIC_SITE_URL` y los secretos en el hosting (nunca en el repositorio) | `docs/DESPLIEGUE.md` §3 |
 | Aplicar el esquema a la base real (`prisma db push` o el servicio `migrate`): incluye las columnas nuevas `termsAcceptedAt` y `termsVersion` | `docs/DESPLIEGUE.md` |
 | Si la base ya tenía cuentas: `node scripts/scrub-google-tokens.mjs` (primero sin `--apply`) | `docs/legal/CAMBIOS-TECNICOS.md` §1.2 |
@@ -35,11 +35,11 @@ Todo lo que depende de servicios reales se verificó contra un simulador local:
 
 - **Jolpica-F1 real** (en el entorno de trabajo no había salida a esa API). Cuando haya internet: `node scripts/capture-f1-fixtures.mjs` y ejecutar los tests de contrato.
 - **Google OAuth real** (se probó con un proveedor falso: casilla de edad, creación de cuenta, usuarios existentes).
-- **UploadThing, Stripe** y **Redis/Postgres de producción**.
+- **UploadThing, Stripe** y **Postgres de producción**.
 - `docker compose up` con un `.env` real, y la instalación como app (PWA) en un móvil real por HTTPS.
 - **«Adivina el piloto»** con la parrilla real de Jolpica: se probó entera en navegador (partida ganada y perdida, persistencia, accesibilidad), pero con datos simulados (pilotos inventados, sin número de coche).
 - La **pantalla** de Ajustes (borrado y exportación) en navegador: solo está comprobada por tipos y tests de datos.
 
 ## 5. Límites conocidos (decididos, no son fallos)
 
-`bf-cache` desactivado (páginas `no-store`), sin CSP, `db push` en vez de migraciones, sin feed real de directo (solo simulador), notificaciones solo dentro de la app, y las instancias múltiples no son compatibles con el directo ni con el bloqueo de notificaciones (una sola instancia).
+`bf-cache` desactivado (páginas `no-store`), sin CSP, `db push` en vez de migraciones, sin feed real de directo (solo simulador), notificaciones solo dentro de la app, y una sola instancia: los límites de uso, el directo y la sincronización de notificaciones viven en memoria (sin Redis desde octubre de 2026; cuándo volver a añadirlo, en `docs/IDEAS.md` § D).

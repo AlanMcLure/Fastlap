@@ -61,7 +61,6 @@ Registro de lo que se cambió en el código a raíz de los «huecos técnicos» 
   - **Se borra:** el usuario (perfil, correo, nombre, foto, rol), sus cuentas de acceso y sesiones, votos de publicaciones y comentarios, suscripciones, pronósticos, votos de Piloto del Día, notificaciones y las denuncias que hizo.
   - **Se desvincula:** las comunidades que creó quedan sin creador (`creatorId = null`); en `ModerationLog`, el autor sale (`null`) y, si era el moderador, se sustituye por el usuario eliminado.
   - **Notificaciones de otros** que citaban su nombre («u/ana ha respondido…») pasan a «Un usuario ha respondido…».
-  - **Caché Redis** de sus publicaciones populares: se invalida.
 - **Reglas** (`src/lib/accountRules.ts`): una cuenta ADMIN no puede borrarse (hay que quitarle el rol antes, para no dejar la web sin administrador); los nombres `eliminado`, `fastlap`, `sistema`, `admin`, `administrador` y `moderador` están reservados en `/api/username`.
 - **Tests:** `accountRules.test.ts` (reglas) y `accountDeletion.test.ts` (integración contra Postgres real; se salta sin `TEST_DATABASE_URL`). Se probó contra un Postgres local con el esquema de `prisma db push`.
 

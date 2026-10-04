@@ -8,7 +8,7 @@ import { loadOutcomes } from '@/lib/leagueData'
 import {
   closingBody, closingKey, closingSoon, recentRace, scoredBody, scoredKey, type NewNotification,
 } from '@/lib/notifications'
-import { redis } from '@/lib/redis'
+import { RateLimit } from '@/lib/ratelimit'
 
 /** Stores notifications; duplicates (same user and dedupe key) are skipped. Never throws: a notification must not break the action that caused it. */
 export async function createNotifications(items: NewNotification[]) {
@@ -20,21 +20,17 @@ export async function createNotifications(items: NewNotification[]) {
   }
 }
 
-const SYNC_EVERY_SECONDS = 600
+/** One sync per user every 10 minutes (in memory: the app runs as one instance). */
+const syncThrottle = new RateLimit(1, '10 m')
 
 /**
  * Generates the time-based notifications of a user: "predictions close soon" for the next race of
  * the leagues they take part in, and "you scored N points" for recent races. There is no scheduler,
- * so it runs when the user's bell polls, at most once every 10 minutes (Redis lock), and is
- * idempotent thanks to the dedupe keys.
+ * so it runs when the user's bell polls, at most once every 10 minutes, and is idempotent thanks to
+ * the dedupe keys (so a restart that forgets the throttle only costs one extra run).
  */
 export async function syncLeagueNotifications(userId: string, now = new Date()) {
-  try {
-    const locked = await redis.set(`notif:sync:${userId}`, '1', { nx: true, ex: SYNC_EVERY_SECONDS })
-    if (!locked) return
-  } catch {
-    return // without the lock every poll would recompute: better to skip
-  }
+  if (!(await syncThrottle.limit(userId)).success) return
 
   try {
     const leagues = await db.predictionLeague.findMany({

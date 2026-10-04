@@ -45,7 +45,7 @@ describe('postPreview', () => {
     expect(postPreview(doc([{ type: 'image', data: { file: { url: 'http://x/a.png' } } }])).imageUrl).toBeUndefined()
   })
 
-  it('accepts the JSON string kept in the Redis cache', () => {
+  it('accepts the content as a JSON string', () => {
     expect(postPreview(JSON.stringify(doc([{ type: 'paragraph', data: { text: 'desde la caché' } }]))).text).toBe('desde la caché')
   })
 

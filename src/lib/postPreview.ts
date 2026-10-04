@@ -45,7 +45,7 @@ function blockTexts(block: Block): string[] {
 
 /**
  * What the feed card shows of a post: the start of its text and its first image.
- * Accepts the raw EditorJS JSON (or a JSON string, as cached in Redis) and never throws.
+ * Accepts the raw EditorJS JSON (or the same JSON as a string) and never throws.
  */
 export function postPreview(content: unknown, maxChars = 280): PostPreview {
   let value = content

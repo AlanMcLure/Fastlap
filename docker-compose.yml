@@ -3,7 +3,7 @@
 #   docker compose up -d --build                 the app on http://localhost:3000
 #   docker compose --profile tools run --rm migrate   apply the database schema (first deploy and after schema changes)
 #   docker compose --profile local up -d db      optional PostgreSQL for local trials (production: a managed one such as Neon)
-# Redis must be an Upstash-compatible REST endpoint (REDIS_URL/REDIS_SECRET): use Upstash's free tier.
+# Run ONE instance of the app: rate limits, the live feed and the notification throttle live in memory.
 # NEXT_PUBLIC_* values are baked in at build time: change them in .env and rebuild.
 services:
   fastlap:

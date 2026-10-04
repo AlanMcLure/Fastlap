@@ -32,11 +32,39 @@ Banco de ideas, ordenado por valor frente a esfuerzo. Estado: ⏳ pendiente · �
 ## C. Sin código, pero críticas
 
 - ✅ **Borradores legales** (`docs/legal/`: aviso legal, privacidad, cookies, condiciones, normas e inventario de datos verificado contra el código). Pendiente: datos del titular, revisión profesional y decisiones técnicas. Hechos: embebidos, tokens de Google, baja de cuenta y exportación de datos (ver `docs/legal/CAMBIOS-TECNICOS.md`); edad mínima (declaración con casilla); falta solo el punto de avisos de retirada.
-- ✅ **Despliegue preparado** (imagen Docker verificada, comprobación de salud, validación del entorno, CI, guía en `DESPLIEGUE.md`). Falta desplegar de verdad: elegir hosting y crear las cuentas (base de datos, Upstash, Google, UploadThing).
+- ✅ **Despliegue preparado** (imagen Docker verificada, comprobación de salud, validación del entorno, CI, guía en `DESPLIEGUE.md`). Falta desplegar de verdad: elegir hosting y crear las cuentas (base de datos, Google, UploadThing).
 - ✅ **FAQs reescritas** con lo que la app hace de verdad (antes hablaban de una sección «Resultados» y un botón «Registrarse» que no existen); ahora salen de `src/lib/faqs.ts` y se publican también como datos estructurados. Revisarlas cada vez que cambie una función.
 - **Probar con aficionados reales** (cinco conversaciones valen más que otra funcionalidad): el plan se apoya en hipótesis.
 - **Cerrar lo externo**: correo a Jolpica por la licencia comercial (lo envía el autor), capturar fixtures reales desde una máquina con internet, probar de verdad Google OAuth, UploadThing (v4), Docker y Stripe.
-- **Despliegue**: elegir hosting (el directo y el cron de sincronización piden un proceso de larga vida), base de datos y Redis de producción.
+- **Despliegue**: elegir hosting (el directo y el cron de sincronización piden un proceso de larga vida) y base de datos de producción.
+
+## D. Infraestructura aparcada
+
+### Redis (retirado en octubre de 2026)
+
+**Por qué se quitó.** La base gratuita de Upstash se borró sola por inactividad, y con ella caían ver publicaciones, votar, comentar, publicar, denunciar, pronosticar y borrar o exportar la cuenta: los límites de uso y la caché no toleraban que Redis faltase. Con una sola instancia y el tráfico actual no aportaba nada que Postgres o la memoria del proceso no den, y era un servicio, una cuenta, dos variables y un encargado del tratamiento más.
+
+**Qué hacía y qué lo sustituye hoy:**
+
+| Uso | Antes (Redis) | Ahora |
+|---|---|---|
+| Límites de uso (votos, publicaciones, comentarios, denuncias, pronósticos, Piloto del Día, borrado y exportación de cuenta, minijuego por IP) | `@upstash/ratelimit`, ventana deslizante compartida | `src/lib/ratelimit.ts`: misma ventana deslizante, en memoria del proceso. Se pierde al reiniciar (aceptable para anti-abuso) |
+| Caché de publicaciones con votos (`post:<id>`) | Hash en Redis leído por la página del post | Nada: la página lee de Postgres por clave primaria, que es igual de rápido a esta escala. Además evita datos desfasados (el recuento ya dio un bug) |
+| Una sincronización de notificaciones de liga por usuario cada 10 min | `SET NX EX` en Redis | Un `RateLimit(1, '10 m')` en memoria. Si se pierde al reiniciar, como mucho se recalcula una vez (las notificaciones son idempotentes) |
+
+**Cuándo volver a planteárselo** (cualquiera de estas):
+
+1. **Más de una instancia de la app** (escalado horizontal, varias réplicas, serverless como Vercel). Los límites en memoria se multiplicarían por el número de instancias y el bloqueo de notificaciones dejaría de ser único. *Alternativa sin Redis:* una tabla `RateLimitHit` en Postgres o `pg_advisory_lock`; Redis gana si hay mucho tráfico de escritura.
+2. **Datos en vivo reales (B6)** con varias instancias: un único lector del feed y **Redis pub/sub** para repartir los mensajes (ver `docs/PLAN-DASHBOARD.md`, rebanada 9, y `src/lib/live/hub.ts`).
+3. **Postgres se convierte en cuello de botella** en lecturas muy repetidas (portada, hilos de GP en directo con miles de visitas): entonces sí compensa una caché, mejor por página o por consulta que la antigua caché por voto.
+4. **Colas de trabajos** (correos de notificación, imágenes, sincronizaciones largas) con reintentos: BullMQ o similar necesita un Redis normal.
+
+**Cómo volver a añadirlo sin repetir el fallo:**
+
+- Mantener la interfaz `limit(id) → { success }` de `src/lib/ratelimit.ts` y cambiar solo la implementación; los endpoints no se tocan.
+- **Fallar abierto**: si Redis no responde (con un tiempo máximo corto, ~800 ms), dejar pasar la petición. Un servicio auxiliar nunca debe tumbar la app; `/api/health` lo puede reportar como `degraded`.
+- Ojo con el plan gratuito de Upstash: **borra las bases inactivas**. En producción, plan de pago o Redis propio junto a la app (con un VPS, un contenedor `redis` en `docker-compose`; el cliente `@upstash/redis` habla HTTP, así que con Redis propio habría que usar `ioredis` y `rate-limiter-flexible` o similar).
+- Si vuelve a guardar datos de usuarios (contadores por id o IP, copias de publicaciones), actualizar el inventario y la política de privacidad (`docs/legal/`): es otro encargado del tratamiento.
 
 ## Orden recomendado
 

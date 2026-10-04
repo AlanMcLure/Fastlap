@@ -8,7 +8,7 @@ Documento corto para llevar a una primera consulta de revisión. Acompáñalo de
 - Acceso **solo con Google**; el usuario elige un nombre público y puede cambiarlo. No hay publicidad, analítica ni pagos (Premium existe en el código pero está desactivado).
 - Gratuita, sin premios ni dinero en los pronósticos.
 - Titular: persona física [PENDIENTE: confirmar si autónomo, particular o futura sociedad]. **No está desplegada ni abierta al público.**
-- Proveedores previstos: base de datos Postgres (Neon u otro), Redis (Upstash), subida de imágenes (UploadThing), alojamiento [PENDIENTE], Google (inicio de sesión). Datos de F1 de Jolpica-F1 (licencia CC BY-NC-SA 4.0).
+- Proveedores previstos: base de datos Postgres (Neon u otro), subida de imágenes (UploadThing), alojamiento [PENDIENTE], Google (inicio de sesión). Datos de F1 de Jolpica-F1 (licencia CC BY-NC-SA 4.0).
 
 ## 2. Qué ya está hecho en el código (para que no se pague por revisarlo dos veces)
 
@@ -35,8 +35,8 @@ Detalle y cómo estaba antes: [CAMBIOS-TECNICOS.md](CAMBIOS-TECNICOS.md).
 ### B. Protección de datos (RGPD / LOPDGDD)
 4. ¿Las bases jurídicas propuestas (contrato, interés legítimo en moderación y seguridad) son correctas para cada tratamiento del inventario?
 5. ¿Es obligatorio llevar un registro de actividades de tratamiento y nombrar un delegado de protección de datos? ¿Hace falta una evaluación de impacto?
-6. **Encargados del tratamiento**: ¿qué contratos o cláusulas (art. 28) hay que tener con la base de datos, Redis, UploadThing y el alojamiento? ¿Basta aceptar sus condiciones estándar?
-7. **Transferencias fuera del EEE** (Google, UploadThing, Upstash, EE. UU.): ¿qué mecanismo documentar y qué decir en la política?
+6. **Encargados del tratamiento**: ¿qué contratos o cláusulas (art. 28) hay que tener con la base de datos, UploadThing y el alojamiento? ¿Basta aceptar sus condiciones estándar?
+7. **Transferencias fuera del EEE** (Google, UploadThing, EE. UU.): ¿qué mecanismo documentar y qué decir en la política?
 8. **Plazos de conservación**: ¿qué plazo razonable para el registro de decisiones de moderación, las denuncias y las copias de seguridad?
 9. **Anonimización al borrar la cuenta**: las publicaciones y comentarios se conservan sin el nombre. ¿Es suficiente como supresión, dado que el texto puede contener datos personales que escribió la propia persona? ¿Hay que ofrecer también borrar ese texto bajo petición?
 10. Las imágenes subidas a UploadThing no se borran automáticamente al borrar la cuenta. ¿Es un incumplimiento si se documenta y se atiende por petición mientras no se automatice?
