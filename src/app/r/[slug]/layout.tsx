@@ -40,14 +40,6 @@ const Layout = async ({
 
   const subreddit = await db.subreddit.findFirst({
     where: { name: slug },
-    include: {
-      posts: {
-        include: {
-          author: true,
-          votes: true,
-        },
-      },
-    },
   })
 
   const subscription = !session?.user

@@ -67,7 +67,7 @@ The Prisma schema uses real database foreign keys (the former `relationMode = "p
 Under [src/app/api/](src/app/api/):
 
 - `auth/[...nextauth]` — NextAuth handler
-- `posts/` (GET, paginated by `limit`/`page`; filters by `subredditName`, `username`, or the caller's followed communities)
+- `posts/` (GET, cursor-paginated: `cursor` = id of the last post shown, `limit` 1–20; filters by `subredditName`, `username`, or the caller's followed communities, falling back to every post when they follow none). Returns `{ posts, nextCursor }` from `getFeedPage` in [src/lib/feed.ts](src/lib/feed.ts); pure helpers and the query schema are in `src/lib/feedRules.ts`. `PostFeed` loads the next page with `useInfiniteQuery` when its sentinel nears the viewport
 - `subreddit/{post/{create,delete,vote,comment},subscribe,unsubscribe}` and `subreddit/[slug]`
 - `users/[slug]`, `username/` (rename), `profile-image/`, `search/`
 - `link/` (URL preview for EditorJS LinkTool; `isSafeUrl()` blocks private IPs and non-http(s) protocols to prevent SSRF — keep that check on any server-side fetch of user-supplied URLs), `uploadthing/` (image uploads — see [core.ts](src/app/api/uploadthing/core.ts))
@@ -121,6 +121,7 @@ Dark by default with a light theme (`<html data-theme="dark|light">`, set before
 
 - Global providers in [src/components/Providers.tsx](src/components/Providers.tsx): `SessionProvider` (NextAuth) wrapped in a `QueryClientProvider` (TanStack Query v5, `staleTime` 60s, `gcTime` 300s). Client components that mutate server state should use `useMutation` with optimistic updates — see [Editor.tsx](src/components/Editor.tsx) and the post-vote components in [src/components/post-vote/](src/components/post-vote/) for the established pattern.
 - Pagination constant: `PAGINATION_RESULTS = 6` in [src/config.ts](src/config.ts).
+- **Never send whole `User` rows off the server.** Anything rendered by a client component or returned by an API is public: select other people's fields with `publicUserSelect` (`username`, `image`) from `src/lib/feed.ts`, never `include: { author: true }` (it carries email, role, terms acceptance). Likewise send vote totals and the viewer's own vote, not `votes` arrays (they reveal who voted what).
 - Date formatting: [src/lib/utils.ts](src/lib/utils.ts) exports `formatTimeToNow` with a custom Spanish locale (`hace 5m`, `justo ahora`, etc.) — use this instead of raw `date-fns` calls so wording stays consistent.
 - `cn(...)` (clsx + tailwind-merge) is also in `utils.ts`.
 

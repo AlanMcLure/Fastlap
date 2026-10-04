@@ -3,7 +3,8 @@
 import { useOnClickOutside } from '@/hooks/use-on-click-outside'
 import { formatTimeToNow } from '@/lib/utils'
 import { CommentRequest } from '@/lib/validators/comment'
-import { Comment, CommentVote, User } from '@prisma/client'
+import type { Comment, CommentVote } from '@prisma/client'
+import type { PublicUser } from '@/lib/feed'
 import { useMutation } from '@tanstack/react-query'
 import axios from 'axios'
 import { MessageSquare } from 'lucide-react'
@@ -19,15 +20,14 @@ import { useSession } from 'next-auth/react'
 import DeleteCommentButton from '../DeleteCommentButton'
 import ReportCommentButton from '../ReportCommentButton'
 
-type ExtendedComment = Comment & {
-  votes: CommentVote[]
-  author: User
+type ExtendedComment = Pick<Comment, 'id' | 'text' | 'createdAt' | 'authorId' | 'replyToId'> & {
+  author: PublicUser
 }
 
 interface PostCommentProps {
   comment: ExtendedComment
   votesAmt: number
-  currentVote: CommentVote | undefined
+  currentVote: Pick<CommentVote, 'type'> | undefined
   postId: string
 }
 
@@ -75,8 +75,8 @@ const PostComment: FC<PostCommentProps> = ({
       <div className='flex items-center'>
         <UserAvatar
           user={{
-            name: comment.author.name || null,
-            image: comment.author.image || null,
+            name: comment.author.username,
+            image: comment.author.image,
           }}
           className='h-6 w-6'
         />

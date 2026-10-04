@@ -1,279 +1,80 @@
 'use client'
 
-import { PAGINATION_RESULTS } from '@/config'
-import { ExtendedPost } from '@/types/db'
 import { useIntersection } from '@mantine/hooks'
-import { useInfiniteQuery, useQuery, useQueryClient } from '@tanstack/react-query'
+import { useInfiniteQuery } from '@tanstack/react-query'
 import axios from 'axios'
-import { FC, useMemo, useRef, useState } from 'react'
-import Post from './Post'
-import { useSession } from 'next-auth/react'
-import { Button } from '@/components/ui/Button'
+import { FC, useEffect } from 'react'
 
-import '@/styles/loader.css'
+import { Button } from '@/components/ui/Button'
+import type { FeedPage } from '@/lib/feed'
+import Post from './Post'
 import { SkeletonCard } from './SkeletonCard'
-import { Vote } from '@prisma/client'
-import { Loader, Loader2 } from 'lucide-react'
 
 interface PostFeedProps {
-  initialPosts: ExtendedPost[]
+  initialPage: FeedPage
   subredditName?: string
   username?: string
 }
 
-const PostFeed: FC<PostFeedProps> = ({ initialPosts, subredditName, username }) => {
+/**
+ * Infinite feed: the server renders the first page, the next ones load when the end of the list
+ * comes near (cursor pagination, so posts published meanwhile neither repeat nor go missing).
+ */
+const PostFeed: FC<PostFeedProps> = ({ initialPage, subredditName, username }) => {
+  const { ref, entry } = useIntersection({ rootMargin: '600px' })
 
-  const lastPostRef = useRef<HTMLElement>(null)
-  const { ref, entry } = useIntersection({
-    root: lastPostRef.current,
-    threshold: 1,
-  })
-  const { data: session } = useSession()
-  const [isLoadingMore, setIsLoadingMore] = useState(false);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [limit, setLimit] = useState(PAGINATION_RESULTS);
-  // const [posts, setPosts] = useState(initialPosts);
-  const queryClient = useQueryClient();
-
-  const { data: postsData, isLoading, isError } = useQuery({
-    queryKey: ['posts', { subredditName, username, limit }],
-    queryFn: async () => {
-      let query = `/api/posts?limit=${limit}&page=1`;
-
-      if (username) {
-        query += `&username=${username}`;
-      }
-
-      if (subredditName) {
-        query += `&subredditName=${subredditName}`;
-      }
-
-      const { data } = await axios.get(query);
-      return data;
+  const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isError } = useInfiniteQuery({
+    queryKey: ['posts', { subredditName, username }],
+    queryFn: async ({ pageParam }) => {
+      const { data } = await axios.get<FeedPage>('/api/posts', {
+        params: { subredditName, username, cursor: pageParam ?? undefined },
+      })
+      return data
     },
-  });
+    initialPageParam: null as string | null,
+    getNextPageParam: (last) => last.nextCursor,
+    initialData: { pages: [initialPage], pageParams: [null] },
+  })
 
-  const posts = useMemo(() => {
-    if (!postsData) return initialPosts;
-    // Filtrar los nuevos posts para evitar duplicados
-    const newPosts = postsData.filter((newPost: ExtendedPost) => {
-      return !initialPosts.some((existingPost: ExtendedPost) => existingPost.id === newPost.id);
-    });
-    return [...initialPosts, ...newPosts];
-  }, [initialPosts, postsData]);
+  const visible = entry?.isIntersecting ?? false
+  useEffect(() => {
+    if (visible && hasNextPage && !isFetchingNextPage && !isError) fetchNextPage()
+  }, [visible, hasNextPage, isFetchingNextPage, isError, fetchNextPage])
 
-  // Función para recargar los posts
-  const reloadPosts = async () => {
-    setIsLoadingMore(true); // Establecer isLoadingMore a true cuando comienza la recarga
+  const posts = data.pages.flatMap((page) => page.posts)
 
-    try {
-      // Invalidar la caché de la consulta existente
-      await queryClient.invalidateQueries({ queryKey: ['posts'] });
-    } catch (error) {
-      console.error('Error reloading posts:', error);
-    } finally {
-      setIsLoadingMore(false); // Establecer isLoadingMore a false cuando la recarga haya terminado
-    }
-  };
-
-  const loadMorePosts = async () => {
-    setIsLoadingMore(true);
-
-    try {
-      setLimit((prevLimit) => prevLimit + PAGINATION_RESULTS);
-      // Invalidar la caché de la consulta existente
-      await queryClient.invalidateQueries({ queryKey: ['posts'] });
-    } catch (error) {
-      console.error('Error reloading posts:', error);
-    } finally {
-      setIsLoadingMore(false); // Establecer isLoadingMore a false cuando la recarga haya terminado
-    }
-  };
-
-  // Derived, not state: a flag set in an effect arrives one render late and made the list jump.
-  const postsLoaded = posts.length > 0;
+  if (posts.length === 0) {
+    return (
+      <p className='rounded-xl border border-dashed border-border p-8 text-center text-sm text-muted-foreground'>
+        Todavía no hay publicaciones.
+      </p>
+    )
+  }
 
   return (
-    <ul className='flex flex-col space-y-4'>
-        {/* only when the server sent nothing: a skeleton above server-rendered posts pushed them down and then away */}
-        {isLoading && initialPosts.length === 0 && (
-          <li>
-            <SkeletonCard />
-          </li>
-        )}
-        
-      {posts && (
-          posts.map((post: ExtendedPost, index: number) => {
-            const votesAmt: number = post.votes.reduce((acc: number, vote: Vote) => {
-              if (vote.type === 'UP') return acc + 1;
-              if (vote.type === 'DOWN') return acc - 1;
-              return acc;
-            }, 0);
-
-            const currentVote: Vote | undefined = post.votes.find(
-              (vote: Vote) => vote.userId === session?.user?.id
-            );
-
-            if (posts.length >= 2 && posts.length - 2 === index) {
-              // Add a ref to the last post in the list
-              return (
-                <li key={post.id} ref={ref}>
-                  <Post
-                    post={post}
-                    commentAmt={post.comments.length}
-                    subredditName={post.subreddit.name}
-                    votesAmt={votesAmt}
-                    currentVote={currentVote}
-                  />
-                </li>
-              )
-            } else {
-              return (
-                <li key={post.id}>
-                  <Post
-                    key={post.id}
-                    post={post}
-                    commentAmt={post.comments.length}
-                    subredditName={post.subreddit.name}
-                    votesAmt={votesAmt}
-                    currentVote={currentVote}
-                  />
-                </li>
-              )
-            }
-          })
-        )}
-      {postsLoaded && (
-        <li className='flex justify-center gap-2 pt-2'>
-          {isLoadingMore ? (
-            <div className='loader' role='status' aria-label='Cargando publicaciones'></div>
-          ) : (
-            <>
-              <Button variant='outline' size='sm' onClick={loadMorePosts}>
-                Cargar más
-              </Button>
-              <Button variant='ghost' size='sm' onClick={reloadPosts} aria-label='Recargar publicaciones'>
-                Recargar
-              </Button>
-            </>
-          )}
+    <ul className='flex flex-col space-y-4' aria-busy={isFetchingNextPage}>
+      {posts.map((post) => (
+        <li key={post.id}>
+          <Post post={post} />
         </li>
-      )}
+      ))}
+
+      <li ref={ref} className='pt-2'>
+        {isFetchingNextPage ? (
+          <SkeletonCard />
+        ) : isError ? (
+          <div className='flex flex-col items-center gap-2 text-sm text-muted-foreground'>
+            <p>No se han podido cargar más publicaciones.</p>
+            <Button variant='outline' size='sm' onClick={() => fetchNextPage()}>
+              Reintentar
+            </Button>
+          </div>
+        ) : !hasNextPage ? (
+          <p className='label text-center'>NO HAY MÁS PUBLICACIONES</p>
+        ) : null}
+      </li>
     </ul>
   )
 }
 
 export default PostFeed
-
-
-// {isLoadingMore && (
-//   <li className='flex justify-center'>
-//     {/* <Loader2 className='w-6 h-6 text-muted-foreground animate-spin' /> */}
-//     <div className="loader"></div>
-//   </li>
-// )}
-
-// /*
-
-// 1. Importaciones: Importa varias utilidades y componentes necesarios, incluyendo useIntersection de @mantine/hooks para detectar cuando un elemento está en la vista, useInfiniteQuery de @tanstack/react-query para manejar la paginación infinita, y axios para hacer solicitudes HTTP.
-
-// 2. Props: PostFeed acepta initialPosts, que son los posts iniciales a mostrar, y subredditName, que es el nombre del subreddit del que se deben cargar los posts.
-
-// 3. useIntersection: Utiliza el hook useIntersection para crear una referencia (ref) a un elemento y un objeto entry que contiene información sobre si el elemento está en la vista o no.
-
-// 4. useInfiniteQuery: Utiliza el hook useInfiniteQuery para cargar posts de manera paginada. Cuando se llama a fetchNextPage, se carga la siguiente página de posts. La función de consulta hace una solicitud GET a /api/posts, pasando el número de página y el nombre del subreddit como parámetros de consulta.
-
-// 5. useEffect: Utiliza el hook useEffect para llamar a fetchNextPage cuando el último post entra en la vista (es decir, cuando entry.isIntersecting es true).
-
-// 6. Renderizado: Renderiza una lista de posts. Para cada post, calcula la cantidad de votos y el voto actual del usuario. Si el post es el penúltimo en la lista, le añade la referencia creada por useIntersection para que se pueda detectar cuando este post entra en la vista y cargar más posts. También muestra un cargador cuando se están cargando más posts.
-
-// */
-// 'use client'
-// import React, { FC, useState } from 'react';
-// import axios from 'axios';
-// import { ExtendedPost } from '@/types/db';
-// import { PAGINATION_RESULTS } from '@/config';
-// import Post from './Post';
-// import { SkeletonCard } from './SkeletonCard';
-// import { useSession } from 'next-auth/react'
-
-// interface PostFeedProps {
-//   initialPosts: ExtendedPost[];
-//   subredditName?: string;
-//   username?: string;
-// }
-
-// const PostFeed: FC<PostFeedProps> = ({ initialPosts, subredditName, username }) => {
-//   const [isLoadingMore, setIsLoadingMore] = useState(false);
-//   const [allPostsLoaded, setAllPostsLoaded] = useState(false);
-//   const [posts, setPosts] = useState(initialPosts);
-//   const { data: session } = useSession();
-
-//   const loadMorePosts = async () => {
-//     if (allPostsLoaded) return; // Evitar cargar más si ya se cargaron todos los posts
-
-//     setIsLoadingMore(true);
-//     const nextPage = posts.length / PAGINATION_RESULTS + 1;
-//     let query = `/api/posts?limit=${PAGINATION_RESULTS}&page=${nextPage}`;
-
-//     if (username) {
-//       query += `&username=${username}`;
-//     }
-
-//     if (subredditName) {
-//       query += `&subredditName=${subredditName}`;
-//     }
-
-//     try {
-//       const { data: newPosts } = await axios.get(query);
-
-//       if (newPosts.length === 0) {
-//         setAllPostsLoaded(true);
-//       } else {
-//         setPosts(prevPosts => [...prevPosts, ...newPosts]);
-//       }
-//     } catch (error) {
-//       console.error('Error loading more posts:', error);
-//     } finally {
-//       setIsLoadingMore(false);
-//     }
-//   };
-
-//   const calculateVotesAmt = (post: ExtendedPost) => {
-//     return post.votes.reduce((acc, vote) => {
-//       if (vote.type === 'UP') return acc + 1;
-//       if (vote.type === 'DOWN') return acc - 1;
-//       return acc;
-//     }, 0);
-//   };
-
-//   const getCurrentVote = (post: ExtendedPost) => {
-//     return post.votes.find(vote => vote.userId === session?.user.id);
-//   };
-
-//   return (
-//     <ul className='flex flex-col col-span-2 space-y-6'>
-//       {isLoadingMore && <li className='flex justify-center'>Cargando...</li>}
-//       {!isLoadingMore &&
-//         posts.map((post, index) => (
-//           <Post
-//             key={post.id}
-//             post={post}
-//             commentAmt={post.comments.length}
-//             subredditName={post.subreddit.name}
-//             votesAmt={calculateVotesAmt(post)}
-//             currentVote={getCurrentVote(post)}
-//           />
-//         ))}
-//       {!isLoadingMore && !allPostsLoaded && (
-//         <li className='flex justify-center'>
-//           <button onClick={loadMorePosts}>Cargar más posts</button>
-//         </li>
-//       )}
-//     </ul>
-//   );
-// };
-
-// export default PostFeed;
-
-

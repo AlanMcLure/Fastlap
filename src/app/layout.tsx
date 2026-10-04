@@ -48,7 +48,8 @@ export default function RootLayout({
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
       </head>
-      <body className='min-h-screen pt-12 bg-background text-foreground antialiased'>
+      {/* browser extensions (e.g. ColorZilla) add attributes to <body> before React hydrates */}
+      <body className='min-h-screen pt-12 bg-background text-foreground antialiased' suppressHydrationWarning>
         <Providers>
           <a
             href='#contenido'

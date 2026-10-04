@@ -1,8 +1,9 @@
 import PostFeed from "@/components/PostFeed"
 import ProfilePredictions from "@/components/ProfilePredictions"
 import { loadProfilePredictions } from "@/lib/predictionData"
-import { PAGINATION_RESULTS } from "@/config"
+import { getAuthSession } from "@/lib/auth"
 import { db } from "@/lib/db"
+import { getFeedPage } from "@/lib/feed"
 import type { Metadata } from "next"
 import { notFound } from "next/navigation"
 
@@ -26,27 +27,14 @@ const page = async ({ params }: PageProps) => {
 
   const user = await db.user.findFirst({
     where: { username: slug },
+    select: { id: true, username: true },
   })
 
-  if (!user) return notFound()
+  if (!user?.username) return notFound()
 
-  const posts = await db.post.findMany({
-    where: {
-      authorId: user.id,
-    },
-    include: {
-      author: true,
-      votes: true,
-      comments: true,
-      subreddit: true,
-    },
-    orderBy: {
-      createdAt: 'desc'
-    },
-    take: PAGINATION_RESULTS,
-  })
-
-  if (!posts) return notFound()
+  const session = await getAuthSession()
+  const viewerId = session?.user?.id
+  const feed = await getFeedPage({ scope: { kind: 'user', username: user.username }, viewerId })
 
   // Prediction stats are a bonus: a failure here must not take the profile down.
   const predictions = await loadProfilePredictions(user.id).catch((error) => {
@@ -60,7 +48,7 @@ const page = async ({ params }: PageProps) => {
         u/{user.username}
       </h1>
       {predictions && <ProfilePredictions data={predictions} username={user.username ?? slug} />}
-      <PostFeed initialPosts={posts} username={user.username || undefined} />
+      <PostFeed initialPage={feed} username={user.username} />
     </>
   )
 }

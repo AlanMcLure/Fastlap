@@ -2,8 +2,7 @@ import { Suspense } from 'react'
 
 import PremiumCard from '@/components/PremiumCard'
 import { PREMIUM_ENABLED, canAccessDashboard } from '@/lib/features'
-import CustomFeed from '@/components/homepage/CustomFeed'
-import GeneralFeed from '@/components/homepage/GeneralFeed'
+import HomeFeed from '@/components/homepage/HomeFeed'
 import NextRaceModule, { NextRacePlaceholder } from '@/components/homepage/NextRaceModule'
 import { buttonVariants } from '@/components/ui/Button'
 import { getAuthSession } from '@/lib/auth'
@@ -51,7 +50,7 @@ export default async function Home() {
         </aside>
 
         {/* Feed de posts */}
-        <div className='md:col-span-2'>{session ? <CustomFeed /> : <GeneralFeed />}</div>
+        <div className='md:col-span-2'><HomeFeed viewerId={session?.user?.id} /></div>
       </div>
     </>
   )

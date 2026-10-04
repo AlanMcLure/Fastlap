@@ -1,8 +1,8 @@
 import MiniCreatePost from '@/components/MiniCreatePost'
 import PostFeed from '@/components/PostFeed'
-import { PAGINATION_RESULTS } from '@/config'
 import { getAuthSession } from '@/lib/auth'
 import { db } from '@/lib/db'
+import { getFeedPage } from '@/lib/feed'
 import { notFound } from 'next/navigation'
 
 interface PageProps {
@@ -14,25 +14,11 @@ const page = async ({ params }: PageProps) => {
 
   const session = await getAuthSession()
 
-  const subreddit = await db.subreddit.findFirst({
-    where: { name: slug },
-    include: {
-      posts: {
-        include: {
-          author: true,
-          votes: true,
-          comments: true,
-          subreddit: true,
-        },
-        orderBy: {
-          createdAt: 'desc'
-        },
-        take: PAGINATION_RESULTS,
-      },
-    },
-  })
-
+  const subreddit = await db.subreddit.findFirst({ where: { name: slug }, select: { name: true } })
   if (!subreddit) return notFound()
+
+  const viewerId = session?.user?.id
+  const feed = await getFeedPage({ scope: { kind: 'community', name: subreddit.name }, viewerId })
 
   return (
     <>
@@ -41,7 +27,7 @@ const page = async ({ params }: PageProps) => {
         <h1 className='mt-2 text-3xl font-bold text-display md:text-4xl'>r/{subreddit.name}</h1>
       </div>
       <MiniCreatePost session={session} />
-      <PostFeed initialPosts={subreddit.posts} subredditName={subreddit.name} />
+      <PostFeed initialPage={feed} subredditName={subreddit.name} />
     </>
   )
 }

@@ -2,7 +2,6 @@
 
 import { formatTimeToNow } from '@/lib/utils'
 import { postPreview } from '@/lib/postPreview'
-import { Post as PrismaPost, User, Vote } from '@prisma/client'
 import { MessageSquare } from 'lucide-react'
 import Link from 'next/link'
 import { FC, useMemo } from 'react'
@@ -10,28 +9,16 @@ import PostVoteClient from './post-vote/PostVoteClient'
 import DeletePostButton from './DeletePostButton'
 import ReportPostMenu from './ReportPostMenu'
 import { useQueryClient } from '@tanstack/react-query'
-
-type PartialVote = Pick<Vote, 'type'>
+import type { FeedPost } from '@/lib/feed'
 
 interface PostProps {
-  post: PrismaPost & {
-    author: User
-    votes: Vote[]
-  }
-  votesAmt: number
-  subredditName: string
-  currentVote?: PartialVote
-  commentAmt: number
+  post: FeedPost
 }
 
 /** A post in a feed: where and who, title, the start of the text or first image, votes and comments. */
-const Post: FC<PostProps> = ({
-  post,
-  votesAmt: _votesAmt,
-  currentVote: _currentVote,
-  subredditName,
-  commentAmt,
-}) => {
+const Post: FC<PostProps> = ({ post }) => {
+  const subredditName = post.subreddit.name
+  const commentAmt = post.commentAmt
   const queryClient = useQueryClient()
   const preview = useMemo(() => postPreview(post.content), [post.content])
   const href = `/r/${subredditName}/post/${post.id}`
@@ -85,7 +72,7 @@ const Post: FC<PostProps> = ({
       </div>
 
       <div className='flex items-center gap-2 border-t border-border px-4 py-3 sm:px-5'>
-        <PostVoteClient postId={post.id} initialVotesAmt={_votesAmt} initialVote={_currentVote?.type} />
+        <PostVoteClient postId={post.id} initialVotesAmt={post.votesAmt} initialVote={post.currentVote} />
         <Link
           href={href}
           className='inline-flex h-9 items-center gap-2 rounded-full px-3 text-sm text-muted-foreground transition-colors hover:bg-accent hover:text-display'>

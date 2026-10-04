@@ -1,92 +1,32 @@
-import { getAuthSession } from '@/lib/auth'
-import { db } from '@/lib/db'
 import { z } from 'zod'
 
-type FollowedCommunity = {
-  subreddit: {
-    id: string;
-    // otras propiedades de subreddit si las hay
-  };
-  // otras propiedades de followedCommunities si las hay
-};
+import { getAuthSession } from '@/lib/auth'
+import { getFeedPage, type FeedScope } from '@/lib/feed'
+import { FeedQuery } from '@/lib/feedRules'
 
+export const dynamic = 'force-dynamic'
+
+/** Next page of a feed: a community, a user's posts, or the home feed (followed communities, else everything). */
 export async function GET(req: Request) {
-  const url = new URL(req.url)
-
-  const session = await getAuthSession()
-
-  let followedCommunitiesIds: string[] = []
-
-  if (session) {
-    const followedCommunities = await db.subscription.findMany({
-      where: {
-        userId: session.user.id,
-      },
-      include: {
-        subreddit: true,
-      },
-    })
-
-    followedCommunitiesIds = followedCommunities.map((sub: FollowedCommunity ) => sub.subreddit.id)
-  }
-
   try {
-    const { limit, page, subredditName, username } = z
-      .object({
-        limit: z.string(),
-        page: z.string(),
-        subredditName: z.string().nullish().optional(),
-        username: z.string().nullish().optional(),
-      })
-      .parse({
-        subredditName: url.searchParams.get('subredditName'),
-        limit: url.searchParams.get('limit'),
-        page: url.searchParams.get('page'),
-        username: url.searchParams.get('username'),
-      })
+    const params = Object.fromEntries(
+      [...new URL(req.url).searchParams].filter(([, value]) => value !== '')
+    )
+    const { subredditName, username, cursor, limit } = FeedQuery.parse(params)
+    const session = await getAuthSession()
+    const viewerId = session?.user?.id
 
-    let whereClause = {}
+    const scope: FeedScope = subredditName
+      ? { kind: 'community', name: subredditName }
+      : username
+        ? { kind: 'user', username }
+        : { kind: 'home', viewerId }
 
-    if (subredditName) {
-      whereClause = {
-        subreddit: {
-          name: subredditName,
-        },
-      }
-    } else if (username) {
-      whereClause = {
-        author: {
-          username,
-        },
-      }
-    } else if (session && followedCommunitiesIds.length > 0) {
-      whereClause = {
-        subreddit: {
-          id: {
-            in: followedCommunitiesIds,
-          },
-        },
-      }
-    }
-
-    const posts = await db.post.findMany({
-      take: parseInt(limit),
-      skip: (parseInt(page) - 1) * parseInt(limit), // skip should start from 0 for page 1
-      orderBy: {
-        createdAt: 'desc',
-      },
-      include: {
-        subreddit: true,
-        votes: true,
-        author: true,
-        comments: true,
-      },
-      where: whereClause,
-    })
-
-    return new Response(JSON.stringify(posts))
+    const page = await getFeedPage({ scope, viewerId, cursor, limit })
+    return Response.json(page, { headers: { 'Cache-Control': 'no-store' } })
   } catch (error) {
+    if (error instanceof z.ZodError) return new Response('Invalid request', { status: 400 })
+    console.error('Feed failed', error)
     return new Response('Could not fetch posts', { status: 500 })
   }
 }
-

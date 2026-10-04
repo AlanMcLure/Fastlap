@@ -18,8 +18,8 @@ import { formatRaceDate } from '@/lib/f1/format'
 import { getCalendar, getRaceResults } from '@/lib/f1/queries'
 import type { Race } from '@/lib/f1/schemas'
 import { canAccessDashboard } from '@/lib/features'
-import { dotdState, weekendStarted } from '@/lib/raceHub'
-import { ensureRaceThread, type RaceThread } from '@/lib/raceThread'
+import { canCreateRaceThread, dotdState, weekendStarted } from '@/lib/raceHub'
+import { ensureRaceThread, findRaceThread, type RaceThread } from '@/lib/raceThread'
 
 // Depends on the current time (thread creation, voting window) and on the viewer.
 export const dynamic = 'force-dynamic'
@@ -86,7 +86,7 @@ const RaceHubPage = async ({ params }: Props) => {
   let thread: RaceThread | null = null
   if (weekendStarted(race, now)) {
     try {
-      thread = await ensureRaceThread(race)
+      thread = canCreateRaceThread(race, now) ? await ensureRaceThread(race) : await findRaceThread(race.season, race.round)
     } catch (error) {
       console.error('Race thread unavailable', error)
     }

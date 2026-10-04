@@ -13,7 +13,7 @@ export interface RaceThread {
   community: string
 }
 
-async function findThread(season: number, round: number): Promise<RaceThread | null> {
+export async function findRaceThread(season: number, round: number): Promise<RaceThread | null> {
   const weekend = await db.raceWeekend.findUnique({
     where: { season_round: { season, round } },
     include: { post: { include: { subreddit: true } } },
@@ -27,7 +27,7 @@ async function findThread(season: number, round: number): Promise<RaceThread | n
  * race so two simultaneous visitors end up with one thread.
  */
 export async function ensureRaceThread(race: Race): Promise<RaceThread> {
-  const existing = await findThread(race.season, race.round)
+  const existing = await findRaceThread(race.season, race.round)
   if (existing) return existing
 
   try {
@@ -57,7 +57,7 @@ export async function ensureRaceThread(race: Race): Promise<RaceThread> {
     if (!(error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2002')) throw error
   }
 
-  const created = await findThread(race.season, race.round)
+  const created = await findRaceThread(race.season, race.round)
   if (!created) throw new Error('Race thread could not be created')
   return created
 }

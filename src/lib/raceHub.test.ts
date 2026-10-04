@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 
 import type { Race } from '@/lib/f1/schemas'
-import { dotdState, raceThreadContent, raceThreadTitle, tally, weekendStarted } from './raceHub'
+import { canCreateRaceThread, dotdState, raceThreadContent, raceThreadTitle, tally, weekendStarted } from './raceHub'
 
 const race = {
   season: 2025,
@@ -33,6 +33,18 @@ describe('weekendStarted', () => {
   it('starts with the first session', () => {
     expect(weekendStarted(race, new Date('2025-03-21T03:29:00Z'))).toBe(false)
     expect(weekendStarted(race, new Date('2025-03-21T03:30:00Z'))).toBe(true)
+  })
+})
+
+describe('canCreateRaceThread', () => {
+  it('opens with the first session', () => {
+    expect(canCreateRaceThread(race, new Date('2025-03-21T03:29:00Z'))).toBe(false)
+    expect(canCreateRaceThread(race, new Date('2025-03-21T03:30:00Z'))).toBe(true)
+  })
+  it('closes a week after the race ends, so old GP pages never post stale threads', () => {
+    expect(canCreateRaceThread(race, new Date('2025-03-30T09:59:00Z'))).toBe(true)
+    expect(canCreateRaceThread(race, new Date('2025-03-30T10:00:00Z'))).toBe(false)
+    expect(canCreateRaceThread(race, new Date('2026-10-03T00:00:00Z'))).toBe(false)
   })
 })
 

@@ -5,6 +5,8 @@ import type { Race } from '@/lib/f1/schemas'
 export const RACE_THREAD_COMMUNITY = 'formula1'
 /** Hours after the race ends during which "Driver of the Day" can be voted. */
 export const DOTD_WINDOW_HOURS = 48
+/** Days after the race ends during which a missing weekend thread may still be created. */
+export const THREAD_CREATE_DAYS = 7
 
 const HOUR = 3600 * 1000
 
@@ -15,6 +17,15 @@ export function dotdState(race: Race, hasResults: boolean, now = new Date()): Do
   const end = sessionStart(race.date, race.time).start.getTime() + RACE_DURATION_HOURS * HOUR
   if (now.getTime() < end || !hasResults) return 'not-open'
   return now.getTime() < end + DOTD_WINDOW_HOURS * HOUR ? 'open' : 'closed'
+}
+
+/**
+ * A missing weekend thread is only created from the first session until a week after the race:
+ * visiting (or a crawler indexing) an old GP page must not post stale threads to the feed.
+ */
+export function canCreateRaceThread(race: Race, now = new Date()): boolean {
+  const end = sessionStart(race.date, race.time).start.getTime() + RACE_DURATION_HOURS * HOUR
+  return weekendStarted(race, now) && now.getTime() < end + THREAD_CREATE_DAYS * 24 * HOUR
 }
 
 /** The weekend thread exists from the first session onwards. */
