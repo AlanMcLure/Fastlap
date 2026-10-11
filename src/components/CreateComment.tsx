@@ -9,15 +9,21 @@ import { useMutation } from '@tanstack/react-query'
 import axios, { AxiosError } from 'axios'
 import { useRouter } from 'next/navigation'
 import { FC, useState } from 'react'
-import { Label } from '@/components/ui/Label'
-import { Textarea } from '@/components/ui/Textarea'
+import { UserAvatar } from '@/components/UserAvatar'
+import { useSession } from 'next-auth/react'
+import Link from 'next/link'
 
 interface CreateCommentProps {
   postId: string
   replyToId?: string
+  signedIn: boolean
 }
 
-const CreateComment: FC<CreateCommentProps> = ({ postId, replyToId }) => {
+/** Id of the composer's field: the phone bar (MobileCommentBar) focuses it. */
+export const COMMENT_FIELD_ID = 'nuevo-comentario'
+
+const CreateComment: FC<CreateCommentProps> = ({ postId, replyToId, signedIn }) => {
+  const { data: session } = useSession()
   const [input, setInput] = useState<string>('')
   const router = useRouter()
   const { loginToast } = useCustomToasts()
@@ -52,27 +58,42 @@ const CreateComment: FC<CreateCommentProps> = ({ postId, replyToId }) => {
     },
   })
 
-  return (
-    <div className='grid w-full gap-1.5'>
-      <Label htmlFor='comment'>Tu comentario</Label>
-      <div className='mt-2'>
-        <Textarea
-          id='comment'
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
-          rows={1}
-          placeholder='Escribe un comentario'
-        />
+  if (!signedIn) {
+    return (
+      <p className='rounded-2xl border border-input px-4 py-3 text-sm text-muted-foreground'>
+        <Link href='/sign-in' className='text-display underline underline-offset-2'>
+          Inicia sesión
+        </Link>{' '}
+        para comentar.
+      </p>
+    )
+  }
 
-        <div className='mt-2 flex justify-end'>
-          <Button
-            isLoading={isLoading}
-            disabled={input.length === 0}
-            onClick={() => comment({ postId, text: input, replyToId })}>
-            Publicar
-          </Button>
-        </div>
-      </div>
+  return (
+    <div className='flex gap-3 rounded-2xl border border-input px-4 py-3 focus-within:border-display'>
+      <UserAvatar
+        user={{ name: session?.user?.username ?? null, image: session?.user?.image ?? null }}
+        className='mt-0.5 h-8 w-8 shrink-0'
+      />
+      <label htmlFor={COMMENT_FIELD_ID} className='sr-only'>
+        Tu comentario
+      </label>
+      <textarea
+        id={COMMENT_FIELD_ID}
+        value={input}
+        onChange={(e) => setInput(e.target.value)}
+        rows={1}
+        placeholder='Añade un comentario…'
+        className='min-h-9 flex-1 resize-none self-center bg-transparent py-1.5 leading-6 text-foreground outline-none placeholder:text-muted-foreground [field-sizing:content]'
+      />
+      <Button
+        size='sm'
+        className='self-end rounded-full'
+        isLoading={isLoading}
+        disabled={input.trim().length === 0}
+        onClick={() => comment({ postId, text: input, replyToId })}>
+        Comentar
+      </Button>
     </div>
   )
 }

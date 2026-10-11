@@ -1,194 +1,57 @@
-import BackButton from '@/components/BackButton'
-import { buttonVariants } from '@/components/ui/Button'
-import { getAuthSession } from '@/lib/auth'
-import { db } from '@/lib/db'
 import { format } from 'date-fns'
 import { es } from 'date-fns/locale'
-import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { ReactNode } from 'react'
 
-interface PageProps {
-  params: {
-    slug: string
-  }
-}
+import { UserAvatar } from '@/components/UserAvatar'
+import { getAuthSession } from '@/lib/auth'
+import { db } from '@/lib/db'
 
-const UserLayout = async ({
-  children,
-  params,
-}: {
-  children: ReactNode
-  params: Promise<{ slug: string }>
-}) => {
+/** Profile header (who, since when, what they have done here) above the profile page. */
+const UserLayout = async ({ children, params }: { children: ReactNode; params: Promise<{ slug: string }> }) => {
   const { slug } = await params
 
+  // only public fields: this header is shown to everyone
   const user = await db.user.findFirst({
     where: { username: slug },
+    select: { id: true, username: true, image: true, createdAt: true },
   })
-
-  const comunidadesCreadasCount = await db.subreddit.count({
-    where: {
-      creatorId: user?.id
-    }
-  })
-
-  const voteCount = await db.vote.count({
-    where: {
-      userId: user?.id
-    }  
-  })
-
-  const postCount = await db.post.count({
-    where: {
-      authorId: user?.id
-    }
-  })
-
   if (!user) return notFound()
 
-  const session = await getAuthSession()
+  const [posts, communities, session] = await Promise.all([
+    db.post.count({ where: { authorId: user.id } }),
+    db.subreddit.count({ where: { creatorId: user.id } }),
+    getAuthSession(),
+  ])
+  const own = session?.user?.id === user.id
+
+  const stat = (label: string, value: number) => (
+    <div>
+      <dt className='label'>{label}</dt>
+      <dd className='mt-1 font-mono text-xl font-bold text-display'>{value}</dd>
+    </div>
+  )
 
   return (
-    <div className='sm:container max-w-7xl mx-auto h-full pt-12'>
-      <div>
-        <BackButton />
-
-        <div className='grid grid-cols-1 md:grid-cols-3 gap-y-4 md:gap-x-4 py-6'>
-          <div className='flex flex-col col-span-2 space-y-6'>{children}</div>
-
-          {/* info sidebar */}
-          <div className='overflow-hidden h-fit rounded-lg border border-border order-first md:order-last'>
-            <div className='bg-muted px-6 py-4'>
-              <p className='font-semibold py-3'>Sobre {user.username}</p>
-            </div>
-            <dl className='divide-y divide-border px-6 py-4 text-sm leading-6 bg-card'>
-              <div className='flex justify-between gap-x-4 py-3'>
-                <dt className='text-muted-foreground'>Desde</dt>
-                <dd className='text-foreground'>
-                  <time dateTime={user.createdAt.toDateString()}>
-                    {format(user.createdAt, 'd MMMM yyyy', {locale: es})}
-                  </time>
-                </dd>
-              </div>
-              <div className='flex justify-between gap-x-4 py-3'>
-                <dt className='text-muted-foreground'>Tipo de usuario</dt>
-                <dd className='flex items-start gap-x-2'>
-                  <div className='text-foreground'>{user.role}</div>
-                </dd>
-              </div>
-              <div className='flex justify-between gap-x-4 py-3'>
-                <dt className='text-muted-foreground'>Comunidades creadas</dt>
-                <dd className='flex items-start gap-x-2'>
-                  <div className='text-foreground'>{comunidadesCreadasCount}</div>
-                </dd>
-              </div>
-              <div className='flex justify-between gap-x-4 py-3'>
-                <dt className='text-muted-foreground'>Posts</dt>
-                <dd className='flex items-start gap-x-2'>
-                  <div className='text-foreground'>{postCount}</div>
-                </dd>
-              </div>
-              <div className='flex justify-between gap-x-4 py-3'>
-                <dt className='text-muted-foreground'>Votos</dt>
-                <dd className='flex items-start gap-x-2'>
-                  <div className='text-foreground'>{voteCount}</div>
-                </dd>
-              </div>
-              {session?.user?.id === user.id ? (
-                <div className='flex justify-between gap-x-4 py-3'>
-                  <dt className='text-muted-foreground'>Este es tu perfil</dt>
-                </div>
-              ) : null}
-              {/* <Link
-                className={buttonVariants({
-                  variant: 'outline',
-                  className: 'w-full mb-6',
-                })}
-                href={`${username}/submit`}>
-                Create Post
-              </Link> */}
-            </dl>
-          </div>
+    <div className='mx-auto max-w-3xl pb-10'>
+      <header className='flex flex-wrap items-center gap-x-6 gap-y-4 border-b border-border pb-6'>
+        <UserAvatar user={{ name: user.username, image: user.image }} className='h-16 w-16' />
+        <div className='min-w-0 flex-1'>
+          <p className='label'>{own ? 'TU PERFIL' : 'PERFIL'}</p>
+          <h1 className='mt-1 truncate text-3xl font-bold text-display'>u/{user.username}</h1>
+          <p className='mt-1 text-sm text-muted-foreground'>
+            En FastLap desde{' '}
+            <time dateTime={user.createdAt.toISOString()}>{format(user.createdAt, "MMMM 'de' yyyy", { locale: es })}</time>
+          </p>
         </div>
-      </div>
+        <dl className='flex gap-8'>
+          {stat('PUBLICACIONES', posts)}
+          {stat('COMUNIDADES', communities)}
+        </dl>
+      </header>
+      {children}
     </div>
   )
 }
 
 export default UserLayout
-
-// import { buttonVariants } from '@/components/ui/Button'
-// import { getAuthSession } from '@/lib/auth'
-// import { db } from '@/lib/db'
-// import { format } from 'date-fns'
-// import Link from 'next/link'
-// import { notFound } from 'next/navigation'
-// import { ReactNode } from 'react'
-
-// const UserLayout = async ({
-//   children,
-//   params: { username },
-// }: {
-//   children: ReactNode
-//   params: { username: string }
-// }) => {
-//   const session = await getAuthSession()
-
-//   const user = await db.user.findFirst({
-//     where: { username: username },
-//     include: {
-      
-//     },
-//   })
-
-//   if (!user) return notFound()
-
-//   return (
-//     <div className='sm:container max-w-7xl mx-auto h-full pt-12'>
-//       <div>
-//         <div className='grid grid-cols-1 md:grid-cols-3 gap-y-4 md:gap-x-4 py-6'>
-//           <ul className='flex flex-col col-span-2 space-y-6'>{children}</ul>
-
-//           {/* info sidebar */}
-//           <div className='overflow-hidden h-fit rounded-lg border border-border order-first md:order-last'>
-//             <div className='bg-muted px-6 py-4'>
-//               <p className='font-semibold py-3'>About User {user.username}</p>
-//             </div>
-//             <dl className='divide-y divide-border px-6 py-4 text-sm leading-6 bg-card'>
-//               <div className='flex justify-between gap-x-4 py-3'>
-//                 <dt className='text-muted-foreground'>Joined</dt>
-//                 <dd className='text-foreground'>
-//                   <time dateTime={user.createdAt.toDateString()}>
-//                     {format(user.createdAt, 'MMMM d, yyyy')}
-//                   </time>
-//                 </dd>
-//               </div>
-//               <div className='flex justify-between gap-x-4 py-3'>
-//                 <dt className='text-muted-foreground'>Posts</dt>
-//                 <dd className='flex items-start gap-x-2'>
-//                   <div className='text-foreground'>{user.posts.length}</div>
-//                 </dd>
-//               </div>
-//               {session?.user?.id === user.id ? (
-//                 <div className='flex justify-between gap-x-4 py-3'>
-//                   <dt className='text-muted-foreground'>This is your profile</dt>
-//                 </div>
-//               ) : null}
-//               <Link
-//                 className={buttonVariants({
-//                   variant: 'outline',
-//                   className: 'w-full mb-6',
-//                 })}
-//                 href={`${username}/submit`}>
-//                 Create Post
-//               </Link>
-//             </dl>
-//           </div>
-//         </div>
-//       </div>
-//     </div>
-//   )
-// }
-
-// export default UserLayout

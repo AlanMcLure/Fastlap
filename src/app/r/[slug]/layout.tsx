@@ -1,5 +1,4 @@
 import SubscribeLeaveToggle from '@/components/SubscribeLeaveToggle'
-import BackButton from '@/components/BackButton'
 import { buttonVariants } from '@/components/ui/Button'
 import { getAuthSession } from '@/lib/auth'
 import { db } from '@/lib/db'
@@ -70,55 +69,53 @@ const Layout = async ({
   const isCreator = subreddit.creatorId === session?.user?.id
 
   return (
-    <div>
-      <BackButton className='-ml-5' />
+    <div className='flex flex-col gap-8 lg:flex-row lg:items-start'>
+      <div className='min-w-0 flex-1'>{children}</div>
 
-      <div className='grid grid-cols-1 gap-y-6 py-6 md:grid-cols-3 md:gap-x-6'>
-        <div className='flex flex-col space-y-4 md:col-span-2'>{children}</div>
-
-        {/* info sidebar */}
-        <aside className='order-first h-fit space-y-5 rounded-xl border border-border bg-card p-5 md:order-last'>
-          <div>
-            <p className='label'>SOBRE LA COMUNIDAD</p>
-            <p className='mt-2 text-lg text-display'>r/{subreddit.name}</p>
-          </div>
-
-          <dl className='divide-y divide-border text-sm'>
-            <div className='flex justify-between gap-x-4 py-3'>
-              <dt className='label self-center'>CREADA</dt>
-              <dd className='text-foreground'>
+      {/* about the community: no box, sections divided by lines */}
+      <aside aria-label='Sobre la comunidad' className='w-full shrink-0 lg:sticky lg:top-[7.5rem] lg:w-80'>
+        <section className='border-b border-border pb-5'>
+          <p className='label'>COMUNIDAD</p>
+          <Link href={`/r/${subreddit.name}`} className='mt-2 block text-xl font-bold text-display underline-offset-4 hover:underline'>
+            r/{subreddit.name}
+          </Link>
+          <dl className='mt-4 grid grid-cols-2 gap-3'>
+            <div>
+              <dt className='label'>MIEMBROS</dt>
+              <dd className='display mt-1 text-2xl leading-none text-display'>{memberCount}</dd>
+            </div>
+            <div>
+              <dt className='label'>CREADA</dt>
+              <dd className='mt-1.5 text-sm text-display'>
                 <time dateTime={subreddit.createdAt.toISOString()}>
-                  {format(subreddit.createdAt, "d 'de' MMMM 'de' yyyy", { locale: es })}
+                  {format(subreddit.createdAt, "d MMM yyyy", { locale: es })}
                 </time>
               </dd>
             </div>
-            <div className='flex justify-between gap-x-4 py-3'>
-              <dt className='label self-center'>MIEMBROS</dt>
-              <dd className='font-mono text-display'>{memberCount}</dd>
-            </div>
           </dl>
-
-          {isCreator ? (
-            <p className='label'>ERES EL CREADOR DE ESTA COMUNIDAD</p>
-          ) : (
-            <SubscribeLeaveToggle
-              isSubscribed={isSubscribed}
-              subredditId={subreddit.id}
-              subredditName={subreddit.name}
-            />
-          )}
-          <Link
-            className={buttonVariants({ variant: 'outline', className: 'w-full' })}
-            href={`/r/${slug}/submit`}>
-            Crear publicación
-          </Link>
-          <Link
-            className={buttonVariants({ variant: 'outline', className: 'w-full' })}
-            href={`/r/${slug}/liga`}>
-            Liga de pronósticos
-          </Link>
-        </aside>
-      </div>
+          <div className='mt-4 flex gap-2'>
+            {isCreator ? (
+              <p className='label flex-1 self-center'>ERES SU CREADOR</p>
+            ) : (
+              <div className='flex-1'>
+                <SubscribeLeaveToggle isSubscribed={isSubscribed} subredditId={subreddit.id} subredditName={subreddit.name} />
+              </div>
+            )}
+            <Link className={buttonVariants({ variant: 'outline', className: 'flex-1 rounded-full' })} href={`/r/${slug}/submit`}>
+              Publicar aquí
+            </Link>
+          </div>
+        </section>
+        <Link
+          href={`/r/${slug}/liga`}
+          className='flex items-center justify-between border-b border-border py-4 transition-colors hover:text-display'>
+          <span>
+            <span className='label block'>LIGA DE PRONÓSTICOS</span>
+            <span className='text-display'>Podios de cada GP</span>
+          </span>
+          <span aria-hidden='true'>→</span>
+        </Link>
+      </aside>
     </div>
   )
 }

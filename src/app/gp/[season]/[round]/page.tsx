@@ -161,12 +161,15 @@ const RaceHubPage = async ({ params }: Props) => {
         {thread ? (
           <Link
             href={`/r/${thread.community}/post/${thread.postId}`}
-            className='flex items-center justify-between gap-4 rounded-xl border border-input bg-card p-5 text-display transition-colors hover:border-display'>
-            <span>Comenta el fin de semana en r/{thread.community}</span>
+            className='flex items-center justify-between gap-4 border-y border-border py-4 text-display transition-colors hover:text-foreground'>
+            <span>
+              <span className='block text-lg font-medium'>Hilo del GP en r/{thread.community}</span>
+              <span className='text-sm text-muted-foreground'>Comenta las sesiones, la carrera y el resultado</span>
+            </span>
             <span aria-hidden='true'>→</span>
           </Link>
         ) : (
-          <p className='rounded-xl border border-border bg-card p-5 text-foreground'>
+          <p className='border-y border-border py-4 text-muted-foreground'>
             El hilo se abrirá cuando empiece el fin de semana (primera sesión de libres).
           </p>
         )}
@@ -188,7 +191,7 @@ const RaceHubPage = async ({ params }: Props) => {
         </section>
       ) : (
         <section className='space-y-4'>
-          <p className='rounded-xl border border-border bg-card p-5 text-foreground'>
+          <p className='text-muted-foreground'>
             {status === 'finished'
               ? 'Todavía no hay resultados publicados. Suelen aparecer poco después de terminar.'
               : status === 'in-progress'

@@ -43,13 +43,15 @@ const page = async ({ params }: PageProps) => {
   })
 
   return (
-    <>
-      <h1 className='font-bold text-3xl md:text-4xl h-14'>
-        u/{user.username}
-      </h1>
+    <div className='space-y-10 pt-6'>
       {predictions && <ProfilePredictions data={predictions} username={user.username ?? slug} />}
-      <PostFeed initialPage={feed} username={user.username} />
-    </>
+      <section aria-labelledby='posts-title'>
+        <h2 id='posts-title' className='label mb-3'>
+          PUBLICACIONES
+        </h2>
+        <PostFeed initialPage={feed} username={user.username} />
+      </section>
+    </div>
   )
 }
 

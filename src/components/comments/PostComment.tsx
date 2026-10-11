@@ -8,13 +8,12 @@ import type { PublicUser } from '@/lib/feed'
 import { useMutation } from '@tanstack/react-query'
 import axios from 'axios'
 import { MessageSquare } from 'lucide-react'
+import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { FC, useRef, useState } from 'react'
+import { FC, ReactNode, useRef, useState } from 'react'
 import CommentVotes from '../CommentVotes'
 import { UserAvatar } from '../UserAvatar'
 import { Button } from '../ui/Button'
-import { Label } from '../ui/Label'
-import { Textarea } from '../ui/Textarea'
 import { toast } from '../../hooks/use-toast'
 import { useSession } from 'next-auth/react'
 import DeleteCommentButton from '../DeleteCommentButton'
@@ -29,6 +28,14 @@ interface PostCommentProps {
   votesAmt: number
   currentVote: Pick<CommentVote, 'type'> | undefined
   postId: string
+  /** Written by the author of the post (shows the AUTOR mark). */
+  isOp?: boolean
+  /** Draws the thread line from the avatar down to the replies. */
+  hasReplies?: boolean
+  /** `sm` for replies. */
+  size?: 'md' | 'sm'
+  /** The replies, rendered inside the thread. */
+  children?: ReactNode
 }
 
 const PostComment: FC<PostCommentProps> = ({
@@ -36,6 +43,10 @@ const PostComment: FC<PostCommentProps> = ({
   votesAmt,
   currentVote,
   postId,
+  isOp = false,
+  hasReplies = false,
+  size = 'md',
+  children,
 }) => {
   const { data: session } = useSession()
   const [isReplying, setIsReplying] = useState<boolean>(false)
@@ -70,94 +81,94 @@ const PostComment: FC<PostCommentProps> = ({
     },
   })
 
+  const replyId = `respuesta-${comment.id}`
+
   return (
-    <div ref={commentRef} className='flex flex-col'>
-      <div className='flex items-center'>
+    <div className='flex gap-3'>
+      <div className='flex shrink-0 flex-col items-center'>
         <UserAvatar
-          user={{
-            name: comment.author.username,
-            image: comment.author.image,
-          }}
-          className='h-6 w-6'
+          user={{ name: comment.author.username, image: comment.author.image }}
+          className={size === 'sm' ? 'h-6 w-6' : 'h-8 w-8'}
         />
-        <div className='ml-2 flex items-center gap-x-2'>
-          <p className='text-sm font-medium text-display'>u/{comment.author.username}</p>
+        {hasReplies && <span className='mt-1.5 w-0.5 flex-1 rounded-full bg-border' aria-hidden='true' />}
+      </div>
 
-          <p className='max-h-40 truncate text-xs text-muted-foreground'>
-            {formatTimeToNow(new Date(comment.createdAt))}
+      <div className='min-w-0 flex-1'>
+        <div ref={commentRef}>
+          <p className='flex flex-wrap items-center gap-x-1.5 gap-y-1 text-[13px] text-muted-foreground'>
+            <Link href={`/u/${comment.author.username}`} className='font-bold text-display underline-offset-2 hover:underline'>
+              {comment.author.username}
+            </Link>
+            {isOp && (
+              <span className='rounded border border-input px-1.5 py-0.5 font-mono text-[9px] leading-none tracking-[0.1em] text-foreground'>
+                AUTOR
+              </span>
+            )}
+            <span aria-hidden='true'>·</span>
+            <time dateTime={new Date(comment.createdAt).toISOString()}>{formatTimeToNow(new Date(comment.createdAt))}</time>
           </p>
-        </div>
-      </div>
 
-      <p className='mt-2 whitespace-pre-wrap break-words text-sm leading-6 text-foreground'>{comment.text}</p>
+          <p className='mt-1 whitespace-pre-wrap break-words leading-relaxed text-foreground'>{comment.text}</p>
 
-      <div className='mt-2 flex items-center justify-between'>
-        <div className='flex items-center gap-2'>
-          <CommentVotes
-            commentId={comment.id}
-            votesAmt={votesAmt}
-            currentVote={currentVote}
-          />
-
-          <Button
-            onClick={() => {
-              if (!session) return router.push('/sign-in')
-              setIsReplying(true)
-            }}
-            variant='ghost'
-            size='xs'>
-            <MessageSquare className='h-4 w-4 mr-1.5' />
-            Responde
-          </Button>
-        </div>
-        <div className='flex items-center'>
-          <ReportCommentButton commentId={comment.id} authorId={comment.authorId} />
-          <DeleteCommentButton commentId={comment.id} authorId={comment.authorId} />
-        </div>
-      </div>
-
-      {isReplying ? (
-        <div className='grid w-full gap-1.5'>
-          <Label htmlFor='comment'>Tu comentario</Label>
-          <div className='mt-2'>
-            <Textarea
-              onFocus={(e) =>
-                e.currentTarget.setSelectionRange(
-                  e.currentTarget.value.length,
-                  e.currentTarget.value.length
-                )
-              }
-              autoFocus
-              id='comment'
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              rows={1}
-              placeholder='¿Qué piensas?'
-            />
-
-            <div className='mt-2 flex justify-end gap-2'>
-              <Button
-                tabIndex={-1}
-                variant='subtle'
-                onClick={() => setIsReplying(false)}>
-                Cancelar
-              </Button>
-              <Button
-                isLoading={isLoading}
-                onClick={() => {
-                  if (!input) return
-                  postComment({
-                    postId,
-                    text: input,
-                    replyToId: comment.replyToId ?? comment.id, // default to top-level comment
-                  })
-                }}>
-                Publicar
-              </Button>
+          <div className='-ml-1 mt-1.5 flex items-center gap-1'>
+            <CommentVotes commentId={comment.id} votesAmt={votesAmt} currentVote={currentVote} />
+            <Button
+              onClick={() => {
+                if (!session) return router.push('/sign-in')
+                setIsReplying(true)
+              }}
+              variant='ghost'
+              size='xs'
+              className='rounded-full text-muted-foreground'>
+              <MessageSquare className='mr-1.5 h-4 w-4' aria-hidden='true' />
+              Responder
+            </Button>
+            <div className='ml-auto flex items-center'>
+              <ReportCommentButton commentId={comment.id} authorId={comment.authorId} />
+              <DeleteCommentButton commentId={comment.id} authorId={comment.authorId} />
             </div>
           </div>
+
+          {isReplying && (
+            <div className='mt-2 rounded-2xl border border-input px-4 py-3 focus-within:border-display'>
+              <label htmlFor={replyId} className='sr-only'>
+                Tu respuesta a {comment.author.username}
+              </label>
+              <textarea
+                id={replyId}
+                onFocus={(e) => e.currentTarget.setSelectionRange(e.currentTarget.value.length, e.currentTarget.value.length)}
+                autoFocus
+                value={input}
+                onChange={(e) => setInput(e.target.value)}
+                rows={1}
+                placeholder='¿Qué piensas?'
+                className='w-full resize-none bg-transparent leading-6 text-foreground outline-none placeholder:text-muted-foreground [field-sizing:content]'
+              />
+              <div className='mt-2 flex justify-end gap-2'>
+                <Button size='sm' variant='ghost' className='rounded-full' onClick={() => setIsReplying(false)}>
+                  Cancelar
+                </Button>
+                <Button
+                  size='sm'
+                  className='rounded-full'
+                  isLoading={isLoading}
+                  disabled={input.trim().length === 0}
+                  onClick={() =>
+                    postComment({
+                      postId,
+                      text: input,
+                      replyToId: comment.replyToId ?? comment.id, // replies stay one level deep
+                    })
+                  }>
+                  Responder
+                </Button>
+              </div>
+            </div>
+          )}
         </div>
-      ) : null}
+
+        {children && <div className='mt-1 space-y-4 pt-2'>{children}</div>}
+      </div>
     </div>
   )
 }

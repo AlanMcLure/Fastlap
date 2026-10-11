@@ -66,7 +66,7 @@ const DriverOfDay: FC<DriverOfDayProps> = ({ season, round, candidates, state, i
       </div>
 
       {state === 'not-open' ? (
-        <p className='rounded-xl border border-border bg-card p-5 text-foreground'>
+        <p className='text-muted-foreground'>
           Podrás votar a tu piloto del día cuando termine la carrera y haya resultados. La votación dura 48 horas.
         </p>
       ) : (

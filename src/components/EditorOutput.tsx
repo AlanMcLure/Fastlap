@@ -21,10 +21,12 @@ const renderers = {
   embed: CustomEmbedRenderer,
 }
 
+// Post body at reading size (the page is about the post).
 const style = {
   paragraph: {
-    fontSize: '0.875rem',
-    lineHeight: '1.25rem',
+    fontSize: '1.0625rem',
+    lineHeight: '1.65',
+    marginBottom: '0.75rem',
   },
 }
 
@@ -32,7 +34,7 @@ const EditorOutput: FC<EditorOutputProps> = ({ content }) => {
   return (
     <Output
       style={style}
-      className='text-sm'
+      className='max-w-2xl text-foreground'
       renderers={renderers}
       data={content}
     />

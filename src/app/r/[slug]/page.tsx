@@ -1,9 +1,11 @@
-import MiniCreatePost from '@/components/MiniCreatePost'
+import Link from 'next/link'
+import { notFound } from 'next/navigation'
+
 import PostFeed from '@/components/PostFeed'
+import { UserAvatar } from '@/components/UserAvatar'
 import { getAuthSession } from '@/lib/auth'
 import { db } from '@/lib/db'
 import { getFeedPage } from '@/lib/feed'
-import { notFound } from 'next/navigation'
 
 interface PageProps {
   params: Promise<{ slug: string }>
@@ -21,14 +23,20 @@ const page = async ({ params }: PageProps) => {
   const feed = await getFeedPage({ scope: { kind: 'community', name: subreddit.name }, viewerId })
 
   return (
-    <>
-      <div>
-        <p className='label'>COMUNIDAD</p>
-        <h1 className='mt-2 text-3xl font-bold text-display md:text-4xl'>r/{subreddit.name}</h1>
-      </div>
-      <MiniCreatePost session={session} />
+    <div className='pb-10'>
+      <p className='label'>COMUNIDAD</p>
+      <h1 className='mt-2 text-3xl font-bold text-display md:text-4xl'>r/{subreddit.name}</h1>
+
+      <Link
+        href={session?.user ? `/r/${subreddit.name}/submit` : '/sign-in'}
+        className='mt-6 flex items-center gap-3 border-t border-border py-4 text-muted-foreground transition-colors hover:text-foreground'>
+        <UserAvatar user={{ name: session?.user?.username ?? null, image: session?.user?.image ?? null }} className='h-9 w-9' />
+        <span className='flex-1'>{session?.user ? `Publica algo en r/${subreddit.name}…` : 'Inicia sesión para publicar'}</span>
+        {session?.user && <span className='rounded-full bg-primary px-4 py-2 text-sm font-medium text-primary-foreground'>Publicar</span>}
+      </Link>
+
       <PostFeed initialPage={feed} subredditName={subreddit.name} />
-    </>
+    </div>
   )
 }
 
