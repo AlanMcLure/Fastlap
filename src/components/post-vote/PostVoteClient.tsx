@@ -2,7 +2,6 @@
 
 import { useCustomToasts } from '@/hooks/use-custom-toasts'
 import { PostVoteRequest } from '@/lib/validators/vote'
-import { usePrevious } from '@mantine/hooks'
 import { VoteType } from '@prisma/client'
 import { useMutation } from '@tanstack/react-query'
 import VotePill from './VotePill'
@@ -14,17 +13,18 @@ interface PostVoteClientProps {
   postId: string
   initialVotesAmt: number
   initialVote?: VoteType | null
+  layout?: 'pill' | 'column'
 }
 
 const PostVoteClient = ({
   postId,
   initialVotesAmt,
   initialVote,
+  layout,
 }: PostVoteClientProps) => {
   const { loginToast } = useCustomToasts()
   const [votesAmt, setVotesAmt] = useState<number>(initialVotesAmt)
   const [currentVote, setCurrentVote] = useState(initialVote)
-  const prevVote = usePrevious(currentVote)
 
   // ensure sync with server
   useEffect(() => {
@@ -40,12 +40,12 @@ const PostVoteClient = ({
 
       await axios.patch('/api/subreddit/post/vote', payload)
     },
-    onError: (err, voteType) => {
-      if (voteType === 'UP') setVotesAmt((prev) => prev - 1)
-      else setVotesAmt((prev) => prev + 1)
-
-      // reset current vote
-      setCurrentVote(prevVote)
+    onError: (err, _type, before) => {
+      // back to exactly what was shown before the click (a flip moved the score by 2, a toggle the other way)
+      if (before) {
+        setVotesAmt(before.votesAmt)
+        setCurrentVote(before.currentVote)
+      }
 
       if (err instanceof AxiosError) {
         if (err.response?.status === 401) {
@@ -60,6 +60,7 @@ const PostVoteClient = ({
       })
     },
     onMutate: (type: VoteType) => {
+      const before = { votesAmt, currentVote }
       if (currentVote === type) {
         // User is voting the same way again, so remove their vote
         setCurrentVote(undefined)
@@ -72,10 +73,11 @@ const PostVoteClient = ({
         else if (type === 'DOWN')
           setVotesAmt((prev) => prev - (currentVote ? 2 : 1))
       }
+      return before
     },
   })
 
-  return <VotePill votes={votesAmt} current={currentVote} onVote={(type) => vote(type)} />
+  return <VotePill layout={layout} votes={votesAmt} current={currentVote} onVote={(type) => vote(type)} />
 }
 
 export default PostVoteClient

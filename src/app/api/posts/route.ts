@@ -6,13 +6,13 @@ import { FeedQuery } from '@/lib/feedRules'
 
 export const dynamic = 'force-dynamic'
 
-/** Next page of a feed: a community, a user's posts, or the home feed (followed communities, else everything). */
+/** Next page of a feed: a community, a user's posts, everything (`feed=all`) or the home feed (followed communities, else everything). */
 export async function GET(req: Request) {
   try {
     const params = Object.fromEntries(
       [...new URL(req.url).searchParams].filter(([, value]) => value !== '')
     )
-    const { subredditName, username, cursor, limit } = FeedQuery.parse(params)
+    const { subredditName, username, cursor, limit, feed } = FeedQuery.parse(params)
     const session = await getAuthSession()
     const viewerId = session?.user?.id
 
@@ -20,7 +20,9 @@ export async function GET(req: Request) {
       ? { kind: 'community', name: subredditName }
       : username
         ? { kind: 'user', username }
-        : { kind: 'home', viewerId }
+        : feed === 'all'
+          ? { kind: 'all' }
+          : { kind: 'home', viewerId }
 
     const page = await getFeedPage({ scope, viewerId, cursor, limit })
     return Response.json(page, { headers: { 'Cache-Control': 'no-store' } })

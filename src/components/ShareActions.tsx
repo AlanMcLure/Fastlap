@@ -4,7 +4,7 @@ import { Download, Share2 } from 'lucide-react'
 import { FC } from 'react'
 
 import { Button, buttonVariants } from '@/components/ui/Button'
-import { toast } from '@/hooks/use-toast'
+import { shareLink } from '@/lib/share'
 
 interface ShareActionsProps {
   /** Title for the share sheet. */
@@ -19,21 +19,7 @@ interface ShareActionsProps {
 
 /** Share the link (system share sheet, or copy it) and download the share card as an image. */
 const ShareActions: FC<ShareActionsProps> = ({ title, path, imageHref, fileName }) => {
-  const share = async () => {
-    const url = `${window.location.origin}${path}`
-    try {
-      if (typeof navigator.share === 'function') {
-        await navigator.share({ title, url })
-        return
-      }
-      await navigator.clipboard.writeText(url)
-      toast({ description: 'Enlace copiado al portapapeles.' })
-    } catch (error) {
-      // closing the share sheet is not an error
-      if (error instanceof DOMException && error.name === 'AbortError') return
-      toast({ title: 'No se ha podido compartir', description: `Copia el enlace a mano: ${url}`, variant: 'destructive' })
-    }
-  }
+  const share = () => shareLink(title, path)
 
   return (
     <div className='flex flex-wrap gap-2'>

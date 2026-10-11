@@ -14,20 +14,22 @@ interface PostFeedProps {
   initialPage: FeedPage
   subredditName?: string
   username?: string
+  /** `all`: the home feed without the followed-communities filter. */
+  feed?: 'all'
 }
 
 /**
  * Infinite feed: the server renders the first page, the next ones load when the end of the list
  * comes near (cursor pagination, so posts published meanwhile neither repeat nor go missing).
  */
-const PostFeed: FC<PostFeedProps> = ({ initialPage, subredditName, username }) => {
+const PostFeed: FC<PostFeedProps> = ({ initialPage, subredditName, username, feed }) => {
   const { ref, entry } = useIntersection({ rootMargin: '600px' })
 
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isError } = useInfiniteQuery({
-    queryKey: ['posts', { subredditName, username }],
+    queryKey: ['posts', { subredditName, username, feed }],
     queryFn: async ({ pageParam }) => {
       const { data } = await axios.get<FeedPage>('/api/posts', {
-        params: { subredditName, username, cursor: pageParam ?? undefined },
+        params: { subredditName, username, feed, cursor: pageParam ?? undefined },
       })
       return data
     },
@@ -52,14 +54,14 @@ const PostFeed: FC<PostFeedProps> = ({ initialPage, subredditName, username }) =
   }
 
   return (
-    <ul className='flex flex-col space-y-4' aria-busy={isFetchingNextPage}>
+    <ul className='flex flex-col border-t border-border' aria-busy={isFetchingNextPage}>
       {posts.map((post) => (
         <li key={post.id}>
           <Post post={post} />
         </li>
       ))}
 
-      <li ref={ref} className='pt-2'>
+      <li ref={ref} className='py-6'>
         {isFetchingNextPage ? (
           <SkeletonCard />
         ) : isError ? (

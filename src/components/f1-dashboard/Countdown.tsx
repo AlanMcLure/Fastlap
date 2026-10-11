@@ -1,34 +1,6 @@
 'use client'
 
-import { useSyncExternalStore } from 'react'
-
-// One shared one-second clock for every countdown on the page.
-const listeners = new Set<() => void>()
-let timer: ReturnType<typeof setInterval> | undefined
-let snapshot = 0
-
-const nowSeconds = () => Math.floor(Date.now() / 1000)
-
-function subscribe(listener: () => void) {
-  listeners.add(listener)
-  if (!timer) {
-    snapshot = nowSeconds()
-    timer = setInterval(() => {
-      snapshot = nowSeconds()
-      listeners.forEach((notify) => notify())
-    }, 1000)
-  }
-  return () => {
-    listeners.delete(listener)
-    if (listeners.size === 0 && timer) {
-      clearInterval(timer)
-      timer = undefined
-    }
-  }
-}
-
-const getSnapshot = () => snapshot || nowSeconds()
-const getServerSnapshot = () => null
+import { useNowSeconds } from '@/hooks/use-now-seconds'
 
 interface CountdownProps {
   /** ISO timestamp of the start of the race. */
@@ -48,7 +20,7 @@ const Unit = ({ value, label }: { value: string; label: string }) => (
 
 /** Countdown to the race start, in dot-matrix digits (the one Doto use on the screen). */
 const Countdown = ({ startIso, endIso }: CountdownProps) => {
-  const now = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot)
+  const now = useNowSeconds()
 
   if (now === null) {
     // server render and first client render: no clock yet

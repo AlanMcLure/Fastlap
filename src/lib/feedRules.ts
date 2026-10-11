@@ -11,6 +11,8 @@ export const FeedQuery = z.object({
   subredditName: z.string().min(1).max(64).optional(),
   username: z.string().min(1).max(64).optional(),
   cursor: z.string().min(1).max(64).optional(),
+  /** `all`: the home feed without the followed-communities filter. */
+  feed: z.enum(['all']).optional(),
   limit: z.coerce.number().int().min(1).max(FEED_MAX_LIMIT).default(PAGINATION_RESULTS),
 })
 

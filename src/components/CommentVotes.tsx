@@ -2,7 +2,6 @@
 import { toast } from '@/hooks/use-toast'
 import { useCustomToasts } from '@/hooks/use-custom-toasts'
 import { CommentVoteRequest } from '@/lib/validators/vote'
-import { usePrevious } from '@mantine/hooks'
 import { CommentVote, VoteType } from '@prisma/client'
 import { useMutation } from '@tanstack/react-query'
 import VotePill from './post-vote/VotePill'
@@ -27,7 +26,6 @@ const CommentVotes: FC<CommentVotesProps> = ({
   const [currentVote, setCurrentVote] = useState<PartialVote | undefined>(
     _currentVote
   )
-  const prevVote = usePrevious(currentVote)
 
   const { mutate: vote } = useMutation({
     mutationFn: async (type: VoteType) => {
@@ -38,12 +36,12 @@ const CommentVotes: FC<CommentVotesProps> = ({
 
       await axios.patch('/api/subreddit/post/comment/vote', payload)
     },
-    onError: (err, voteType) => {
-      if (voteType === 'UP') setVotesAmt((prev) => prev - 1)
-      else setVotesAmt((prev) => prev + 1)
-
-      // reset current vote
-      setCurrentVote(prevVote)
+    onError: (err, _type, before) => {
+      // back to exactly what was shown before the click (a flip moved the score by 2, a toggle the other way)
+      if (before) {
+        setVotesAmt(before.votesAmt)
+        setCurrentVote(before.currentVote)
+      }
 
       if (err instanceof AxiosError) {
         if (err.response?.status === 401) {
@@ -58,6 +56,7 @@ const CommentVotes: FC<CommentVotesProps> = ({
       })
     },
     onMutate: (type: VoteType) => {
+      const before = { votesAmt, currentVote }
       if (currentVote?.type === type) {
         // User is voting the same way again, so remove their vote
         setCurrentVote(undefined)
@@ -70,6 +69,7 @@ const CommentVotes: FC<CommentVotesProps> = ({
         else if (type === 'DOWN')
           setVotesAmt((prev) => prev - (currentVote ? 2 : 1))
       }
+      return before
     },
   })
 

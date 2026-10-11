@@ -12,12 +12,15 @@ interface SubscribeLeaveToggleProps {
   isSubscribed: boolean
   subredditId: string
   subredditName: string
+  /** Small outline pill (lists, side columns) instead of the full-width button. */
+  compact?: boolean
 }
 
 const SubscribeLeaveToggle = ({
   isSubscribed,
   subredditId,
   subredditName,
+  compact = false,
 }: SubscribeLeaveToggleProps) => {
   const { toast } = useToast()
   const { loginToast } = useCustomToasts()
@@ -87,19 +90,17 @@ const SubscribeLeaveToggle = ({
     },
   })
 
+  const look = compact
+    ? { variant: 'outline' as const, size: 'sm' as const, className: 'h-8 shrink-0 rounded-full px-4' }
+    : { className: 'w-full rounded-full' }
+
   return isSubscribed ? (
-    <Button
-      className='w-full'
-      isLoading={isUnsubLoading}
-      onClick={() => unsubscribe()}>
-      Dejar comunidad
+    <Button {...look} isLoading={isUnsubLoading} onClick={() => unsubscribe()}>
+      {compact ? 'Dejar' : 'Salir'}
     </Button>
   ) : (
-    <Button
-      className='w-full'
-      isLoading={isSubLoading}
-      onClick={() => subscribe()}>
-      Únete para postear
+    <Button {...look} isLoading={isSubLoading} onClick={() => subscribe()}>
+      Unirme
     </Button>
   )
 }

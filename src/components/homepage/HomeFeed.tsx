@@ -3,14 +3,17 @@ import Link from 'next/link'
 import PostFeed from '@/components/PostFeed'
 import { getFeedPage } from '@/lib/feed'
 
-/** Home feed: the followed communities of a signed-in user, otherwise (or if they follow none) every post. */
-const HomeFeed = async ({ viewerId }: { viewerId?: string }) => {
-  const page = await getFeedPage({ scope: { kind: 'home', viewerId }, viewerId })
+/**
+ * Home feed: the followed communities of a signed-in user, otherwise (or if they follow none) every
+ * post. `all` shows every post (the "Todo" tab).
+ */
+const HomeFeed = async ({ viewerId, all = false }: { viewerId?: string; all?: boolean }) => {
+  const page = await getFeedPage({ scope: all ? { kind: 'all' } : { kind: 'home', viewerId }, viewerId })
 
   return (
-    <div className='space-y-4'>
+    <div>
       {page.showingAll && (
-        <p className='rounded-xl border border-dashed border-border px-5 py-4 text-sm text-muted-foreground'>
+        <p className='border-t border-border py-4 text-sm text-muted-foreground'>
           Aún no sigues ninguna comunidad, así que ves todas las publicaciones. Únete a las que te interesen para
           personalizar tu feed, o{' '}
           <Link href='/r/create' className='text-display underline underline-offset-2'>
@@ -19,7 +22,7 @@ const HomeFeed = async ({ viewerId }: { viewerId?: string }) => {
           .
         </p>
       )}
-      <PostFeed initialPage={page} />
+      <PostFeed initialPage={page} feed={all ? 'all' : undefined} />
     </div>
   )
 }

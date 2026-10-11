@@ -30,6 +30,7 @@ export interface FeedPost {
 
 export type FeedScope =
   | { kind: 'home'; viewerId?: string }
+  | { kind: 'all' }
   | { kind: 'community'; name: string }
   | { kind: 'user'; username: string }
 
@@ -43,7 +44,7 @@ export interface FeedPage {
 async function scopeFilter(scope: FeedScope): Promise<{ where: Prisma.PostWhereInput; showingAll?: boolean }> {
   if (scope.kind === 'community') return { where: { subreddit: { name: scope.name } } }
   if (scope.kind === 'user') return { where: { author: { username: scope.username } } }
-  if (!scope.viewerId) return { where: {} }
+  if (scope.kind === 'all' || !scope.viewerId) return { where: {} }
   const followed = await db.subscription.findMany({ where: { userId: scope.viewerId }, select: { subredditId: true } })
   if (followed.length === 0) return { where: {}, showingAll: true }
   return { where: { subredditId: { in: followed.map((f) => f.subredditId) } } }

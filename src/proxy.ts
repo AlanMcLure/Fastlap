@@ -18,5 +18,5 @@ export default auth((req) => {
 
 // See "Matching Paths" below to learn more
 export const config = {
-  matcher: ['/r/:path*/submit', '/r/create', '/settings', '/f1-dashboard', '/f1-dashboard/:path*'],
+  matcher: ['/submit', '/r/:path*/submit', '/r/create', '/settings', '/f1-dashboard', '/f1-dashboard/:path*'],
 }

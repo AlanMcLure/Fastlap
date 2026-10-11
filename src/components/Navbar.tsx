@@ -1,47 +1,51 @@
-import { getAuthSession } from '@/lib/auth'
+import { Plus } from 'lucide-react'
 import Link from 'next/link'
-import { buttonVariants } from './ui/Button'
-import { UserAccountNav } from './UserAccountNav'
+import { Suspense } from 'react'
+
+import { getAuthSession } from '@/lib/auth'
+import { canAccessDashboard } from '@/lib/features'
+import { Icons } from './Icons'
+import NavLinks, { type NavItem } from './NavLinks'
+import NotificationBell from './NotificationBell'
+import RaceTicker, { TickerBar } from './race-ticker/RaceTicker'
 import SearchBar from './SearchBar'
 import ThemeToggle from './ThemeToggle'
-import { Icons } from './Icons'
-import NotificationBell from './NotificationBell'
-import { canAccessDashboard } from '@/lib/features'
+import { buttonVariants } from './ui/Button'
+import { UserAccountNav } from './UserAccountNav'
 
-const navLink = 'label transition-colors hover:text-display'
-
+/**
+ * Fixed header, 96 px tall: the navigation row (56 px) and the race ticker (40 px) under it.
+ * The root layout offsets the page by exactly that height.
+ */
 const Navbar = async () => {
   const session = await getAuthSession()
+  const items: NavItem[] = [
+    { href: '/', label: 'Inicio' },
+    { href: '/gp', label: 'GP' },
+    { href: '/pronosticos', label: 'Pronósticos' },
+    { href: '/juegos', label: 'Juegos' },
+    ...(session?.user && canAccessDashboard(session.user.role) ? [{ href: '/f1-dashboard', label: 'Datos' }] : []),
+  ]
+
   return (
-    <header className='fixed top-0 inset-x-0 z-[10] h-14 border-b border-border bg-background/95 backdrop-blur-none'>
-      <div className='container max-w-7xl h-full mx-auto flex items-center gap-2 sm:gap-6'>
-        {/* logo */}
+    <header className='fixed inset-x-0 top-0 z-[10] bg-background/95'>
+      <div className='container mx-auto flex h-14 max-w-7xl items-center gap-3 border-b border-border sm:gap-6'>
         <Link href='/' className='flex shrink-0 items-center gap-2 text-display' aria-label='FastLap, inicio'>
           <Icons.logo className='h-7 w-7' />
-          <span className='label hidden text-display md:block'>FASTLAP</span>
+          <span className='label hidden text-display lg:block'>FASTLAP</span>
         </Link>
 
-        {/* F1 Dashboard link: every signed-in user, or only PREMIUM/ADMIN when Premium is enabled */}
-        <nav className='flex shrink-0 items-center gap-4'>
-          {/* on phones the header is full: the link lives in the home page and the account menu */}
-          <Link href='/pronosticos' className={`${navLink} hidden sm:inline`}>
-            PRONÓSTICOS
-          </Link>
-          <Link href='/juegos' className={`${navLink} hidden md:inline`}>
-            JUEGOS
-          </Link>
-          {session?.user && canAccessDashboard(session.user.role) && (
-            <Link href='/f1-dashboard' className={`${navLink} hidden min-[360px]:inline`}>
-              F1
-            </Link>
-          )}
-        </nav>
+        <NavLinks items={items} />
 
-        {/* search bar */}
         <SearchBar />
 
-        {/* actions */}
         <div className='flex shrink-0 items-center gap-1'>
+          {session?.user && (
+            <Link href='/submit' className={buttonVariants({ size: 'sm', className: 'hidden gap-1.5 rounded-full md:inline-flex' })}>
+              <Plus className='h-4 w-4' aria-hidden='true' />
+              Publicar
+            </Link>
+          )}
           <ThemeToggle />
           {session?.user && <NotificationBell />}
           {session?.user ? (
@@ -53,6 +57,10 @@ const Navbar = async () => {
           )}
         </div>
       </div>
+
+      <Suspense fallback={<TickerBar />}>
+        <RaceTicker />
+      </Suspense>
     </header>
   )
 }

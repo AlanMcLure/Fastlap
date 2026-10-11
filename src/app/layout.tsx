@@ -1,6 +1,8 @@
 import type { Metadata, Viewport } from 'next'
+import MobileNav from '@/components/MobileNav'
 import Navbar from '@/components/Navbar'
 import ServiceWorkerRegister from '@/components/ServiceWorkerRegister'
+import { getAuthSession } from '@/lib/auth'
 import { siteUrl } from '@/lib/seo'
 import { cn } from '@/lib/utils'
 import { Doto, Space_Grotesk, Space_Mono } from 'next/font/google'
@@ -32,13 +34,16 @@ export const viewport: Viewport = { themeColor: '#000000', colorScheme: 'dark li
 // Applies the saved theme before first paint so there is no light/dark flash. Dark is the default.
 const themeScript = `try{document.documentElement.dataset.theme=localStorage.getItem('theme')==='light'?'light':'dark'}catch(e){document.documentElement.dataset.theme='dark'}`
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
   authModal,
 }: {
   children: React.ReactNode
   authModal: React.ReactNode
 }) {
+  const session = await getAuthSession()
+  const username = session?.user ? session.user.username ?? '' : null
+
   return (
     <html
       lang='es'
@@ -49,7 +54,7 @@ export default function RootLayout({
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
       </head>
       {/* browser extensions (e.g. ColorZilla) add attributes to <body> before React hydrates */}
-      <body className='min-h-screen pt-12 bg-background text-foreground antialiased' suppressHydrationWarning>
+      <body className='min-h-screen bg-background pb-16 pt-24 text-foreground antialiased md:pb-0' suppressHydrationWarning>
         <Providers>
           <a
             href='#contenido'
@@ -59,9 +64,10 @@ export default function RootLayout({
           <Navbar />
           {authModal}
 
-          <main id='contenido' tabIndex={-1} className='container max-w-7xl mx-auto h-full pt-12 focus:outline-none'>
+          <main id='contenido' tabIndex={-1} className='container max-w-7xl mx-auto h-full pt-6 focus:outline-none'>
             {children}
           </main>
+          <MobileNav username={username} />
         </Providers>
         <Toaster />
         <ServiceWorkerRegister />
