@@ -6,6 +6,7 @@ import { sessionStart, weekendSessions } from '@/lib/f1/calendar'
 import { getCalendar, getRaceResults } from '@/lib/f1/queries'
 import type { Race } from '@/lib/f1/schemas'
 import { predictionDeadline } from '@/lib/league'
+import { hasReplay } from '@/lib/replay/replays'
 import { sessionState } from '@/lib/postPage'
 import { TICKER_LABEL, tickerState } from '@/lib/raceTicker'
 import { withTimeout } from '@/lib/timeout'
@@ -30,6 +31,7 @@ const RaceWeekendPanel = async ({ season, round }: { season: number; round: numb
 
   const now = new Date()
   const podium = withResults?.Results.slice(0, 3) ?? []
+  const replay = podium.length > 0 ? await hasReplay(season, round).catch(() => false) : false
   const fastest = withResults?.Results.find((r) => r.FastestLap?.rank === 1)
   const state = tickerState(race, now)
   const { start } = sessionStart(race.date, race.time)
@@ -53,6 +55,11 @@ const RaceWeekendPanel = async ({ season, round }: { season: number; round: numb
               </li>
             ))}
           </ol>
+          {replay && (
+            <Link href={`/gp/${season}/${round}/repeticion`} className='label mt-3 inline-flex items-center gap-2 text-display hover:underline'>
+              VER LA REPETICIÓN <span aria-hidden='true'>→</span>
+            </Link>
+          )}
           {fastest && (
             <p className='mt-3 text-sm text-muted-foreground'>
               Vuelta rápida: <span className='text-display'>{fastest.Driver.familyName}</span>

@@ -20,6 +20,7 @@ import type { Race } from '@/lib/f1/schemas'
 import { canAccessDashboard } from '@/lib/features'
 import { canCreateRaceThread, dotdState, weekendStarted } from '@/lib/raceHub'
 import { ensureRaceThread, findRaceThread, type RaceThread } from '@/lib/raceThread'
+import { hasReplay } from '@/lib/replay/replays'
 
 // Depends on the current time (thread creation, voting window) and on the viewer.
 export const dynamic = 'force-dynamic'
@@ -120,6 +121,7 @@ const RaceHubPage = async ({ params }: Props) => {
   const { locality, country } = race.Circuit.Location
   const { start: raceStart } = sessionStart(race.date, race.time)
   const showDashboard = !session?.user ? false : canAccessDashboard(session.user.role)
+  const replay = hasResults ? await hasReplay(season, round).catch(() => false) : false
 
   return (
     <div className='mx-auto max-w-3xl space-y-8 py-6'>
@@ -172,6 +174,17 @@ const RaceHubPage = async ({ params }: Props) => {
           <p className='border-y border-border py-4 text-muted-foreground'>
             El hilo se abrirá cuando empiece el fin de semana (primera sesión de libres).
           </p>
+        )}
+        {replay && (
+          <Link
+            href={`/gp/${season}/${round}/repeticion`}
+            className='flex items-center justify-between gap-4 border-b border-border py-4 text-display transition-colors hover:text-foreground'>
+            <span>
+              <span className='block text-lg font-medium'>Repetición de la carrera</span>
+              <span className='text-sm text-muted-foreground'>Los coches sobre el circuito, vuelta a vuelta</span>
+            </span>
+            <span aria-hidden='true'>→</span>
+          </Link>
         )}
       </section>
 

@@ -37,6 +37,7 @@ No se usa **analítica**, **publicidad**, **seguimiento** ni perfilado. No hay c
 | **UploadThing** | Imágenes subidas y su IP al subirlas | Alojar imágenes | Encargado; dónde se alojan |
 | **Stripe** (solo si se activa Premium; hoy oculto) | Correo y datos de pago | Cobro | Responsable independiente en parte; ver condiciones de Premium |
 | **Jolpica-F1** | Ninguno: la aplicación consulta datos de carreras desde el servidor, sin datos de usuarios | Datos de F1 | Licencia CC BY-NC-SA 4.0; no comercial |
+| **OpenF1** | Ninguno: el servidor descarga una vez las posiciones de los coches de cada carrera terminada, sin datos de usuarios | Repeticiones de carreras | Licencia CC BY-NC-SA 4.0; no comercial; no afiliado a la F1 |
 | **Sitios de imágenes externas** en publicaciones | Su IP al cargar la imagen | Contenido de los usuarios | Las incrustaciones (iframes) ya no se admiten; los posts antiguos con embed muestran solo un enlace. Ver [CAMBIOS-TECNICOS.md](CAMBIOS-TECNICOS.md) |
 | **Imágenes de publicaciones alojadas fuera** (cualquier host https) | La IP del lector (la web pide `no-referrer`) | Mostrar la imagen | Riesgo bajo; mencionar en la política |
 

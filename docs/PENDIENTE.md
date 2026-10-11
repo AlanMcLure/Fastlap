@@ -10,7 +10,7 @@
 | Definir `NEXT_PUBLIC_SITE_URL` y los secretos en el hosting (nunca en el repositorio) | `docs/DESPLIEGUE.md` §3 |
 | Aplicar el esquema a la base real (`prisma db push` o el servicio `migrate`): incluye las columnas nuevas `termsAcceptedAt` y `termsVersion` | `docs/DESPLIEGUE.md` |
 | Si la base ya tenía cuentas: `node scripts/scrub-google-tokens.mjs` (primero sin `--apply`) | `docs/legal/CAMBIOS-TECNICOS.md` §1.2 |
-| **Enviar el correo a Jolpica** (`admin@jolpi.ca`) si habrá publicidad o cobro: los datos son CC BY-NC-SA, uso no comercial | `docs/DESPLIEGUE.md` §7, `docs/IDEAS.md` |
+| **Enviar el correo a Jolpica** (`admin@jolpi.ca`) si habrá publicidad o cobro: los datos son CC BY-NC-SA, uso no comercial (lo mismo vale para OpenF1, fuente de las repeticiones) | `docs/DESPLIEGUE.md` §7, `docs/IDEAS.md` |
 | **Decisiones de producto** abiertas: noticias (B4), colores de equipo (B5), datos en vivo reales (B6) | `docs/IDEAS.md` |
 | **Segundo minijuego**: describir la idea «tipo futbol11» (no pude abrir la web) y elegir entre ese, las luces de salida u otro | `docs/IDEAS.md` A10 |
 | **Datos del titular** y el resto de `[PENDIENTE]` de los textos legales (`grep -rn PENDIENTE docs/legal`) | `docs/legal/README.md` |

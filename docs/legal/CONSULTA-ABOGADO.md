@@ -60,7 +60,7 @@ Detalle y cómo estaba antes: [CAMBIOS-TECNICOS.md](CAMBIOS-TECNICOS.md).
 
 ### F. Propiedad intelectual y marcas
 22. El nombre, las siglas y el logotipo de «Formula 1», «F1», los equipos y los nombres de los pilotos son marcas o datos protegidos. ¿Qué uso es lícito en una web de aficionados (nombres de pilotos y equipos en estadísticas y textos)? ¿Qué aviso de «no afiliación» hay que poner?
-23. **Datos de Jolpica-F1** (CC BY-NC-SA 4.0, uso no comercial): ¿qué implica para una web gratuita hoy y qué cambiaría si hubiera publicidad o Premium? La licencia **comparte igual** (SA): ¿afecta a la API pública que expone datos de temporadas cerradas?
+23. **Datos de Jolpica-F1 y de OpenF1** (ambos CC BY-NC-SA 4.0, uso no comercial; OpenF1 añade posiciones de los coches en pista, derivadas del cronometraje oficial de la F1): ¿qué implica para una web gratuita hoy y qué cambiaría si hubiera publicidad o Premium? La licencia **comparte igual** (SA): ¿afecta a la API pública que expone datos de temporadas cerradas?
 24. Los usuarios suben imágenes y texto: ¿qué licencia hay que pedirles en las condiciones y cómo se redacta la cesión mínima para poder mostrarlo?
 25. Imágenes de pilotos o fotos de carreras subidas por usuarios: ¿hay riesgo de derechos de imagen o de autor y cómo se gestiona?
 

@@ -49,6 +49,9 @@ Compruébalas con `node scripts/check-env.mjs` (o `yarn check-env`; dentro de la
 8. **Tarea programada** para mantenerla al día, una vez al día, la última temporada cerrada. Con cron del servidor:
    `0 4 * * * curl -fsS -H "Authorization: Bearer $CRON_SECRET" "https://tu-dominio/api/f1/sync" >/dev/null`
    (o un programador del hosting, o un flujo de GitHub Actions con `schedule`).
+   Repeticiones de carreras (OpenF1), una vez al día; construye la última carrera terminada si falta:
+   `0 6 * * * curl -fsS -m 600 -H "Authorization: Bearer $CRON_SECRET" "https://tu-dominio/api/f1/replay/build" >/dev/null`
+   Para una carrera concreta: `.../api/f1/replay/build?season=2025&round=9` (tarda uno o dos minutos; OpenF1 se cierra mientras hay una sesión en directo, así que no lo programes en domingo por la mañana).
 9. **Lista de comprobación antes de abrir** (sección 6).
 
 ## 4. Operación
@@ -88,7 +91,7 @@ En el entorno de desarrollo (sin acceso a Google, UploadThing, Stripe ni a la AP
 
 ## 7. Pendiente y riesgos (no es asesoramiento legal)
 
-- **Licencia de los datos:** Jolpica-F1 es CC BY-NC-SA 4.0 (**uso no comercial**, atribución). Si vas a cobrar o poner publicidad, escribe antes a `admin@jolpi.ca`. La copia propia y la API pública son obras derivadas con la misma licencia.
+- **Licencia de los datos:** Jolpica-F1 es CC BY-NC-SA 4.0 (**uso no comercial**, atribución). Si vas a cobrar o poner publicidad, escribe antes a `admin@jolpi.ca`. La copia propia y la API pública son obras derivadas con la misma licencia. Las repeticiones usan **OpenF1**, también CC BY-NC-SA 4.0 y pensado para «non-commercial fan engagement»: el mismo límite; la atribución sale bajo el visor.
 - **Textos legales:** borradores en `docs/legal/` (sin publicar ni revisar); la lista de lo que falta está en `docs/PENDIENTE.md`. Las cookies actuales son técnicas, sin analítica.
 - **Marcas:** la app avisa de que no está afiliada a la Fórmula 1; no uses logos oficiales.
 - **Content-Security-Policy:** no hay. Se añadieron las demás cabeceras de seguridad, pero una CSP exige permitir el script del tema y los datos estructurados, y probarla con cuidado (los incrustados del editor ya no existen).
