@@ -2,6 +2,21 @@
 
 Índice único de lo que falta. El detalle de cada punto está en el documento al que enlaza; si cambia algo, actualiza aquí y allí.
 
+## 0. Ramas: se trabaja en `claude/fastlap-repo-work-fjj0ch`, no en `master`
+
+Desde octubre de 2026 todo el trabajo va en la rama **`claude/fastlap-repo-work-fjj0ch`**. `master` se ha quedado en «Migración a Next.js 16» y **no se toca** hasta completar esta lista; después se integra la rama en `master` de una vez.
+
+Antes de integrar en `master`:
+
+| Qué | Por qué |
+|---|---|
+| **Comprobar si `master` está desplegado en público (Vercel)** y, si lo está, decidir si se adelanta solo el arreglo de la fuga de correos (commit `bf73b40`) o se pausa ese despliegue | La versión de `master` envía el correo de cada autor a cualquier visitante (portada y `/api/posts`). Está corregido en la rama, no en `master`. Si estuvo abierto al público con cuentas reales, consultarlo con el abogado (RGPD, posible notificación) |
+| Variables en el hosting: añadir `AUTH_URL`, `AUTH_TRUST_HOST=true` y `CRON_SECRET`; quitar `REDIS_URL` y `REDIS_SECRET` | Auth.js v5 y la retirada de Redis (`docs/DESPLIEGUE.md` §2) |
+| El esquema ya está aplicado a la base de Neon (`prisma db push`) | Hecho el 3/10/2026; repetirlo si cambia el esquema |
+| Programar las tareas diarias (`/api/f1/sync` y `/api/f1/replay/build`) | `docs/DESPLIEGUE.md` §3 |
+| Probar en producción el inicio de sesión con Google, la subida de imágenes y una repetición | Solo se han probado en local |
+
+
 ## 1. Solo puedes hacerlo tú (decisiones, cuentas, datos)
 
 | Qué | Dónde está el detalle |

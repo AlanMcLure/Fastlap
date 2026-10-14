@@ -6,6 +6,10 @@ Guidance for any coding agent or contributor working in this repository.
 
 FastLap is a Reddit-style social network for Formula 1 fans (Spanish-language UI). It combines forum-style communities ("subreddits") with an F1 data dashboard gated behind a paid Premium tier. Built with Next.js 16 (App Router), React 19, TypeScript (`strict: true`), Tailwind 3 + Shadcn UI ("new-york" style, slate base color), Prisma 6/Postgres (Neon), Auth.js v5 (`next-auth@beta`), UploadThing, and Stripe. There is no Redis (removed Oct 2026; see below).
 
+## Branches
+
+Work on **`claude/fastlap-repo-work-fjj0ch`**. `master` is frozen at "Migración a Next.js 16" (it may be the deployed version) and must not receive commits until the checklist in [docs/PENDIENTE.md](docs/PENDIENTE.md) §0 is done; then the branch is merged into `master` in one go. Never push to `master` without the owner's explicit go-ahead.
+
 ## Common commands
 
 ```bash
