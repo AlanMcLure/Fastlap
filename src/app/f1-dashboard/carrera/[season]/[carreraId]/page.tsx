@@ -10,6 +10,8 @@ import SessionList from '@/components/f1-dashboard/SessionList'
 import StandingsTable from '@/components/f1-dashboard/StandingsTable'
 import { driverRows } from '@/components/f1-dashboard/standingRows'
 import { raceStatus } from '@/lib/f1/calendar'
+import { statsEnabled } from '@/lib/f1stats/client'
+import { DETAILED_FROM } from '@/lib/f1stats/queries'
 import { formatRaceDate } from '@/lib/f1/format'
 import { groupPitStops, raceSummary } from '@/lib/f1/race'
 import { getCalendar, getDriverStandings, getPitStops, getRaceResults } from '@/lib/f1/queries'
@@ -78,11 +80,27 @@ const RacePage = async ({ params }: RacePageProps) => {
         <p className='mt-2 text-muted-foreground'>
           {race.Circuit.circuitName} · {locality}, {country}
         </p>
-        <Link
-          href={`/gp/${season}/${round}`}
-          className='label mt-4 inline-block rounded-full border border-input px-4 py-2.5 text-display transition-colors hover:border-display'>
-          HILO Y PILOTO DEL DÍA
-        </Link>
+        <div className='mt-4 flex flex-wrap gap-2'>
+          <Link
+            href={`/gp/${season}/${round}`}
+            className='label inline-block rounded-full border border-input px-4 py-2.5 text-display transition-colors hover:border-display'>
+            HILO Y PILOTO DEL DÍA
+          </Link>
+          {statsEnabled() && season >= DETAILED_FROM && (
+            <Link
+              href={`/f1-dashboard/carrera/${season}/${round}/analisis`}
+              className='label inline-block rounded-full bg-primary px-4 py-2.5 text-primary-foreground transition-opacity hover:opacity-80'>
+              ANÁLISIS DE LA SESIÓN
+            </Link>
+          )}
+          {statsEnabled() && (
+            <Link
+              href={`/f1-dashboard/carrera/${season}/${round}/circuito`}
+              className='label inline-block rounded-full border border-input px-4 py-2.5 text-display transition-colors hover:border-display'>
+              HISTORIA DEL CIRCUITO
+            </Link>
+          )}
+        </div>
       </div>
 
       {hasResults ? (

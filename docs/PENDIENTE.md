@@ -29,6 +29,7 @@ Antes de integrar en `master`:
 | **Decisiones de producto** abiertas: noticias (B4), colores de equipo (B5), datos en vivo reales (B6) | `docs/IDEAS.md` |
 | **Segundo minijuego**: describir la idea «tipo futbol11» (no pude abrir la web) y elegir entre ese, las luces de salida u otro | `docs/IDEAS.md` A10 |
 | **Datos del titular** y el resto de `[PENDIENTE]` de los textos legales (`grep -rn PENDIENTE docs/legal`) | `docs/legal/README.md` |
+| Decidir si se **despliega api-f1** (Spring Boot + MySQL, repo `AlanMcLure/api-f1`) y dónde; después, definir `F1_STATS_URL` en el hosting para activar las páginas de análisis, temporada, récords y circuitos | `AGENTS.md` (Stats layer), `docs/IDEAS.md` A12 |
 
 ## 2. Necesita un profesional
 
