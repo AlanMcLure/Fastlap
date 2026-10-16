@@ -77,6 +77,10 @@ const SeasonPage = async ({ searchParams }: SeasonPageProps) => {
   const positions = progression ? positionsChart(progression, teamsView ? teamNames : codes) : null
   const paceChart = pace && pace.teams.length > 0 ? qualifyingPaceChart(pace) : null
   const shownBattles = mainBattles(battles ?? [])
+  const fastestTeams = (pace?.teams ?? [])
+    .filter((team) => team.fastestCount > 0)
+    .map((team) => `${team.constructorName ?? team.constructorId} ${team.fastestCount}`)
+    .join(', ')
 
   return (
     <div className='max-w-5xl space-y-10'>
@@ -110,8 +114,7 @@ const SeasonPage = async ({ searchParams }: SeasonPageProps) => {
             initial={positions.series.slice(0, 3).map((s) => s.number)}
             reversed
             yDomain={[1, Math.max(positions.series.length, 2)]}
-            formatValue={(v) => `P${v}`}
-            yTickFormat={(v) => `P${v}`}
+            unit='position'
             xTick='R'
             xName='RONDA'
           />
@@ -132,7 +135,7 @@ const SeasonPage = async ({ searchParams }: SeasonPageProps) => {
       {pace && paceChart && (
         <section aria-labelledby='pace-title' className='space-y-4'>
           <h2 id='pace-title' className='label'>RITMO A UNA VUELTA DE CADA EQUIPO</h2>
-          <div className='grid gap-6 lg:grid-cols-[2fr_3fr]'>
+          <div className='grid gap-6 lg:grid-cols-2'>
             <BarList
               title='DIFERENCIA MEDIANA CON EL MÁS RÁPIDO'
               description='Mejor vuelta del equipo en clasificación frente a la mejor de todas, en cada Gran Premio.'
@@ -144,19 +147,18 @@ const SeasonPage = async ({ searchParams }: SeasonPageProps) => {
                   label: team.constructorName ?? team.constructorId,
                   value: team.medianGapPercent!,
                   display: team.medianGapPercent === 0 ? '0 %' : percent(team.medianGapPercent),
-                  aside: team.fastestCount ? `${team.fastestCount} × el más rápido` : undefined,
                 }))}
             />
             <DriverLineChart
               title='CARRERA A CARRERA'
+              footnote={fastestTeams ? `El más rápido en clasificación: ${fastestTeams}.` : undefined}
               description='Diferencia con el equipo más rápido de cada clasificación (0 % = el más rápido).'
               rows={paceChart.rows}
               drivers={paceChart.series}
               initial={paceChart.series.slice(0, 3).map((s) => s.number)}
               reversed
               yDomain={[0, 'auto']}
-              formatValue={(v) => `${v.toFixed(2).replace('.', ',')} %`}
-              yTickFormat={(v) => `${v}%`}
+              unit='percent'
               xTick='R'
               xName='RONDA'
               legend='EQUIPOS'
@@ -182,7 +184,7 @@ const SeasonPage = async ({ searchParams }: SeasonPageProps) => {
           <div className='grid gap-6 lg:grid-cols-2'>
             <BarList
               title='EQUIPOS MÁS RÁPIDOS EN BOXES'
-              description='Tiempo en el pit lane frente a la mediana de cada carrera (cada circuito tiene un pit lane distinto).'
+              description='Tiempo en el pit lane frente a la mediana de cada carrera (cada circuito tiene un pit lane distinto). A la derecha, las paradas contadas.'
               names
               items={pits.teams
                 .filter((team) => team.laneDeltaToRaceMedian != null)
@@ -191,7 +193,7 @@ const SeasonPage = async ({ searchParams }: SeasonPageProps) => {
                   label: team.teamName,
                   value: team.laneDeltaToRaceMedian! - all[0].laneDeltaToRaceMedian!,
                   display: `${formatDelta(team.laneDeltaToRaceMedian, 2)} s`,
-                  aside: `${team.stops} paradas`,
+                  aside: String(team.stops),
                 }))}
             />
             <BarList

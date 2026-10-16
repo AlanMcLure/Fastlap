@@ -24,6 +24,15 @@ const HIGHLIGHTS = [
 ]
 const MAX_HIGHLIGHTS = HIGHLIGHTS.length
 
+/** How values are shown. A plain string, because functions cannot be passed from server components. */
+export type ChartUnit = 'gap' | 'position' | 'percent'
+
+const FORMAT: Record<ChartUnit, { value: (v: number) => string; tick: (v: number) => string }> = {
+  gap: { value: (v) => (v === 0 ? 'LÍDER' : `+${v.toFixed(1)} s`), tick: (v) => `${v}s` },
+  position: { value: (v) => `P${v}`, tick: (v) => `P${v}` },
+  percent: { value: (v) => `${v.toFixed(2).replace('.', ',')} %`, tick: (v) => `${v}%` },
+}
+
 const NEUTRAL_LABEL: Record<Neutralisation['kind'], string> = { sc: 'SC', vsc: 'VSC', red: 'ROJA' }
 
 interface DriverLineChartProps {
@@ -36,8 +45,7 @@ interface DriverLineChartProps {
   /** Positions: P1 at the top. */
   reversed?: boolean
   yDomain?: [number | string, number | string]
-  formatValue: (value: number) => string
-  yTickFormat?: (value: number) => string
+  unit: ChartUnit
   neutralisations?: Neutralisation[]
   footnote?: string
   /** Prefix of the x ticks ("V12") and name of the x unit in the tooltip ("VUELTA 12"). */
@@ -61,8 +69,7 @@ const DriverLineChart = ({
   initial,
   reversed = false,
   yDomain,
-  formatValue,
-  yTickFormat,
+  unit,
   neutralisations = [],
   footnote,
   xTick = 'V',
@@ -70,6 +77,7 @@ const DriverLineChart = ({
   legend = 'DESTACAR',
 }: DriverLineChartProps) => {
   const [selected, setSelected] = useState<number[]>(initial.slice(0, MAX_HIGHLIGHTS))
+  const { value: formatValue, tick: yTickFormat } = FORMAT[unit]
   const codes = new Map(drivers.map((d) => [d.number, d.code]))
 
   const toggle = (number: number) =>
@@ -113,7 +121,7 @@ const DriverLineChart = ({
   }
 
   return (
-    <figure className='rounded-2xl border border-input bg-card p-4 sm:p-6'>
+    <figure className='min-w-0 rounded-2xl border border-input bg-card p-4 sm:p-6'>
       <figcaption>
         <span className='label'>{title}</span>
         <span className='mt-1 block text-sm text-muted-foreground'>{description}</span>

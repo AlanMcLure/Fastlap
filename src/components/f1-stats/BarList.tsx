@@ -23,8 +23,17 @@ interface BarListProps {
 /** Ranking as horizontal bars, timing-tower style: gaps to the best (shortest = best) or plain amounts. */
 const BarList = ({ title, description, items, emptyText = 'Sin datos suficientes.', names = false, mode = 'gap' }: BarListProps) => {
   const max = Math.max(...items.map((i) => i.value), 0)
+  // Shared columns (monospace widths in ch) so every bar has the same track and stays comparable.
+  // The aside gets its own column from sm up; on phones it drops below the row, under the bar.
+  const valueWidth = Math.max(...items.map((i) => i.display.length), 0) + 1
+  const asideWidth = Math.max(...items.map((i) => i.aside?.length ?? 0), 0)
+  const label = names ? 'minmax(6rem,9rem)' : '3rem'
+  const columns = {
+    '--cols': `1.5rem ${label} minmax(0,1fr) ${valueWidth}ch`,
+    '--cols-sm': `1.5rem ${label} minmax(0,1fr) ${valueWidth}ch${asideWidth ? ` ${asideWidth}ch` : ''}`,
+  } as React.CSSProperties
   return (
-    <figure className='rounded-2xl border border-input bg-card p-4 sm:p-6'>
+    <figure className='min-w-0 rounded-2xl border border-input bg-card p-4 sm:p-6'>
       <figcaption>
         <span className='label'>{title}</span>
         {description && <span className='mt-1 block text-sm text-muted-foreground'>{description}</span>}
@@ -36,7 +45,8 @@ const BarList = ({ title, description, items, emptyText = 'Sin datos suficientes
           {items.map((item, index) => (
             <li
               key={item.key}
-              className={`grid items-center gap-3 ${names ? 'grid-cols-[1.5rem_minmax(7rem,11rem)_1fr_auto]' : 'grid-cols-[1.5rem_3rem_1fr_auto]'}`}>
+              style={columns}
+              className='grid items-center gap-x-3 gap-y-0.5 [grid-template-columns:var(--cols)] sm:[grid-template-columns:var(--cols-sm)]'>
               <span className='font-mono text-xs text-muted-foreground'>{index + 1}</span>
               <span
                 className={names ? 'truncate text-sm text-display' : 'font-mono text-sm font-bold text-display'}
@@ -49,10 +59,12 @@ const BarList = ({ title, description, items, emptyText = 'Sin datos suficientes
                   style={{ width: `${max > 0 ? Math.max(2, (item.value / max) * 100) : mode === 'amount' ? 0 : 2}%` }}
                 />
               </span>
-              <span className='text-right font-mono text-sm tabular-nums text-foreground'>
-                {item.display}
-                {item.aside && <span className='ml-3 text-muted-foreground'>{item.aside}</span>}
-              </span>
+              <span className='whitespace-nowrap text-right font-mono text-sm tabular-nums text-foreground'>{item.display}</span>
+              {item.aside && (
+                <span className='col-span-2 col-start-3 whitespace-nowrap text-right font-mono text-xs text-muted-foreground sm:col-span-1 sm:col-start-auto sm:text-sm'>
+                  {item.aside}
+                </span>
+              )}
             </li>
           ))}
         </ol>

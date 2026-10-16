@@ -35,7 +35,7 @@ const RecordsPage = async ({ searchParams }: RecordsPageProps) => {
   if (!statsEnabled()) notFound()
   const teams = (await searchParams).tipo === 'equipos'
 
-  let boards: { title: string; rows: { id: string; name: string; value: number; extra?: string }[] }[]
+  let boards: { title: string; description?: string; rows: { id: string; name: string; value: number; extra?: string }[] }[]
   try {
     boards = await Promise.all(
       CATEGORIES.map(async (category) => {
@@ -49,13 +49,14 @@ const RecordsPage = async ({ searchParams }: RecordsPageProps) => {
         const rows = await getDriverRecords(category.kind)
         return {
           title: category.title,
+          description: category.kind === 'wins' ? 'Al lado, el porcentaje de sus carreras que ganó.' : undefined,
           rows: rows.map((d) => ({
             id: d.id,
             name: d.name,
             value: Number(d[category.driverField]),
             extra:
               category.kind === 'wins' && d.totalRaceStarts > 0
-                ? `${Math.round((d.totalRaceWins / d.totalRaceStarts) * 100)} % de sus carreras`
+                ? `${Math.round((d.totalRaceWins / d.totalRaceStarts) * 100)} %`
                 : undefined,
           })),
         }
@@ -96,6 +97,7 @@ const RecordsPage = async ({ searchParams }: RecordsPageProps) => {
               <BarList
                 key={board.title}
                 title={board.title}
+                description={board.description}
                 names
                 mode='amount'
                 items={board.rows.map((row) => ({

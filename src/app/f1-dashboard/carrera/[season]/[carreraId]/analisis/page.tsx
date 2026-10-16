@@ -258,8 +258,7 @@ const RaceAnalysis = async ({
           drivers={drivers}
           initial={top3}
           yDomain={[0, gapMax]}
-          formatValue={(v) => (v === 0 ? 'LÍDER' : `+${v.toFixed(1)} s`)}
-          yTickFormat={(v) => `${v}s`}
+          unit='gap'
           neutralisations={periods}
           footnote='La escala se ajusta a los diez primeros: los doblados se salen por abajo.'
         />
@@ -274,8 +273,7 @@ const RaceAnalysis = async ({
           initial={top3}
           reversed
           yDomain={[1, drivers.length]}
-          formatValue={(v) => `P${v}`}
-          yTickFormat={(v) => `P${v}`}
+          unit='position'
           neutralisations={periods}
         />
       )}
@@ -334,7 +332,7 @@ const RaceAnalysis = async ({
               detail: `Vuelta ${pit.lapNumber ?? '?'}`,
               value: stop != null ? stop - base : 0,
               display: stop != null ? `${stop.toFixed(1)} s` : '—',
-              aside: pit.laneDuration != null ? `${pit.laneDuration.toFixed(1)} s en el pit lane · V${pit.lapNumber ?? '?'}` : undefined,
+              aside: pit.laneDuration != null ? `pit lane ${pit.laneDuration.toFixed(1)} s · V${pit.lapNumber ?? '?'}` : undefined,
             }
           })}
         />
